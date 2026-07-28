@@ -1,0 +1,256 @@
+/* ============================================================
+   LE PHARE — Section « accueil » (premier écran).
+
+   Composition : la nuit occupe le haut du cadre, le texte se pose en
+   bas. L'énergie vient du vide sombre au-dessus du titre et du seul
+   foyer chaud en haut à droite — pas d'un empilement centré.
+
+   Aucune media query : les paliers de titre, le padding de section et
+   les repères sont déjà fluides. Rien à retoucher entre 360 et 1600px.
+   ============================================================ */
+
+.lp-hero {
+  /* Le premier écran ne dépasse jamais la hauteur visible, et se plafonne
+     à 820px : au-delà, le titre décroche des repères et le faisceau perd
+     son foyer. min-height (jamais height) pour que le contenu puisse
+     pousser la section sur un écran court ou avec une police agrandie. */
+  min-height: min(calc(100vh - var(--nav-height)), 820px);
+  min-height: min(calc(100svh - var(--nav-height)), 820px);
+  /* SEULE section du site à redéclarer son rythme vertical, et pour une
+     raison mesurée : avec --sp-9 en haut ET en bas, le contenu du premier
+     écran dépasse le plafond de 820px sur grand écran. Le haut se cale
+     donc sur la barre de navigation (la seule contrainte réelle), et le
+     vide au-dessus du titre est produit par la répartition flex — il
+     grandit avec l'écran au lieu d'être figé. */
+  padding-block: var(--nav-height) var(--sp-9);
+  display: grid;
+  /* Le décor est peint dans son propre contexte d'empilement : aucun
+     motif ne peut remonter au-dessus d'une section voisine. */
+  isolation: isolate;
+}
+
+/* ------------------------------------------------------------
+   1. LE DÉCOR
+   Un conteneur dédié porte l'overflow, PAS la section : si la section
+   découpait, le contour de focus d'un bouton en bord de cadre serait
+   rogné. Il est le seul enfant à vivre sur --z-motif.
+   ------------------------------------------------------------ */
+
+.lp-hero__decor {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: var(--z-motif);
+  pointer-events: none;
+}
+
+/* Le foyer est posé haut à droite, là où serait la lanterne. À l'arrêt
+   (mouvement réduit : rotation figée à 24°), le départ de 186° amène le
+   lobe principal en diagonale descendante vers le titre — le faisceau
+   reste un faisceau, jamais un disque arrêté au hasard. */
+.lp-hero__faisceau {
+  /* Plus large que le défaut : au diamètre standard, le cône traverse le
+     cadre en un trait fin qui se lit comme une rayure et non comme de la
+     lumière. Le lobe garde son angle, c'est sa portée en pixels qui gagne. */
+  --faisceau-taille: 160vmax;
+}
+
+.lp-hero__grain {
+  --grain-opacite: 0.05;
+}
+
+/* La houle ferme le cadre par le bas et se dissout vers le haut. Réglée
+   plus discrète que le défaut : elle passe derrière les repères. */
+.lp-hero__vagues {
+  --vagues-opacite: 0.16;
+}
+
+/* ------------------------------------------------------------
+   2. LE CORPS
+   ------------------------------------------------------------ */
+
+.lp-hero__corps {
+  position: relative;
+  z-index: var(--z-base);
+  display: flex;
+  flex-direction: column;
+  /* Le texte se pose au bas du cadre ; la nuit et le faisceau occupent
+     le haut. Sur un écran court la section grandit, rien n'est coupé. */
+  justify-content: flex-end;
+  gap: var(--sp-8);
+}
+
+/* ---- Bloc d'introduction ----
+   Chaque écart est déclaré sur l'élément qui le suit : pas de `gap`
+   uniforme ici, la séquence surtitre → filet → titre → chapô → actions
+   a un rythme volontairement inégal. */
+.lp-hero__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.lp-hero__filet { margin-top: var(--sp-3); }
+.lp-hero__titre { margin-top: var(--sp-5); }
+.lp-hero__lead  { margin-top: var(--sp-5); }
+
+.lp-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-top: var(--sp-7);
+}
+
+/* Seule media query du partial, et elle change bien une STRUCTURE :
+   sous ~416px les deux boutons ne tiennent plus côte à côte et se
+   retrouvaient empilés à des largeurs différentes. Une colonne pleine
+   largeur est à la fois plus nette et plus facile à viser au pouce. */
+@media (max-width: 26rem) {
+  .lp-hero__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Le titre ----
+   Deux blocs de ligne : les coupes sont composées, pas subies. */
+.lp-hero__ligne {
+  display: block;
+}
+
+/* Le seul geste typographique de la page : la ligne qui s'allume est
+   aussi celle qui monte d'un pas. Le décalage reste sous 3rem — au-delà
+   il désaxerait le bloc de texte au lieu de le nuancer. */
+.lp-hero__ligne--lumiere {
+  color: var(--accent-bright);
+  margin-left: clamp(0.75rem, 3vw, 3rem);
+}
+
+/* ------------------------------------------------------------
+   3. LE PIED : descente + repères
+   ------------------------------------------------------------ */
+
+.lp-hero__pied {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+/* La barre du bas : les trois repères à gauche, la descente à droite,
+   tous alignés sur la même ligne de pied. Un seul rang plutôt que deux —
+   le premier écran n'a pas la hauteur pour empiler. */
+.lp-hero__barre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--sp-5);
+}
+
+/* Indication de descente : un lien réel vers la section suivante, calé
+   à l'opposé des repères pour tenir le bas de cadre. La marge auto la
+   maintient à droite même lorsqu'elle passe à la ligne sous 480px. */
+/* min-height : 25px de haut, c'était une cible tactile trop petite pour
+   l'unique raccourci vers la suite de la page. */
+.lp-hero__descente {
+  flex: none;
+  margin-inline-start: auto;
+  padding-bottom: var(--sp-1);
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-dim);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.lp-hero__descente:hover { color: var(--accent-bright); }
+
+.lp-hero__fleche {
+  flex: none;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.lp-hero__descente:hover .lp-hero__fleche { transform: translateY(3px); }
+
+.lp-hero__rule { width: 100%; }
+
+/* ---- Les repères ----
+   Trois valeurs calculées, alignées sur le filet. Aucun trait vertical
+   entre les colonnes : c'est la gouttière qui sépare. */
+.lp-hero__reperes {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  /* Les chiffres n'ont pas tous la même taille (l'année est plus longue,
+     donc plus petite) : c'est leur LIGNE DE BASE qui les aligne, pas le
+     haut de leur boîte. Sans quoi l'année flottait 4px trop haut. */
+  align-items: baseline;
+  gap: var(--sp-5);
+  margin: 0;
+  min-width: 0;
+}
+
+.lp-hero__repere {
+  /* Base courte : deux repères par ligne à 360px, trois dès ~560px.
+     Le plafond évite qu'ils s'étalent sur toute la largeur en 1600px. */
+  flex: 1 1 8.5rem;
+  max-width: 16rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Le <dt> précède le <dd> dans le DOM (ordre attendu d'une liste de
+   définitions) ; `order` remonte la valeur au-dessus de son libellé.
+   On inverse par `order` et non par column-reverse : ce dernier empile
+   depuis le BAS, si bien qu'un libellé passant sur deux lignes décalait
+   son chiffre vers le haut et cassait l'alignement de la barre. */
+.lp-hero__repere-valeur {
+  order: -1;
+  margin: 0;
+  font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.25rem);
+}
+
+/* L'année scolaire est une donnée numérique, pas un compteur : onze
+   signes au lieu d'un. Un cran de corps en moins lui évite de déborder
+   de sa colonne sous 400px ; la ligne de base la raccroche aux autres. */
+.lp-hero__repere-valeur--long {
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+}
+
+/* Le libellé vit sous le chiffre : on le laisse respirer sur deux
+   lignes plutôt que de le tronquer. */
+.lp-hero__repere-libelle {
+  text-wrap: balance;
+}
+
+/* ------------------------------------------------------------
+   4. ENTRÉE EN SCÈNE
+   Une seule passe au chargement, lente, dans l'ordre de lecture.
+   Ce n'est pas une boucle : la seule boucle de la page est le faisceau.
+   ------------------------------------------------------------ */
+
+@keyframes lp-hero-entree {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.lp-hero__entree {
+  animation: lp-hero-entree var(--dur-reveal) var(--ease-out) both;
+  animation-delay: var(--entree-retard, 0ms);
+}
+
+/* Le reset global écrase la DURÉE mais pas le RETARD : sans cette règle,
+   un visiteur en mouvement réduit verrait le hero vide pendant un demi-
+   seconde (le fill-mode `both` maintient l'état initial pendant le délai). */
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero__entree {
+    animation: none;
+  }
+}

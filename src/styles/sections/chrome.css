@@ -1,0 +1,557 @@
+/* ============================================================
+   LE PHARE — Chrome : la barre de navigation et le pied de page.
+   Le cadre qui tient le site. Deux règles le gouvernent :
+
+   1. La barre est POSÉE SUR la page (position: fixed), jamais dans le
+      flux. Elle n'occupe aucune hauteur : .lp-section porte déjà le
+      scroll-margin-top qui compense sa présence, et le hero est dessiné
+      pour être vu au travers.
+   2. Son arête basse est une LIGNE D'HORIZON dont le foyer avance avec
+      la lecture. La barre de progression n'est pas un objet rapporté :
+      c'est le motif signature du site qui sert d'indicateur.
+
+   Toutes les couleurs viennent de tokens.css. Aucune valeur hexadécimale.
+   ============================================================ */
+
+/* ============================================================
+   1. LA BARRE
+   ============================================================ */
+
+.lp-nav {
+  /* Hauteur pilotée par une variable pour que le panneau mobile la suive
+     sans la recalculer : il se cale dessous, quelle que soit la bascule. */
+  --lp-barre-h: var(--nav-height);
+  --lp-progression: 0%;
+
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-nav);
+}
+
+/* Passé le seuil de défilement, la barre se referme. */
+.lp-nav.is-condense {
+  --lp-barre-h: 56px;
+}
+
+/* Le fond est une COUCHE À PART : c'est son opacité qu'on anime.
+   Faire varier un backdrop-filter directement saccade sur la plupart
+   des moteurs. Il porte aussi le filtre — surtout pas .lp-nav, qui
+   deviendrait alors le bloc conteneur du panneau en position: fixed. */
+.lp-nav__fond {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--surface-voile);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: var(--edge-light);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.lp-nav.is-condense .lp-nav__fond { opacity: 1; }
+
+.lp-nav__barre {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  height: var(--lp-barre-h);
+  transition: height var(--dur-base) var(--ease-out);
+}
+
+/* ---------- La cible du lien d'évitement ----------
+   <main id="contenu"> porte tabIndex={-1} pour que « Aller au contenu »
+   déplace le FOCUS et pas seulement le défilement. Le focus n'y est jamais
+   qu'un point d'atterrissage : on n'entoure pas la page entière d'un
+   contour laiton de 2px. C'est la seule exception au focus visible global. */
+#contenu:focus,
+#contenu:focus-visible {
+  outline: none;
+}
+
+/* ---------- La marque ---------- */
+
+.lp-nav__marque {
+  --logo-h: 36px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+  color: var(--fg);
+  text-decoration: none;
+}
+.lp-nav.is-condense .lp-nav__marque { --logo-h: 30px; }
+
+/* La hauteur du logo vient d'une variable : c'est `height` qu'on anime. */
+.lp-nav__marque .lp-logo {
+  transition: height var(--dur-base) var(--ease-out);
+}
+.lp-nav__marque:hover .lp-logo { color: var(--accent-bright); }
+
+.lp-nav__marque-texte {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.lp-nav__nom {
+  white-space: nowrap;
+}
+
+/* La baseline se replie quand la barre se referme : elle a dit ce qu'elle
+   avait à dire dès le premier écran. */
+.lp-nav__baseline {
+  overflow: hidden;
+  max-height: 1.6em;
+  font-size: var(--fs-12);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-dim);
+  white-space: nowrap;
+  transition:
+    max-height var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out);
+}
+.lp-nav.is-condense .lp-nav__baseline {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* ---------- Les liens ---------- */
+
+/* Sous le point de bascule, tout passe par le panneau. */
+.lp-nav__liens,
+.lp-nav__cta {
+  display: none;
+}
+
+.lp-nav__liste {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--sp-3), 1.4vw, var(--sp-5));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-nav__lien {
+  position: relative;
+  display: block;
+  padding-block: var(--sp-2);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.lp-nav__lien:hover { color: var(--fg); }
+
+/* La section courante est marquée par un filet laiton — le même geste
+   que .lp-filet sous un surtitre. L'attribut aria-current le double :
+   l'information n'est jamais portée par la seule couleur. */
+.lp-nav__lien::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 32px;
+  height: 2px;
+  translate: -50% 0;
+  background: var(--accent);
+  opacity: 0;
+  scale: 0.25 1;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    scale var(--dur-base) var(--ease-out);
+}
+.lp-nav__lien.is-courant { color: var(--fg); }
+.lp-nav__lien.is-courant::after {
+  opacity: 1;
+  scale: 1 1;
+}
+
+.lp-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+/* ---------- Le bouton du menu ---------- */
+
+.lp-nav__burger {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+  color: var(--fg);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.lp-nav__burger:hover { border-color: var(--border-brass); }
+
+/* Trois traits d'amplitudes décroissantes : la houle de la trame de
+   vagues réduite à un pictogramme. */
+.lp-nav__trait {
+  display: block;
+  width: 22px;
+  height: 2px;
+  margin-left: 11px;
+  background: currentColor;
+  transition:
+    width var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out),
+    rotate var(--dur-base) var(--ease-out),
+    translate var(--dur-base) var(--ease-out);
+}
+/* On désigne les traits par adjacence et non par :nth-of-type() : le
+   libellé accessible du bouton est lui aussi un <span>, il fausserait
+   le comptage (bogue constaté au rendu, croix cassée). */
+.lp-nav__trait + .lp-nav__trait { width: 15px; }
+.lp-nav__trait + .lp-nav__trait + .lp-nav__trait { width: 18px; }
+
+/* Ouvert, les trois traits se referment en croix (gap 5 + trait 2 = 7px
+   entre deux axes : c'est la translation exacte vers le centre). */
+.lp-nav__burger.is-ouvert .lp-nav__trait {
+  translate: 0 7px;
+  rotate: 45deg;
+}
+.lp-nav__burger.is-ouvert .lp-nav__trait + .lp-nav__trait {
+  width: 0;
+  opacity: 0;
+  translate: 0 0;
+  rotate: 0deg;
+}
+.lp-nav__burger.is-ouvert .lp-nav__trait + .lp-nav__trait + .lp-nav__trait {
+  width: 22px;
+  /* Le troisième trait est aussi « précédé d'un trait » : il hérite du
+     opacity: 0 de la règle ci-dessus, qu'il faut donc annuler ici. */
+  opacity: 1;
+  translate: 0 -7px;
+  rotate: -45deg;
+}
+
+/* ---------- L'horizon de lecture ---------- */
+
+.lp-nav__horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border-hair) 8%,
+    var(--border-hair) 92%,
+    transparent 100%
+  );
+}
+
+/* La traînée : ce qui a déjà été lu reste éclairé, en s'éteignant vers
+   l'arrière comme le sillage d'un faisceau. */
+.lp-nav__horizon::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--lp-progression);
+  max-width: 100%;
+  opacity: 0.5;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 100%);
+}
+
+/* Le foyer : le point où la lumière frappe l'horizon. */
+.lp-nav__horizon::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: var(--lp-progression);
+  width: 84px;
+  height: 5px;
+  translate: -50% 0;
+  background: radial-gradient(50% 100% at 50% 50%, var(--accent-bright) 0%, transparent 72%);
+}
+
+/* ============================================================
+   2. LE PANNEAU MOBILE
+   Il se cale SOUS la barre : le bouton reste visible et devient la
+   croix de fermeture. Il vit donc dans le plan de la barre, mais
+   derrière elle (z-index 0 contre 2).
+   ============================================================ */
+
+.lp-nav__panneau {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  padding-top: var(--lp-barre-h);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  animation: lp-nav-ouverture var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes lp-nav-ouverture {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.lp-nav__panneau-corps {
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--sp-5) var(--sp-8);
+}
+
+.lp-nav__panneau-liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Entrée décalée ligne à ligne. Le rang vient du JSX (--lp-rang), et il
+   est remis à 0 sous prefers-reduced-motion : sans quoi le retard
+   subsisterait alors que la durée, elle, est déjà neutralisée. */
+.lp-nav__panneau-liste li {
+  animation: lp-nav-ligne 420ms var(--ease-out) both;
+  animation-delay: calc(var(--lp-rang, 0) * 45ms);
+}
+
+@keyframes lp-nav-ligne {
+  from { opacity: 0; translate: 0 10px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+.lp-nav__panneau-lien {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding-block: var(--sp-4);
+  border-bottom: 1px solid var(--border-hair);
+  text-decoration: none;
+}
+
+/* Le titre porte la classe de rôle .lp-h3 : on ne redessine pas la typo,
+   on ne reprend que la couleur, qui est ici un état. */
+.lp-nav__panneau-lien .lp-h3 {
+  color: var(--fg-muted);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.lp-nav__panneau-lien:hover .lp-h3,
+.lp-nav__panneau-lien.is-courant .lp-h3 {
+  color: var(--fg);
+}
+
+/* Segment d'horizon pointant la section courante. */
+.lp-nav__panneau-marque {
+  flex: none;
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.lp-nav__panneau-lien:hover .lp-nav__panneau-marque { opacity: 0.4; }
+.lp-nav__panneau-lien.is-courant .lp-nav__panneau-marque { opacity: 1; }
+
+.lp-nav__panneau-cta {
+  width: 100%;
+  margin-top: var(--sp-6);
+}
+
+.lp-nav__panneau-pied {
+  margin-top: var(--sp-4);
+}
+
+/* ============================================================
+   3. LE PIED DE PAGE
+   Il porte l'id « contact » : la dernière entrée du plan ne renvoie
+   pas vers une section de plus, elle renvoie ici.
+   ============================================================ */
+
+.lp-pied {
+  position: relative;
+  padding-top: var(--sp-9);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* La houle sert de raccord avec la section précédente, quel que soit
+   son fond. Volontairement basse en intensité : c'est un seuil, pas un
+   décor. */
+.lp-pied .lp-vagues {
+  --vagues-l: 380px;
+  --vagues-opacite: 0.18;
+}
+
+/* Le motif vit sur --z-motif : le contenu doit repasser devant. */
+.lp-pied__corps,
+.lp-pied__colophon {
+  position: relative;
+  z-index: 1;
+}
+
+.lp-pied__haut {
+  display: grid;
+  gap: var(--sp-7);
+  align-items: start;
+}
+
+.lp-pied__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+/* Le filet respire un peu plus que le reste : il ouvre le bloc. */
+.lp-pied__intro .lp-filet { margin-block: var(--sp-1) var(--sp-2); }
+
+.lp-pied__identite {
+  --logo-h: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  color: var(--fg);
+}
+.lp-pied__nom { margin-top: var(--sp-2); }
+.lp-pied__annee { color: var(--fg-dim); }
+
+.lp-pied__separation { margin-block: var(--sp-8); }
+
+.lp-pied__grille {
+  display: grid;
+  gap: var(--sp-7) var(--sp-5);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.lp-pied__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+/* ---------- Coordonnées ---------- */
+
+.lp-pied__liste-coord {
+  margin: 0;
+}
+
+.lp-pied__coord {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding-block: var(--sp-3);
+}
+.lp-pied__coord + .lp-pied__coord {
+  border-top: 1px solid var(--border-hair);
+}
+
+.lp-pied__valeur {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-16);
+  color: var(--fg);
+  /* Une adresse e-mail longue ne doit jamais pousser la colonne. */
+  overflow-wrap: anywhere;
+}
+
+.lp-pied__partiel { color: var(--fg-muted); }
+
+.lp-pied__secours {
+  max-width: var(--measure-tight);
+}
+
+/* ---------- Plan du site ---------- */
+
+.lp-pied__plan {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-pied__plan-lien {
+  display: block;
+  padding-block: var(--sp-2);
+  font-size: var(--fs-14);
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+/* Au survol, le soulignement double le changement de couleur : jamais
+   la couleur seule pour signaler un état. */
+.lp-pied__plan-lien:hover {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--border-brass);
+  text-underline-offset: 0.25em;
+}
+
+.lp-pied__mention {
+  max-width: var(--measure-tight);
+}
+
+/* ---------- Colophon ---------- */
+
+/* Le creux le plus profond de la page : la nuit sous la ligne d'eau. */
+.lp-pied__colophon {
+  margin-top: var(--sp-8);
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border-hair);
+}
+
+.lp-pied__colophon-corps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  padding-block: var(--sp-5);
+}
+
+.lp-pied__legal { margin: 0; }
+
+/* ============================================================
+   4. STRUCTURE RESPONSIVE
+   Une seule bascule : au-delà, la barre affiche ses liens et le
+   panneau n'a plus de raison d'être. Les tailles, elles, sont déjà
+   fluides — aucune media query ne les retouche.
+   ============================================================ */
+
+/* Sous 560px la baseline mangerait la largeur du bouton de menu. */
+@media (max-width: 559px) {
+  .lp-nav__baseline { display: none; }
+}
+
+@media (min-width: 900px) {
+  .lp-nav__liens { display: block; }
+  /* Le bouton reste en inline-flex : .lp-btn centre son libellé avec. */
+  .lp-nav__cta { display: inline-flex; }
+  .lp-nav__burger { display: none; }
+}
+
+/* Le pied de page passe en deux colonnes quand la place le permet :
+   le titre à gauche, la marque à droite. */
+@media (min-width: 860px) {
+  .lp-pied__haut {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: var(--sp-6);
+  }
+}

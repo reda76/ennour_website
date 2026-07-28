@@ -1,0 +1,499 @@
+/* ============================================================
+   LE PHARE — Design tokens.
+   Bleu nuit & laiton. Thème sombre unique (pas de mode clair).
+   Import unique et global : voir src/main.jsx.
+
+   Ordre : polices → couleurs de base → rôles → bordures → typo →
+   espacements → rayons → ombres → motion → layout → classes de rôle.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter:wght@300..700&display=swap');
+
+:root {
+  /* ---------- COULEUR — base : le vocabulaire du phare ---------- */
+  /* La nuit : la masse sombre sur laquelle tout repose. */
+  --night-0:   #081320;   /* le plus profond — pied de page, creux, puits */
+  --night-1:   #0d1b2a;   /* fond de page — valeur EXACTE de la direction */
+  --night-2:   #14293d;   /* surface surélevée — valeur EXACTE */
+  --night-3:   #18304a;   /* surface active : survol de carte, ligne de tableau */
+  --night-4:   #1d3650;   /* surface la plus haute : champ de saisie, tuile */
+  /* Le palier entre --night-2, -3 et -4 est volontairement court : plus clair,
+     le laiton et le texte tertiaire tombaient sous 4.5:1. Mesuré, pas estimé. */
+
+  /* La brume : tout ce qui est écrit. */
+  --fog-1:     #eef2f6;   /* texte principal — valeur EXACTE */
+  --fog-2:     #9fb3c8;   /* texte secondaire — valeur EXACTE */
+  --fog-3:     #8aa2ba;   /* texte tertiaire, légendes */
+  --fog-4:     #63798f;   /* désactivé et purement décoratif — JAMAIS du texte à lire */
+
+  /* Le laiton : la lumière du phare. Seul accent chaud du site. */
+  --brass-1:   #c9a227;   /* accent — valeur EXACTE */
+  --brass-2:   #d9b93a;   /* survol : plus clair, jamais plus saturé */
+  --brass-3:   #f0d878;   /* point le plus lumineux — valeur EXACTE */
+  --brass-4:   #8c6f18;   /* laiton éteint : filets, états pressés. Pas du texte. */
+
+  /* ---------- COULEUR — signaux ----------
+     Désaturés : rien ne doit rivaliser avec le laiton. */
+  --signal-ok:      #7cbb93;   /* confirmé, ouvert */
+  --signal-attente: #c9a227;   /* « à confirmer » — c'est le laiton lui-même :
+                                  une donnée manquante est une lumière, pas une alarme */
+  --signal-off:     #90a0b3;   /* fermé, vacances, hors période */
+
+  /* ---------- COULEUR — rôles ---------- */
+  --bg:            var(--night-1);
+  --bg-deep:       var(--night-0);
+  --surface:       var(--night-2);
+  --surface-2:     var(--night-3);
+  --surface-3:     var(--night-4);
+  /* Fond de la nav collante : translucide, à coupler avec backdrop-filter. */
+  --surface-voile: rgba(13, 27, 42, 0.82);   /* --night-1 à 82 % */
+
+  --fg:            var(--fog-1);
+  --fg-muted:      var(--fog-2);
+  --fg-dim:        var(--fog-3);
+  --fg-disabled:   var(--fog-4);
+  --fg-on-accent:  var(--night-1);   /* texte posé SUR du laiton */
+
+  --accent:        var(--brass-1);
+  --accent-hover:  var(--brass-2);
+  --accent-bright: var(--brass-3);
+  --accent-deep:   var(--brass-4);
+
+  /* ---------- BORDURES ----------
+     Toutes dérivées de --fog-2 (#9fb3c8) et --brass-1 (#c9a227) en rgba :
+     une bordure doit être de la brume ou de la lumière, jamais une couleur à part. */
+  --border-hair:    rgba(159, 179, 200, 0.14);   /* filet quasi invisible, séparateur interne */
+  --border:         rgba(159, 179, 200, 0.22);   /* défaut : contour de carte */
+  --border-strong:  rgba(159, 179, 200, 0.36);   /* survol, élément actif */
+  --border-brass:   rgba(201, 162, 39, 0.45);    /* accentué */
+  --border-brass-2: rgba(201, 162, 39, 0.85);    /* sélectionné, courant */
+
+  /* ---------- TYPO — familles ----------
+     Fraunces : serif variable, axes opsz / SOFT / WONK. Elle porte le
+     caractère — titres et chiffres remarquables uniquement.
+     Inter : tout le texte courant, l'interface et les données. */
+  --ff-display: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --ff-body:    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ff-mono:    ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  /* ---------- TYPO — réglages d'axes Fraunces ----------
+     opsz : taille optique. SOFT : adoucissement des empattements.
+     WONK : les formes alternatives penchées (le grain de folie de Fraunces).
+     Sur fond sombre les fûts paraissent plus fins : on adoucit à mesure
+     que la taille descend, et on coupe WONK sous ~24px où il devient du bruit. */
+  --fvs-display: 'opsz' 144, 'SOFT' 12, 'WONK' 1;
+  --fvs-heading: 'opsz' 72,  'SOFT' 26, 'WONK' 1;
+  --fvs-title:   'opsz' 32,  'SOFT' 48, 'WONK' 0;
+  --fvs-quote:   'opsz' 20,  'SOFT' 84, 'WONK' 0;
+
+  /* ---------- TYPO — échelle de tailles ----------
+     Pas fixes pour l'interface et les données. */
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-30: 1.875rem;
+  --fs-38: 2.375rem;
+  --fs-48: 3rem;
+
+  /* Paliers fluides pour les titres : la page respire de 360px à 1600px
+     sans une seule media query dans les partials de section. */
+  --fs-display: clamp(2.75rem, 1.60rem + 5.2vw, 5.50rem);   /*  44 →  88 px */
+  --fs-h1:      clamp(2.25rem, 1.50rem + 3.4vw, 4.00rem);   /*  36 →  64 px */
+  --fs-h2:      clamp(1.875rem, 1.40rem + 2.1vw, 3.00rem);  /*  30 →  48 px */
+  --fs-h3:      clamp(1.375rem, 1.15rem + 1.0vw, 1.875rem); /*  22 →  30 px */
+  --fs-h4:      var(--fs-20);
+  --fs-lead:    clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);    /*  17 →  20 px */
+
+  /* ---------- TYPO — graisses ---------- */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* ---------- TYPO — interlettrage ---------- */
+  --tr-display:  -0.022em;   /* les grands titres serrent */
+  --tr-tight:    -0.012em;
+  --tr-normal:   0;
+  --tr-wide:     0.02em;
+  --tr-eyebrow:  0.15em;     /* surtitres capitales */
+
+  /* ---------- TYPO — interlignage ---------- */
+  --lh-display: 0.98;
+  --lh-heading: 1.08;
+  --lh-title:   1.22;
+  --lh-body:    1.6;
+  --lh-loose:   1.75;
+
+  /* ---------- TYPO — mesures (largeur de ligne confortable) ---------- */
+  --measure:         64ch;   /* prose courante */
+  --measure-tight:   46ch;   /* chapô, corps de carte */
+  --measure-display: 17ch;   /* grands titres : force de bonnes coupes */
+
+  /* ---------- ESPACEMENTS — base 8 ---------- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  /* --sp-9 et --sp-10 sont FLUIDES : ce sont les respirations de page,
+     pas des pas d'interface. .lp-section les utilise pour son rythme. */
+  --sp-9:  clamp(4.5rem, 3.25rem + 3.5vw, 7.5rem);   /*  72 → 120 px */
+  --sp-10: clamp(6.5rem, 4.75rem + 5.0vw, 10.5rem);  /* 104 → 168 px */
+
+  /* ---------- RAYONS — sobres, jamais de pilule ---------- */
+  --r-0: 0;
+  --r-1: 4px;    /* rayon par défaut du site */
+  --r-2: 8px;    /* grandes surfaces : carte large, panneau */
+  --r-full: 50%; /* réservé aux vraies puces rondes (pastilles, jalons) */
+
+  /* ---------- OMBRES ----------
+     Sur fond sombre l'ombre porte peu : c'est l'ARÊTE ÉCLAIRÉE qui
+     détache une surface. Toujours combiner --edge-light et --shadow-*. */
+  --edge-light:   inset 0 1px 0 rgba(238, 242, 246, 0.07);   /* --fog-1 à 7 % */
+  --shadow-card:  0 10px 24px rgba(3, 9, 16, 0.34);
+  --shadow-lift:  0 18px 44px rgba(3, 9, 16, 0.48);
+  --shadow-modal: 0 32px 80px rgba(3, 9, 16, 0.62);
+  --glow-brass:   0 0 28px rgba(201, 162, 39, 0.20);         /* --brass-1 à 20 % */
+  --shadow-focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+  /* ---------- MOTION ----------
+     Un phare est lent. Rien ne doit sursauter. */
+  --dur-micro:  120ms;
+  --dur-base:   220ms;
+  --dur-reveal: 620ms;   /* révélation au scroll (.lp-reveal) */
+  --dur-slow:   900ms;
+  --dur-beam:   24s;     /* rotation du faisceau */
+  --ease-out:   cubic-bezier(0.16, 0.84, 0.24, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ---------- LAYOUT ---------- */
+  --content-max:   1280px;
+  --content-narrow: 760px;                     /* colonne de lecture centrée */
+  --content-pad-x: clamp(20px, 1rem + 1.5vw, 40px);
+  --nav-height:    72px;
+  --gap-grille:    var(--sp-5);                /* gouttière par défaut des grilles */
+
+  /* ---------- PLANS ---------- */
+  --z-motif:   0;    /* faisceaux, vagues, grain : toujours derrière */
+  --z-base:    1;
+  --z-sticky:  50;
+  --z-nav:     100;
+  --z-overlay: 150;
+  --z-skip:    200;
+}
+
+/* ============================================================
+   RÔLES TYPOGRAPHIQUES
+   Classes partagées par toutes les sections : un titre de niveau 2
+   doit avoir exactement le même dessin d'un bout à l'autre du site.
+   On applique la classe SUR la balise sémantique (<h2 class="lp-h2">),
+   la balise porte le sens, la classe porte le dessin.
+   ============================================================ */
+
+.lp-display,
+.lp-h1,
+.lp-h2 {
+  font-family: var(--ff-display);
+  color: var(--fg);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.lp-display {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-semibold);
+  font-variation-settings: var(--fvs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tr-display);
+  max-width: var(--measure-display);
+}
+
+.lp-h1 {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-semibold);
+  font-variation-settings: var(--fvs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tr-display);
+  max-width: var(--measure-display);
+}
+
+.lp-h2 {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-semibold);
+  font-variation-settings: var(--fvs-heading);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tr-display);
+  max-width: var(--measure-display);
+}
+
+.lp-h3 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  font-variation-settings: var(--fvs-title);
+  line-height: var(--lh-title);
+  letter-spacing: var(--tr-tight);
+  color: var(--fg);
+  /* Comme les trois rôles au-dessus : un titre de carte se coupe autrement
+     au hasard, et les titres de carte sont les plus nombreux du site. */
+  text-wrap: balance;
+  margin: 0;
+}
+
+/* À partir du niveau 4 on repasse en Inter : à cette taille la serif
+   perd son intérêt et gêne le balayage d'une liste ou d'un tableau. */
+.lp-h4 {
+  font-family: var(--ff-body);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-title);
+  letter-spacing: var(--tr-tight);
+  color: var(--fg);
+  margin: 0;
+}
+
+/* Surtitre : dit de quoi parle la section, jamais un slogan. */
+.lp-eyebrow {
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  line-height: 1.2;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+}
+
+/* Variante SOURDE du surtitre : même dessin exactement, en brume.
+   Elle existe pour les micro-libellés en capitales qui ne sont PAS des
+   surtitres de section — légende de filtre, étiquette de coordonnée,
+   acteur d'une étape, « À noter ». Cinq partials en avaient chacun leur
+   copie, avec trois couleurs différentes : le laiton avait cessé de
+   vouloir dire « surtitre de section ». */
+.lp-eyebrow--sourd {
+  color: var(--fg-dim);
+}
+
+.lp-lead {
+  font-family: var(--ff-body);
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-loose);
+  color: var(--fg-muted);
+  max-width: var(--measure-tight);
+  margin: 0;
+}
+
+.lp-p {
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  line-height: var(--lh-body);
+  color: var(--fg-muted);
+  max-width: var(--measure);
+  margin: 0;
+}
+
+.lp-small {
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+  color: var(--fg-dim);
+  margin: 0;
+}
+
+.lp-caption {
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body);
+  color: var(--fg-dim);
+  margin: 0;
+}
+
+/* Chiffres et horaires : chasse fixe pour que les colonnes s'alignent. */
+.lp-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: var(--tr-normal);
+}
+
+/* Chiffre remarquable (tarif, numéro d'étape) : Fraunces, gros, laiton. */
+.lp-chiffre {
+  font-family: var(--ff-display);
+  font-weight: var(--fw-semibold);
+  font-variation-settings: var(--fvs-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: var(--tr-display);
+  color: var(--accent-bright);
+}
+
+/* ============================================================
+   BOUTONS
+   Deux niveaux, pas trois. Même hauteur, même rayon, même
+   interlettrage : seul le remplissage change.
+   ============================================================ */
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 48px;
+  padding: 0 var(--sp-6);
+  border: 1px solid transparent;
+  border-radius: var(--r-1);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-wide);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lp-btn--primaire {
+  background: var(--accent);
+  color: var(--fg-on-accent);
+  border-color: var(--accent);
+}
+.lp-btn--primaire:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  box-shadow: var(--glow-brass);
+}
+/* Pressé : le fond reste --accent, assombri d'un cran par filter.
+   --accent-deep (#8c6f18) en fond échouait au contraste AA quel que soit le
+   texte posé dessus — 4,24:1 avec --fog-1, 3,65:1 avec --fg-on-accent (mesuré).
+   Ici le rapport reste à ~6:1 et le bouton s'enfonce quand même. */
+.lp-btn--primaire:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--fg-on-accent);
+  filter: brightness(0.92);
+}
+
+.lp-btn--secondaire {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+.lp-btn--secondaire:hover { border-color: var(--border-brass-2); color: var(--accent-bright); }
+.lp-btn--secondaire:active { background: var(--surface-2); }
+
+/* Lien de texte accentué : souligné à distance, jamais un faux bouton. */
+.lp-lien {
+  color: var(--accent-bright);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: var(--border-brass);
+  transition: text-decoration-color var(--dur-base) var(--ease-out);
+}
+.lp-lien:hover { text-decoration-color: var(--accent-bright); }
+
+/* ============================================================
+   CARTE
+   Une seule anatomie pour tout le site. Ce qui la détache du fond,
+   c'est l'arête éclairée en haut, pas une ombre portée.
+   ============================================================ */
+
+.lp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+  box-shadow: var(--edge-light);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+/* Variante interactive UNIQUEMENT si la carte est cliquable en entier. */
+.lp-card--action:hover {
+  background: var(--surface-2);
+  border-color: var(--border-brass);
+  transform: translateY(-2px);
+}
+
+/* Le liséré de lumière : une carte mise en avant reçoit le faisceau
+   sur son arête haute. Un seul liséré par grille, sinon il ne dit plus rien. */
+.lp-card--phare::before {
+  content: '';
+  position: absolute;
+  inset: -1px -1px auto -1px;
+  height: 2px;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  background: linear-gradient(90deg, transparent, var(--accent-bright) 28%, var(--accent) 62%, transparent);
+}
+
+/* ============================================================
+   ÉTAT « À CONFIRMER »
+   Le contenu porte des valeurs volontairement absentes (tarifs,
+   téléphone, jours du cours de Fiqh). On ne laisse jamais un trou :
+   on affiche une attente assumée, en laiton éteint, jamais en rouge.
+   Usage : <span class="lp-attente">Tarif à confirmer</span>
+   ============================================================ */
+
+.lp-attente {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px dashed var(--border-brass);
+  border-radius: var(--r-1);
+  background: rgba(201, 162, 39, 0.07);   /* --brass-1 à 7 % */
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+  color: var(--accent-bright);
+}
+
+/* La pastille : un point de lumière en attente, pas une alerte. */
+.lp-attente::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--r-full);
+  background: var(--signal-attente);
+}
+
+/* ============================================================
+   FILETS ET SÉPARATEURS
+   ============================================================ */
+
+/* Filet court sous un surtitre — marque le début d'un bloc. */
+.lp-filet {
+  width: 32px;
+  height: 2px;
+  border: 0;
+  margin: 0;
+  background: var(--accent);
+}
+
+/* Séparateur interne discret (dans une carte, entre deux lignes). */
+.lp-rule {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: var(--border-hair);
+}

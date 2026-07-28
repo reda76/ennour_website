@@ -1,0 +1,491 @@
+/* ============================================================
+   LE PHARE — sections « Inscription » et « Contact ».
+   Deux sections consécutives, donc deux fonds contraires :
+   #inscription est sur --surface, #contact retombe sur --bg.
+   Les surfaces s'empilent alors en trois paliers :
+   section (--surface) → panneau (--surface-2) → champ (--surface-3).
+
+   Aucune media query pour retoucher une taille : les paliers
+   typographiques sont déjà fluides. Elles ne servent ici qu'à
+   changer une structure (nombre de colonnes, densité d'un panneau).
+   ============================================================ */
+
+/* ============================================================
+   1. INSCRIPTION — cadre
+   ============================================================ */
+
+.lp-inscription { background: var(--surface); }
+
+.lp-inscription__entete,
+.lp-contact__entete {
+  display: grid;
+  justify-items: start;
+  gap: var(--sp-3);
+  max-width: var(--measure);
+}
+
+/* ============================================================
+   2. LE PARCOURS
+   Quatre étapes, et c'est bien une séquence : la numérotation y est
+   légitime. L'information qui manquait, c'est QUI agit — le filet
+   passe en pointillé laiton sur l'étape que l'équipe pédagogique
+   tient, celle où la demande attend.
+   ============================================================ */
+
+.lp-inscription__parcours {
+  list-style: none;
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-5);
+}
+
+.lp-inscription__etape {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-2);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--border-hair);
+}
+
+.lp-inscription__etape--attente {
+  border-top-style: dashed;
+  border-top-color: var(--border-brass);
+}
+
+.lp-inscription__etape-tete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin: 0;
+}
+
+.lp-inscription__num { font-size: var(--fs-38); }
+
+/* Qui agit : une information, pas une décoration — elle est écrite
+   en toutes lettres, la couleur ne fait que la souligner. Le dessin vient
+   de .lp-eyebrow--sourd (tokens.css) ; seul l'alignement est propre à la
+   colonne d'étape. */
+.lp-inscription__acteur {
+  text-align: right;
+}
+
+.lp-inscription__etape--attente .lp-inscription__acteur { color: var(--accent); }
+
+.lp-inscription__etape-texte { font-size: var(--fs-14); }
+
+/* ============================================================
+   3. CORPS : formulaire + colonne d'aide
+   ============================================================ */
+
+.lp-inscription__corps {
+  margin-top: var(--sp-7);
+  display: grid;
+  align-items: start;
+  gap: var(--sp-5);
+}
+
+/* Compose .lp-card (bordure, rayon, arête éclairée, padding --sp-6) :
+   la recette était recopiée, avec un padding plus serré que celui des
+   cartes voisines — deux densités de carte cohabitaient sur la page. Seul
+   le fond déroge : la section est déjà sur --surface. */
+.lp-inscription__panneau {
+  background: var(--surface-2);
+  /* Les contrôles natifs (liste déroulante, case à cocher, curseur de
+     texte) doivent s'afficher en sombre : sans cela le menu du <select>
+     s'ouvre en blanc au milieu de la nuit. */
+  color-scheme: dark;
+}
+
+.lp-inscription__form,
+.lp-inscription__succes { display: grid; gap: var(--sp-5); }
+
+.lp-inscription__form-tete { display: grid; gap: var(--sp-2); }
+
+/* Rangée de champs : deux colonnes dès que la place existe, une seule
+   en dessous — sans media query. */
+.lp-inscription__rang {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* align-content: start — sans quoi le champ, étiré à la hauteur de son
+   voisin de rangée (celui qui porte une aide ou une erreur), étirerait
+   aussi sa zone de saisie : deux champs côte à côte de hauteurs différentes. */
+.lp-inscription__champ {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.lp-inscription__fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.lp-inscription__label {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg);
+  padding: 0;
+}
+
+.lp-inscription__facultatif {
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--tr-normal);
+  color: var(--fg-dim);
+}
+
+/* ---------- Champs de saisie ---------- */
+
+.lp-inscription__input,
+.lp-inscription__select,
+.lp-inscription__textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--sp-4);
+  background: var(--surface-3);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+  /* 16px : en dessous, iOS zoome à la mise au point du champ. */
+  font-size: var(--fs-16);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lp-inscription__textarea {
+  padding: var(--sp-3) var(--sp-4);
+  min-height: 132px;
+  line-height: var(--lh-body);
+  resize: vertical;
+}
+
+.lp-inscription__input:hover,
+.lp-inscription__select:hover,
+.lp-inscription__textarea:hover { border-color: var(--border-strong); }
+
+.lp-inscription__input:focus,
+.lp-inscription__select:focus,
+.lp-inscription__textarea:focus { border-color: var(--border-brass-2); }
+
+.lp-inscription__select:disabled { color: var(--fg-disabled); cursor: not-allowed; }
+
+/* Champ en défaut. La palette ne comporte pas de rouge : l'erreur se
+   signale par la lumière (une arête laiton à l'attaque du champ) ET par
+   un message écrit — jamais par la couleur seule. */
+.lp-inscription__input[aria-invalid='true'],
+.lp-inscription__select[aria-invalid='true'],
+.lp-inscription__textarea[aria-invalid='true'] {
+  border-color: var(--border-brass-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.lp-inscription__erreur {
+  display: flex;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body);
+  color: var(--accent-bright);
+}
+
+.lp-inscription__erreur::before {
+  content: '↳';
+  flex: none;
+  color: var(--accent);
+}
+
+.lp-inscription__resume {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border-brass);
+  border-left-width: 3px;
+  border-radius: var(--r-1);
+  background: var(--surface-3);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
+  color: var(--accent-bright);
+}
+
+/* ---------- Niveau : trois tuiles, jamais des pilules ---------- */
+
+.lp-inscription__niveaux {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.lp-inscription__niveau {
+  position: relative;   /* garde le bouton radio caché DANS sa tuile */
+  flex: 1 1 120px;
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Le bouton radio reste dans le flux (donc focalisable) mais invisible :
+   c'est la tuile qui porte l'état, et l'anneau de focus se reporte sur elle. */
+.lp-inscription__niveau input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.lp-inscription__niveau span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 var(--sp-3);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+  font-size: var(--fs-14);
+  color: var(--fg-muted);
+  text-align: center;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lp-inscription__niveau:hover span { border-color: var(--border-strong); color: var(--fg); }
+
+.lp-inscription__niveau input:checked + span {
+  border-color: var(--border-brass-2);
+  color: var(--accent-bright);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+/* :focus ET :focus-visible. Le bouton radio fait 1x1px en opacity: 0 :
+   quand la validation y porte le focus après un clic de souris,
+   :focus-visible ne s'applique pas et RIEN n'indiquait plus où le clavier
+   se trouvait — sur un champ en erreur, c'est le seul repère disponible. */
+.lp-inscription__niveau input:focus + span,
+.lp-inscription__niveau input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Consentement ---------- */
+
+.lp-inscription__consentement {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-3);
+}
+
+.lp-inscription__consentement input {
+  width: 18px;
+  height: 18px;
+  margin: 3px 0 0;
+  flex: none;
+  accent-color: var(--accent);
+}
+
+.lp-inscription__consentement-texte { cursor: pointer; }
+
+/* ---------- Actions ---------- */
+
+.lp-inscription__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.lp-inscription__mention-envoi { max-width: var(--measure-tight); }
+
+/* ---------- Récapitulatif (état honnête : rien n'a été envoyé) ---------- */
+
+.lp-inscription__recap { margin: 0; }
+
+.lp-inscription__recap-ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+  border-top: 1px solid var(--border-hair);
+}
+
+.lp-inscription__recap-ligne dt {
+  font-size: var(--fs-13);
+  color: var(--fg-dim);
+}
+
+.lp-inscription__recap-ligne dd {
+  margin: 0;
+  font-size: var(--fs-14);
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   4. COLONNE D'AIDE
+   ============================================================ */
+
+.lp-inscription__aide { display: grid; align-content: start; gap: var(--sp-5); }
+
+/* Compose .lp-card. La section est déjà sur --surface : seul le fond
+   déroge, d'un palier, sinon le bloc se confondrait avec elle. */
+.lp-inscription__bloc {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-3);
+  background: var(--surface-2);
+}
+
+.lp-inscription__coord { display: grid; gap: var(--sp-4); margin: 0; }
+.lp-inscription__coord dd { margin: var(--sp-1) 0 0; }
+
+.lp-inscription__lien-contact { justify-self: start; font-size: var(--fs-14); }
+
+.lp-inscription__reglement {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.lp-inscription__reglement li { display: grid; gap: var(--sp-1); }
+
+.lp-inscription__moyen {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  color: var(--fg);
+}
+
+/* ============================================================
+   5. CONTACT
+   ============================================================ */
+
+.lp-contact { background: var(--bg); }
+
+.lp-contact__corps {
+  margin-top: var(--sp-7);
+  display: grid;
+  align-items: start;
+  gap: var(--sp-6);
+  /* Le contenu reste sur son propre plan : la section ne porte aujourd'hui
+     aucun motif, c'est la houle du pied de page qui tient le raccord. */
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.lp-contact__coord { margin: 0; }
+
+.lp-contact__ligne {
+  display: grid;
+  gap: var(--sp-2);
+  padding-block: var(--sp-4);
+  border-top: 1px solid var(--border-hair);
+}
+
+.lp-contact__ligne:last-child { border-bottom: 1px solid var(--border-hair); }
+
+.lp-contact__valeur {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0;
+  font-size: var(--fs-18);
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.lp-contact__adresse { font-style: normal; }
+
+/* Le fragment d'adresse déjà connu, à côté de la part en attente. */
+.lp-contact__complement { font-size: var(--fs-16); color: var(--fg-muted); }
+
+/* ---------- Le relèvement : emplacement du plan ----------
+   Pas de carte distante, pas d'iframe : un repère assumé. Des cercles
+   de portée et une ligne d'horizon, le feu au centre. Le bloc dit ce
+   qu'il est — il ne fait pas semblant d'être une carte. */
+
+/* Compose .lp-card : c'en est une. */
+.lp-contact__plan {
+  overflow: hidden;
+  margin: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--sp-5);
+  min-height: 320px;
+  text-align: center;
+}
+
+.lp-contact__releve {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-motif);
+  pointer-events: none;
+  background:
+    /* la ligne d'horizon traverse le relèvement à hauteur du feu */
+    linear-gradient(var(--border-hair), var(--border-hair)) center / 100% 1px no-repeat,
+    /* les cercles de portée */
+    repeating-radial-gradient(circle at 50% 50%,
+      transparent 0 43px, var(--border-hair) 43px 44px),
+    radial-gradient(circle at 50% 50%,
+      rgba(201, 162, 39, 0.10) 0%, rgba(201, 162, 39, 0) 62%); /* --brass-1, halo court */
+}
+
+.lp-contact__plan > *:not(.lp-contact__releve) {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.lp-contact__amer {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-3);
+}
+
+.lp-contact__logo { --logo-h: 64px; color: var(--fg); }
+
+.lp-contact__ville { letter-spacing: var(--tr-wide); }
+
+.lp-contact__legende {
+  display: grid;
+  gap: var(--sp-1);
+  max-width: 36ch;
+}
+
+/* ============================================================
+   6. STRUCTURE — les seules media queries de ce partial
+   ============================================================ */
+
+/* Le parcours : 1 colonne, puis 2, puis les 4 étapes de front. */
+@media (min-width: 640px) {
+  .lp-inscription__parcours { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .lp-inscription__parcours { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 960px) {
+  .lp-inscription__corps { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+}
+
+@media (min-width: 880px) {
+  .lp-contact__corps { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+  /* Le libellé passe en regard de la valeur : la colonne est assez large. */
+  .lp-contact__ligne {
+    grid-template-columns: minmax(0, 140px) minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--sp-5);
+  }
+}

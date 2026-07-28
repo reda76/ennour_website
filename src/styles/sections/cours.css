@@ -1,0 +1,267 @@
+/* ============================================================
+   LE PHARE — Section « Les cours » (#cours).
+   Deuxième section de la page : elle tombe sur --surface dans
+   l'alternance, les cartes passent donc sur --surface-2 pour
+   rester détachées de leur fond.
+
+   Hiérarchie de lecture dans une carte, du plus fort au plus faible :
+   titre (Fraunces) → accroche (Inter, pleine lumière) → description
+   (Inter, brume) → points clés (courts, tiret laiton) → pied
+   (ce que le pôle ouvre réellement + le lien vers le planning).
+   ============================================================ */
+
+.lp-cours {
+  background: var(--surface);
+}
+
+/* Le halo est le seul motif de la section — le faisceau reste au hero.
+   Aucun overflow: hidden ici : coupée net, la lumière deviendrait une tache.
+   Le foyer doit donc être posé ASSEZ BAS pour que le halo tienne dans la
+   section : le dégradé de .lp-lueur s'éteint à 68 % du rayon, soit 283px
+   pour une taille de 52rem. À --lueur-y: 2 % (≈ 20px), la lumière remontait
+   ~260px au-dessus de .lp-cours et venait noyer la première ligne d'horizon
+   — le point unique du filet devenait une nappe. 18rem = 288px de foyer :
+   le halo commence donc juste sous l'arête haute. */
+.lp-cours__lueur {
+  --lueur-x: 28%;
+  --lueur-y: 18rem;
+  --lueur-taille: 52rem;
+  --lueur-opacite: 0.85;
+}
+
+/* Les motifs vivent sur --z-motif : le contenu doit repasser devant. */
+.lp-cours__wrap {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+/* ------------------------------------------------------------
+   En-tête de section
+   ------------------------------------------------------------ */
+
+.lp-cours__entete {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+.lp-cours__titraille {
+  display: grid;
+  justify-items: start;
+  gap: var(--sp-3);
+}
+
+.lp-cours__intro {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.lp-cours__mention {
+  max-width: var(--measure-tight);
+}
+
+/* Au-delà de 56rem, le chapô se cale sur le bas du titre : l'en-tête se lit
+   comme une manchette à deux colonnes, pas comme un empilement centré. */
+@media (min-width: 56rem) {
+  .lp-cours__entete {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--sp-8);
+    align-items: end;
+  }
+}
+
+/* ------------------------------------------------------------
+   Grille des trois pôles
+   ------------------------------------------------------------ */
+
+.lp-cours__grille {
+  margin: var(--sp-7) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  /* minmax(0, …) et non 1fr seul : une piste auto laisserait un mot long
+     pousser la colonne au-delà de la fenêtre à 360px. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap-grille);
+}
+
+/* L'item porte la révélation au scroll (et son transition-delay en ligne) ;
+   la carte garde ainsi ses propres transitions de survol, non retardées. */
+.lp-cours__item {
+  display: flex;
+  min-width: 0;
+}
+
+.lp-cours__carte {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-2);
+  gap: var(--sp-5);
+}
+
+/* La carte n'est pas cliquable en entier : le survol ne fait qu'accuser la
+   bordure. Le focus interne obtient le même traitement, au clavier. */
+.lp-cours__carte:hover,
+.lp-cours__carte:focus-within {
+  border-color: var(--border-strong);
+}
+
+.lp-cours__tete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* L'accroche est la phrase que le visiteur doit retenir : seule ligne du corps
+   de carte en pleine lumière, en Inter medium serré. Elle passe devant la
+   description, qui reste en brume. */
+.lp-cours__accroche {
+  margin: 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-title);
+  letter-spacing: var(--tr-tight);
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.lp-cours__corps {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--sp-4);
+}
+
+/* ------------------------------------------------------------
+   Points clés
+   ------------------------------------------------------------ */
+
+.lp-cours__points {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.lp-cours__point {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+  color: var(--fg-muted);
+}
+
+/* Puce en tiret laiton : le .lp-filet à l'échelle d'une ligne, plutôt qu'un
+   glyphe de liste qui n'appartiendrait à aucun des deux alphabets du site. */
+.lp-cours__point::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 10px;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* ------------------------------------------------------------
+   Pied de carte
+   ------------------------------------------------------------ */
+
+/* margin-top: auto — les trois pieds s'alignent sur une même ligne quelle que
+   soit la longueur des textes au-dessus. C'est l'horizon interne de la grille. */
+.lp-cours__pied {
+  margin-top: auto;
+  padding-top: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.lp-cours__compte {
+  margin: 0;
+}
+
+.lp-cours__compte-n {
+  font-weight: var(--fw-semibold);
+  color: var(--accent-bright);
+}
+
+/* Séparateur purement décoratif : --fg-disabled est réservé à cet usage. */
+.lp-cours__compte-g::before {
+  content: ' · ';
+  color: var(--fg-disabled);
+}
+
+/* ------------------------------------------------------------
+   Lien vers le planning
+   ------------------------------------------------------------ */
+
+/* min-height : c'est l'unique action de la carte, et elle ne mesurait que
+   22px de haut — au pouce, on visait un trait de texte. La hauteur de cible
+   monte à 44px sans que le dessin du lien change. */
+.lp-cours__lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: var(--sp-2);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-wide);
+  color: var(--accent-bright);
+  text-decoration: none;
+}
+
+/* Le soulignement ne porte que sur le libellé : la flèche doit rester libre
+   de glisser. Mêmes réglages que .lp-lien, pour que les deux se ressemblent. */
+.lp-cours__lien-t {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: var(--border-brass);
+  transition: text-decoration-color var(--dur-base) var(--ease-out);
+}
+
+.lp-cours__fleche {
+  transition: translate var(--dur-base) var(--ease-out);
+}
+
+/* Survoler n'importe où dans la carte réchauffe son lien : l'affordance est
+   donnée à l'échelle du pôle, pas seulement à celle des trois mots. */
+.lp-cours__carte:hover .lp-cours__lien-t,
+.lp-cours__lien:hover .lp-cours__lien-t,
+.lp-cours__lien:focus-visible .lp-cours__lien-t {
+  text-decoration-color: var(--accent-bright);
+}
+
+.lp-cours__carte:hover .lp-cours__fleche,
+.lp-cours__lien:focus-visible .lp-cours__fleche {
+  translate: 3px 0;
+}
+
+/* ------------------------------------------------------------
+   Structure responsive
+   Deux media queries, toutes deux structurelles : les tailles de
+   texte et les paddings sont déjà fluides par clamp().
+   ------------------------------------------------------------ */
+
+/* Palier intermédiaire — une seule colonne serait trop large pour un texte
+   courant, trois seraient trop étroites : la carte s'ouvre en deux volets,
+   titre et accroche à gauche, contenu à droite. */
+@media (min-width: 46rem) and (max-width: 65.999rem) {
+  .lp-cours__carte {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr);
+    column-gap: var(--sp-7);
+    align-items: start;
+  }
+}
+
+/* Desktop — les trois pôles côte à côte, à égalité. */
+@media (min-width: 66rem) {
+  .lp-cours__grille {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

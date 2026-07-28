@@ -1,0 +1,551 @@
+/* ============================================================
+   LE PHARE — Section « calendrier ».
+
+   L'année lue comme le feu d'un phare : une bande allumée court
+   d'un bout à l'autre (les cours), les vacances l'éteignent
+   (éclipses), les examens la font flamber (éclats). Les mêmes
+   trois formes se retrouvent dans la légende et dans le registre,
+   pour que la frise s'apprenne une fois et se relise partout.
+
+   Cinquième section de la page (accueil, cours, planning, tarifs,
+   calendrier…) : elle tombe donc sur --bg dans l'alternance.
+   ============================================================ */
+
+.lp-calendrier {
+  background: var(--bg);
+}
+
+.lp-calendrier__inner {
+  display: grid;
+  gap: var(--sp-7);
+}
+
+/* ---------- En-tête : intro à gauche, état du jour à droite ---------- */
+
+.lp-calendrier__entete {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+.lp-calendrier__intro {
+  display: grid;
+  justify-items: start;
+  gap: var(--sp-3);
+}
+
+/* Le bloc d'état n'apparaît que dans l'année scolaire, ou juste avant
+   la rentrée. Hors période, le composant ne le rend pas du tout. */
+.lp-calendrier__statut {
+  display: inline-grid;
+  gap: var(--sp-1);
+  justify-self: start;
+  margin: 0;
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--surface);
+  border: 1px solid var(--border-brass);
+  border-radius: var(--r-1);
+  box-shadow: var(--edge-light);
+}
+
+.lp-calendrier__statut-val {
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+  color: var(--fg);
+}
+
+/* ============================================================
+   LA FRISE — horizontale et proportionnelle au temps.
+   Elle n'existe qu'à partir de 760px : en dessous, une année
+   entière ramenée à 320px ne se lit plus, et c'est le registre
+   vertical qui porte seul l'information.
+   ============================================================ */
+
+.lp-calendrier__frise {
+  display: none;
+}
+
+@media (min-width: 760px) {
+  .lp-calendrier__frise { display: block; }
+}
+
+/* Graduations : l'unique trait vertical du site. Il n'est pas un
+   ornement mais l'échelle elle-même — sans lui, « proportionnel au
+   temps » ne se vérifie pas à l'œil. Réduit au filet le plus faible. */
+.lp-calendrier__mois {
+  position: relative;
+  height: 22px;
+  margin-bottom: var(--sp-2);
+}
+
+.lp-calendrier__mois-item {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: var(--sp-2);
+  border-left: 1px solid var(--border-hair);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.lp-calendrier__piste {
+  position: relative;
+  height: 96px;
+}
+
+/* L'axe nu : il déborde de part et d'autre de l'année de cours pour
+   dire que septembre commence avant la rentrée, et juin finit après. */
+.lp-calendrier__piste::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 30px;
+  height: 1px;
+  background: var(--border-hair);
+}
+
+/* La bande allumée : l'année de cours, de la rentrée aux derniers cours. */
+.lp-calendrier__bande {
+  position: absolute;
+  bottom: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent) 10%, var(--accent) 90%, var(--accent-deep));
+  box-shadow: var(--glow-brass);
+}
+
+/* L'éclipse : les vacances éteignent la bande. Fond plus profond que
+   la page + hachure au filet le plus faible — la trame dit « fermé »
+   sans recourir à une couleur d'alerte. */
+.lp-calendrier__eclipse {
+  position: absolute;
+  bottom: 18px;
+  height: 26px;
+  min-width: 3px;
+  border: 1px solid var(--border-hair);
+  border-radius: var(--r-1);
+  background-color: var(--bg-deep);
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--border-hair) 4px 5px);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.lp-calendrier__eclipse.is-actif {
+  background-color: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+/* L'éclat : la semaine d'examens fait monter la lumière au-dessus
+   de la bande. C'est le seul élément de la frise qui dépasse. */
+.lp-calendrier__eclat {
+  position: absolute;
+  bottom: 30px;
+  height: 44px;
+  min-width: 4px;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  background: linear-gradient(to top, var(--accent), var(--accent-bright));
+  box-shadow: var(--glow-brass);
+  transition:
+    height var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lp-calendrier__eclat.is-actif {
+  height: 54px;
+  /* --brass-3 (#f0d878) à 42 % : le halo au survol, plus large que
+     --glow-brass qui reste le halo de repos. */
+  box-shadow: 0 0 24px rgba(240, 216, 120, 0.42);
+}
+
+/* L'amer : les deux bornes de l'année. Boîte de largeur nulle posée
+   sur l'axe ; ses enfants se calent à gauche ou à droite du même x. */
+.lp-calendrier__amer {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+}
+
+.lp-calendrier__amer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 18px;
+  width: 1px;
+  height: 30px;
+  background: var(--border-brass-2);
+}
+
+.lp-calendrier__amer-pt {
+  position: absolute;
+  left: 0;
+  bottom: 27px;
+  width: 8px;
+  height: 8px;
+  translate: -50% 0;
+  border-radius: var(--r-full);
+  background: var(--accent-bright);
+  /* L'anneau du fond détache la pastille de la bande qu'elle chevauche. */
+  box-shadow: 0 0 0 3px var(--bg);
+  transition: box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lp-calendrier__amer.is-actif .lp-calendrier__amer-pt {
+  box-shadow: 0 0 0 3px var(--bg), var(--glow-brass);
+}
+
+.lp-calendrier__amer-lib {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  white-space: nowrap;
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+}
+
+/* Seconde borne : l'étiquette se range à gauche du mât. */
+.lp-calendrier__amer--fin .lp-calendrier__amer-lib {
+  left: auto;
+  right: 0;
+}
+
+/* Le repère du jour, rendu uniquement si la date du jour tombe dans
+   l'axe. En dehors de l'année scolaire, il n'existe pas. */
+.lp-calendrier__jour {
+  position: absolute;
+  bottom: 14px;
+  width: 1px;
+  /* Assez court pour que l'étiquette reste dans la piste et n'aille pas
+     buter dans la rangée des mois. */
+  height: 58px;
+  background: var(--fg);
+}
+
+.lp-calendrier__jour::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  translate: -50% -50%;
+  border-radius: var(--r-full);
+  background: var(--fg);
+}
+
+.lp-calendrier__jour-lib {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  translate: -50% calc(var(--sp-2) * -1);
+  white-space: nowrap;
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg);
+}
+
+/* ============================================================
+   LÉGENDE — les trois formes, nommées en toutes lettres.
+   La forme et le mot portent l'information ; la couleur ne fait
+   que confirmer.
+   ============================================================ */
+
+.lp-calendrier__legende {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-4);
+}
+
+@media (min-width: 640px) {
+  .lp-calendrier__legende {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--sp-5);
+  }
+}
+
+.lp-calendrier__legende-item {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--sp-3);
+  align-items: start;
+}
+
+.lp-calendrier__legende-txt {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.lp-calendrier__legende-lib {
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+  color: var(--fg);
+}
+
+.lp-calendrier__puce {
+  display: block;
+  justify-self: center;
+}
+
+.lp-calendrier__puce--cours {
+  width: 16px;
+  height: 2px;
+  margin-top: 9px;
+  background: var(--accent);
+  box-shadow: var(--glow-brass);
+}
+
+/* Rayon nul, et lui seul de tout le partial : à 9 px de haut, les 4 px
+   de --r-1 transforment la vignette en pastille ronde et elle cesse de
+   se lire comme le bloc d'éclipse de la frise (constaté au rendu). */
+.lp-calendrier__puce--vacances {
+  width: 15px;
+  height: 9px;
+  margin-top: 5px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-0);
+  background-color: var(--bg-deep);
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--border-hair) 4px 5px);
+}
+
+.lp-calendrier__puce--examen {
+  width: 5px;
+  height: 16px;
+  margin-top: 2px;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  background: linear-gradient(to top, var(--accent), var(--accent-bright));
+  box-shadow: var(--glow-brass);
+}
+
+/* ============================================================
+   LE CORPS — le registre chronologique et le panneau des examens.
+   ============================================================ */
+
+.lp-calendrier__corps {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+@media (min-width: 1000px) {
+  .lp-calendrier__corps {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 350px);
+    gap: var(--sp-7);
+    align-items: start;
+  }
+}
+
+/* ---------- Le registre : vertical et chronologique à toute taille ---------- */
+
+.lp-calendrier__registre {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+/* Le rail : la continuité de l'année, dont chaque entrée est un repère.
+   Il s'éteint aux deux extrémités pour ne pas se terminer sur un butoir. */
+.lp-calendrier__registre::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 24px;
+  bottom: 24px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border-brass) 6%, var(--border-brass) 94%, transparent);
+}
+
+.lp-calendrier__entree {
+  position: relative;
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-6);
+  border: 1px solid transparent;
+  border-radius: var(--r-1);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.lp-calendrier__entree.is-actif {
+  background: var(--surface);
+}
+
+/* Période en cours : la seule mise en évidence du registre. Elle est
+   doublée d'un libellé « En cours », jamais portée par la couleur seule. */
+.lp-calendrier__entree.is-encours {
+  background: var(--surface);
+  border-color: var(--border-brass);
+  box-shadow: var(--edge-light);
+}
+
+/* Les marques du registre reprennent exactement les formes de la frise.
+   Toutes centrées sur le rail (x = 5,5 px). */
+.lp-calendrier__marque {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  box-shadow: 0 0 0 4px var(--bg);
+}
+
+.lp-calendrier__marque--jalon {
+  width: 11px;
+  height: 11px;
+  border-radius: var(--r-full);
+  background: var(--accent-bright);
+}
+
+.lp-calendrier__marque--examen {
+  left: 3px;
+  width: 5px;
+  height: 16px;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  background: linear-gradient(to top, var(--accent), var(--accent-bright));
+}
+
+/* Même vignette que dans la légende, même raison pour le rayon nul. */
+.lp-calendrier__marque--vacances {
+  left: -2px;
+  top: 20px;
+  width: 15px;
+  height: 9px;
+  border-radius: var(--r-0);
+  background-color: var(--bg-deep);
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--border-hair) 4px 5px);
+  box-shadow: 0 0 0 4px var(--bg), inset 0 0 0 1px var(--border-strong);
+}
+
+.lp-calendrier__titre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.lp-calendrier__dates {
+  margin: 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+  color: var(--fg-muted);
+}
+
+.lp-calendrier__meta {
+  white-space: nowrap;
+}
+
+.lp-calendrier__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--border-brass);
+  border-radius: var(--r-1);
+  /* --brass-1 (#c9a227) à 10 % : même famille que .lp-attente, un cran
+     plus dense parce que le badge est un état actif, pas une attente. */
+  background: rgba(201, 162, 39, 0.10);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--accent-bright);
+}
+
+/* À partir de 760px la durée remonte sur la ligne du titre : le regard
+   descend alors sur une seule colonne de dates. */
+@media (min-width: 760px) {
+  .lp-calendrier__entree {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--sp-5);
+    align-items: baseline;
+  }
+  .lp-calendrier__titre { grid-column: 1; grid-row: 1; }
+  .lp-calendrier__meta  { grid-column: 2; grid-row: 1; text-align: right; }
+  .lp-calendrier__dates { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* ---------- Le panneau des examens ---------- */
+
+.lp-calendrier__examens {
+  gap: var(--sp-4);
+}
+
+.lp-calendrier__sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.lp-calendrier__session {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3);
+  margin-inline: calc(var(--sp-3) * -1);
+  border-radius: var(--r-1);
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+
+.lp-calendrier__session.is-actif {
+  background: var(--surface-2);
+}
+
+.lp-calendrier__session-lib {
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+  color: var(--fg);
+}
+
+.lp-calendrier__session-date {
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  line-height: 1.4;
+  color: var(--accent-bright);
+}
+
+/* ---------- Pied de section ---------- */
+
+.lp-calendrier__vide {
+  margin: 0;
+}
+
+.lp-calendrier__pied {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.lp-calendrier__mention {
+  max-width: var(--measure);
+}
+
+/* ---------- En-tête sur deux colonnes ---------- */
+
+@media (min-width: 1000px) {
+  .lp-calendrier__entete {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--sp-7);
+  }
+}

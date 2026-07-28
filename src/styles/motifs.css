@@ -1,0 +1,269 @@
+/* ============================================================
+   LE PHARE — Motifs & ornements réutilisables.
+   Le faisceau, la trame de vagues, le grain, la ligne d'horizon.
+
+   Règle commune : un motif est TOUJOURS décoratif. Il est
+   `pointer-events: none`, il vit sur --z-motif (0), et le conteneur
+   qui l'accueille doit porter `position: relative` et, quand le motif
+   déborde, `overflow: hidden`. Dans le JSX : `aria-hidden="true"`.
+
+   Les `#000` de ce fichier n'apparaissent que dans des `mask-image` :
+   ce ne sont pas des couleurs mais des valeurs d'opacité de masque
+   (noir = zone conservée). Aucun token n'a de sens à cet endroit.
+   ============================================================ */
+
+/* ============================================================
+   1. LE FAISCEAU
+   Un cône de lumière laiton issu d'un point. Réalisé en
+   conic-gradient : le fondu est peint dans les arrêts eux-mêmes,
+   sans filter: blur() — un disque de 130vmax flouté coûterait cher
+   à chaque image de l'animation.
+
+   Un seul faisceau par page. C'est la signature du site : le
+   multiplier le banalise et alourdit le rendu.
+
+   Réglages par variables, depuis le partial de la section :
+     --faisceau-x / --faisceau-y  position du foyer dans le conteneur
+     --faisceau-taille            diamètre du disque
+     --faisceau-depart            angle de départ (variante statique)
+     --faisceau-opacite           intensité globale
+   ============================================================ */
+
+.lp-faisceau {
+  --faisceau-x: 50%;
+  --faisceau-y: 50%;
+  --faisceau-taille: 130vmax;
+  --faisceau-depart: -14deg;
+  --faisceau-opacite: 1;
+
+  position: absolute;
+  top: var(--faisceau-y);
+  left: var(--faisceau-x);
+  width: var(--faisceau-taille);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+  z-index: var(--z-motif);
+  opacity: var(--faisceau-opacite);
+
+  /* Bord d'attaque net, traîne longue : c'est ce qui fait lire « faisceau »
+     plutôt que « part de camembert ». Le lobe opposé (≈186°) est le second
+     faisceau de l'optique — deux fois plus faible.
+     Valeurs rgba dérivées de --brass-3 (#f0d878) et --brass-1 (#c9a227). */
+  background: conic-gradient(
+    from var(--faisceau-depart) at 50% 50%,
+    rgba(240, 216, 120, 0)     0deg,
+    rgba(240, 216, 120, 0.03)  2deg,
+    rgba(240, 216, 120, 0.135) 6deg,
+    rgba(240, 216, 120, 0.175) 9deg,
+    rgba(201, 162, 39, 0.115) 13deg,
+    rgba(201, 162, 39, 0.048) 21deg,
+    rgba(201, 162, 39, 0.016) 32deg,
+    rgba(201, 162, 39, 0)     46deg,
+    rgba(201, 162, 39, 0)    176deg,
+    rgba(201, 162, 39, 0.040) 184deg,
+    rgba(201, 162, 39, 0.052) 188deg,
+    rgba(201, 162, 39, 0.021) 197deg,
+    rgba(201, 162, 39, 0)    214deg,
+    rgba(201, 162, 39, 0)    360deg
+  );
+
+  /* Le faisceau s'éteint avec la distance : sans ce masque, le disque
+     dessine un cercle net sur toute la page. */
+  -webkit-mask-image: radial-gradient(closest-side, #000 3%, rgba(0, 0, 0, 0.88) 24%, transparent 74%);
+  mask-image: radial-gradient(closest-side, #000 3%, rgba(0, 0, 0, 0.88) 24%, transparent 74%);
+}
+
+/* Variante animée : une rotation, très lente, jamais distrayante. */
+.lp-faisceau--tourne {
+  animation: lp-faisceau-rotation var(--dur-beam) linear infinite;
+  will-change: rotate;
+}
+
+@keyframes lp-faisceau-rotation {
+  from { rotate: 0deg; }
+  to   { rotate: 360deg; }
+}
+
+/* Halo simple : la lumière posée dans un angle, sans direction.
+   À utiliser quand une section veut de la chaleur sans le geste du faisceau.
+   Le halo doit tenir ENTIER dans son conteneur : si celui-ci porte
+   overflow: hidden, la coupe nette transforme la lumière en tache. */
+.lp-lueur {
+  --lueur-taille: 46rem;
+  --lueur-opacite: 1;
+  position: absolute;
+  top: var(--lueur-y, 0);
+  left: var(--lueur-x, 50%);
+  width: var(--lueur-taille);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+  z-index: var(--z-motif);
+  opacity: var(--lueur-opacite);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(201, 162, 39, 0.13) 0%,
+    rgba(201, 162, 39, 0.05) 38%,
+    rgba(201, 162, 39, 0) 68%
+  );
+}
+
+/* ============================================================
+   2. LA TRAME DE VAGUES
+   Bande répétable en X, calée en bas (ou en haut) d'une section.
+   Le SVG sert de MASQUE : la couleur vient d'ici, pas du fichier —
+   la même tuile peut donc être de la brume ou du laiton.
+   ============================================================ */
+
+.lp-vagues {
+  /* UN SEUL réglage : la largeur de tuile. La hauteur en découle au ratio
+     du fichier (240 × 64 → 3.75). Régler les deux séparément étirerait la
+     houle et la transformerait en salissure — d'où le calc(). */
+  --vagues-l: 300px;
+  --vagues-h: calc(var(--vagues-l) / 3.75);
+  --vagues-couleur: var(--fog-2);
+  --vagues-opacite: 0.28;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--vagues-h);
+  pointer-events: none;
+  z-index: var(--z-motif);
+  background-color: var(--vagues-couleur);
+  opacity: var(--vagues-opacite);
+
+  -webkit-mask: url('../assets/vagues.svg') center bottom / var(--vagues-l) var(--vagues-h) repeat-x;
+  mask: url('../assets/vagues.svg') center bottom / var(--vagues-l) var(--vagues-h) repeat-x;
+}
+
+/* En haut de section : on retourne la tuile pour que la houle « descende ». */
+.lp-vagues--haut {
+  top: 0;
+  bottom: auto;
+  scale: 1 -1;
+}
+
+/* Laiton : réservé au raccord entre deux sections de fond différent. */
+.lp-vagues--laiton {
+  --vagues-couleur: var(--brass-1);
+  --vagues-opacite: 0.30;
+}
+
+/* Fondu vertical : la houle se dissout au lieu d'être coupée net.
+   Deux couches de masque intersectées — d'où la duplication -webkit-. */
+.lp-vagues--fondu {
+  -webkit-mask-image: url('../assets/vagues.svg'), linear-gradient(to top, #000 15%, transparent 100%);
+  mask-image: url('../assets/vagues.svg'), linear-gradient(to top, #000 15%, transparent 100%);
+  -webkit-mask-size: var(--vagues-l) var(--vagues-h), 100% 100%;
+  mask-size: var(--vagues-l) var(--vagues-h), 100% 100%;
+  -webkit-mask-repeat: repeat-x, no-repeat;
+  mask-repeat: repeat-x, no-repeat;
+  -webkit-mask-position: center bottom, center;
+  mask-position: center bottom, center;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* ============================================================
+   3. LE GRAIN
+   Casse l'aplat du bleu nuit sur les grandes surfaces. Optionnel,
+   et volontairement à la limite du perceptible : s'il se voit,
+   c'est qu'il est trop fort.
+   ============================================================ */
+
+/* Le bruit sert de MASQUE sur un aplat de brume : seuls les pics du grain
+   laissent passer une poussière de lumière. Les modes de fusion habituels
+   (overlay, soft-light) ne donnent rien sur un bleu aussi sombre — mesuré,
+   pas supposé. Au-delà de ~0.07 le grain déteint et délave le bleu nuit. */
+.lp-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-motif);
+  opacity: var(--grain-opacite, 0.045);
+  background-color: var(--fog-1);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23b)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23b)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 140px 140px;
+  mask-size: 140px 140px;
+}
+
+/* ============================================================
+   4. LA LIGNE D'HORIZON
+   Le séparateur signature du site : un filet de brume dont la
+   lumière s'accroche à UN point — le phare qui frappe l'horizon.
+   `--horizon-x` déplace ce point ; le varier d'une section à l'autre
+   fait exister le balayage à l'échelle de la page entière.
+
+   Usage : <hr class="lp-horizon" style={{ '--horizon-x': '68%' }} />
+   ============================================================ */
+
+.lp-horizon {
+  --horizon-x: 26%;
+  position: relative;
+  height: 1px;
+  border: 0;
+  margin: 0;
+  overflow: visible;
+  background:
+    radial-gradient(58% 100% at var(--horizon-x) 50%,
+      var(--accent-bright) 0%, rgba(201, 162, 39, 0) 72%),
+    linear-gradient(90deg,
+      transparent 0%, var(--border-hair) 10%, var(--border-hair) 90%, transparent 100%);
+}
+
+/* La brume au-dessus du filet : c'est elle qui fait la lumière, pas le trait. */
+.lp-horizon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -20px;
+  height: 40px;
+  pointer-events: none;
+  background: radial-gradient(28% 100% at var(--horizon-x) 50%,
+    rgba(201, 162, 39, 0.15) 0%, rgba(201, 162, 39, 0) 74%);
+}
+
+/* Filet nu, sans lumière : à l'intérieur d'un bloc, où l'horizon
+   serait un événement de trop. */
+.lp-horizon--sourd {
+  background: linear-gradient(90deg,
+    transparent 0%, var(--border-hair) 10%, var(--border-hair) 90%, transparent 100%);
+}
+.lp-horizon--sourd::after { content: none; }
+
+/* ============================================================
+   5. LE LOGO
+   Le SVG est monochrome + laiton : sa masse suit `color`.
+   Voir src/components/LogoPhare.jsx.
+   ============================================================ */
+
+.lp-logo {
+  display: block;
+  height: var(--logo-h, 40px);
+  width: auto;
+  color: var(--fg);
+  flex: none;
+}
+
+/* Les faisceaux du logo encombrent sous ~28px : on peut les éteindre. */
+.lp-logo--nu .lp-logo__faisceau { display: none; }
+
+/* ============================================================
+   MOUVEMENT RÉDUIT
+   Le reset global de site.css neutralise déjà les durées. On coupe
+   ici explicitement la boucle du faisceau et on le fige sur un angle
+   choisi, pour qu'il reste un faisceau et non un disque arrêté au hasard.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-faisceau--tourne {
+    animation: none;
+    rotate: 24deg;
+    will-change: auto;
+  }
+}

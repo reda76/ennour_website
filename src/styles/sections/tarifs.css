@@ -1,0 +1,264 @@
+/* ============================================================
+   LE PHARE — Section « Formules & tarifs ».
+
+   Le problème de départ : aucun montant n'est arrêté. Plutôt que de
+   masquer ce vide, la section en fait son sujet. Chaque carte porte une
+   ÉTAGÈRE — une bande pleine largeur, en --surface-3, qui traverse la
+   carte de bord à bord. Les quatre étagères tombent à la même hauteur :
+   mises côte à côte, elles ne lisent plus comme quatre badges répétés
+   mais comme une seule ligne d'horizon portant quatre points de lumière.
+   C'est la signature du site rejouée à l'échelle d'une grille.
+
+   Conséquence : la section n'a ni faisceau, ni halo, ni trame. La chaleur
+   vient des données elles-mêmes. Une lumière de plus serait une de trop.
+
+   Fond : --surface (4e section, position paire de l'alternance). Les cartes
+   passent donc sur --surface-2. Si l'intégration déplace la section, une
+   seule ligne est à reprendre : `.lp-tarifs { background }`.
+   ============================================================ */
+
+.lp-tarifs {
+  background: var(--surface);
+}
+
+/* Règle du brief : jamais une carte --surface sur une section --surface. */
+.lp-tarifs .lp-card {
+  background: var(--surface-2);
+}
+
+/* ------------------------------------------------------------
+   EN-TÊTE
+   Deux colonnes dès que la place existe : la mise au point sur les
+   montants est l'information la plus utile de la section, elle ne doit
+   pas ressembler à une note de bas de page.
+   ------------------------------------------------------------ */
+
+.lp-tarifs__entete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  margin-bottom: var(--sp-7);
+}
+
+.lp-tarifs__titre {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.lp-tarifs__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.lp-tarifs__annee {
+  color: var(--fg-dim);
+}
+
+@media (min-width: 900px) {
+  .lp-tarifs__entete {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: var(--sp-8);
+    align-items: end;
+  }
+}
+
+/* ------------------------------------------------------------
+   GRILLE DES FORMULES
+   4 → 2 → 1, jamais 3 : avec quatre cartes, une grille à trois colonnes
+   laisse une orpheline en dernière ligne. Les paliers sont donc explicites
+   plutôt qu'en auto-fit. Media queries de STRUCTURE uniquement.
+   ------------------------------------------------------------ */
+
+.lp-tarifs__grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap-grille);
+  align-items: stretch;
+}
+
+@media (min-width: 640px) {
+  .lp-tarifs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .lp-tarifs__grille { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ------------------------------------------------------------
+   LA CARTE
+   Pas de .lp-card--action : la carte n'est pas cliquable en entier,
+   donc pas d'état de survol qui promettrait une cible inexistante.
+   ------------------------------------------------------------ */
+
+.lp-tarifs__carte {
+  /* L'étagère déborde volontairement du padding : on recadre sur le rayon. */
+  overflow: hidden;
+}
+
+.lp-tarifs__tete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.lp-tarifs__rythme {
+  color: var(--fg-dim);
+}
+
+/* Dès que deux cartes sont côte à côte, les étagères doivent tomber à la
+   même hauteur — sinon la ligne d'horizon se brise sur un titre qui passe
+   à la ligne. On réserve deux lignes de titre, exprimées dans l'interlignage
+   du titre lui-même : la réserve suit le clamp() de --fs-h3 toute seule,
+   sans media query de taille. */
+@media (min-width: 640px) {
+  .lp-tarifs__nom {
+    min-height: calc(2 * var(--lh-title) * 1em);
+  }
+}
+
+/* L'ÉTAGÈRE — la bande de bord à bord qui porte le montant.
+   Le débord annule le padding de carte (--sp-6) : la bande touche les deux
+   arêtes verticales, c'est ce qui la fait lire comme une ligne et non comme
+   un encadré de plus. */
+.lp-tarifs__prix {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin-inline: calc(var(--sp-6) * -1);
+  padding: var(--sp-5) var(--sp-6);
+  background: var(--surface-3);
+  /* Filets de délimitation, même rôle que .lp-rule : ils bornent la bande,
+     ils ne décorent pas. */
+  border-block: 1px solid var(--border-hair);
+}
+
+/* Le montant, le jour où il existe. .lp-chiffre exige une taille explicite. */
+.lp-tarifs__montant {
+  font-size: var(--fs-38);
+}
+
+/* Enveloppe des pastilles d'attente : un <p> pour la sémantique, sans
+   le rythme d'un paragraphe. */
+.lp-tarifs__attente {
+  margin: 0;
+}
+
+/* Ce que la formule couvre. Le marqueur est un éclat de laiton de 10 × 1px :
+   c'est .lp-filet réduit, donc du vocabulaire déjà en place — pas une puce
+   importée d'ailleurs. */
+.lp-tarifs__inclus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-tarifs__inclus li {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+  color: var(--fg-muted);
+}
+
+.lp-tarifs__inclus li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  /* Moitié de la première ligne : le trait se cale sur l'œil du texte,
+     pas sur le haut de la boîte. */
+  top: calc(var(--lh-body) * 0.5em);
+  width: 10px;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* Les liens sont poussés en pied de carte : leur ligne s'aligne d'une carte
+   à l'autre, comme l'étagère plus haut. */
+.lp-tarifs__liens {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-5);
+  margin: auto 0 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
+}
+
+/* Les deux liens de pied de carte ne mesuraient que 22px de haut. La cible
+   monte à 44px ; le padding-top du bloc est repris par cette hauteur, la
+   ligne reste donc posée au même endroit. */
+.lp-tarifs__liens a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* ------------------------------------------------------------
+   PIED DE SECTION
+   ------------------------------------------------------------ */
+
+/* Filet sourd : l'horizon lumineux appartient à l'espace ENTRE deux
+   sections. À l'intérieur, ce serait un événement de trop. */
+.lp-tarifs__coupure {
+  margin-block: var(--sp-7);
+}
+
+.lp-tarifs__pied {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-7);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .lp-tarifs__pied {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--sp-8);
+  }
+}
+
+.lp-tarifs__reglement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.lp-tarifs__moyens {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  max-width: var(--measure-tight);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-tarifs__moyen {
+  margin: 0 0 var(--sp-1);
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-title);
+  color: var(--fg);
+}
+
+/* La colonne d'action porte l'unique bouton primaire de la section. */
+.lp-tarifs__action {
+  gap: var(--sp-4);
+}
+
+.lp-tarifs__cta {
+  /* Le bouton épouse son libellé : étiré sur toute la carte, il pèserait
+     plus lourd que les quatre formules réunies. */
+  align-self: flex-start;
+  margin-top: var(--sp-1);
+}
