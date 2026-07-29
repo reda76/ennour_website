@@ -1,26 +1,67 @@
-import { ORG, POLES, CRENEAUX, HERO, PHOTOS, estAConfirmer } from '../data/contenu.js'
+import { ORG, POLES, CRENEAUX, HERO, estAConfirmer } from '../data/contenu.js'
 
 /* ============================================================
    MOSQUÉE EN-NOUR — Premier écran (#accueil).
 
    Le parti pris a changé sur demande de la mosquée : l'écran ne
-   s'ouvre plus sur un slogan mais sur le LIEU. Le nom, la photo de
-   la porte, et ce que la mosquée propose — rien d'autre.
+   s'ouvre plus sur un slogan mais sur le LIEU : son nom, ce qu'il
+   propose, et sa géométrie.
 
    Le <h1> est le nom de la mosquée. C'est aussi le titre le plus
    juste pour la page : un site de mosquée dont le premier titre
    serait une accroche publicitaire se présenterait mal.
 
-   La photo est cadrée par le masque en arche (.lp-arche) : la
-   porte du bâtiment sert de cadre à sa propre image. Elle ne fait
-   que 214 px de large — on la borne donc en largeur plutôt que de
-   l'étirer, quitte à ce qu'elle reste modeste.
+   La colonne de droite portait la photo de la façade. Celle-ci
+   n'avait été fournie que comme référence de couleur — elle a donc
+   été retirée, et le portail dessiné prend sa place.
    ============================================================ */
 
 /* Créneaux réellement programmés chaque semaine. Compter CRENEAUX.length
    annoncerait 6 alors que « Fiqh — niveau 1 » n'a aucun jour arrêté et se
    range, plus bas, sous « En attente de programmation ». */
 const NB_CRENEAUX_PROGRAMMES = CRENEAUX.filter((c) => c.jours?.length > 0).length
+
+/* Le portail : trois arcs emboîtés, la géométrie de la porte de la mosquée
+   ramenée à ses lignes. Il remplace la photo — qui n'était fournie que comme
+   référence de couleur — et règle du même coup son défaut : un tracé ne peut
+   pas être flou, quelle que soit la taille de l'écran.
+
+   Les arcs intérieurs sont le MÊME tracé, réduit autour du point (140, 368) :
+   le pied de l'arc reste donc calé au sol pendant que la voûte se resserre,
+   ce qui est exactement le dessin d'un portail en retrait. */
+const ARC = 'M20 368V208c-20-33-20-73 0-107 20-47 80-67 120-86 40 19 100 39 120 86 20 34 20 74 0 107v160'
+
+function Portail() {
+  return (
+    <svg
+      className="lp-hero__portail"
+      viewBox="0 0 280 380"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+      preserveAspectRatio="xMidYMax meet"
+    >
+      {[
+        { echelle: 1, opacite: 0.9, epaisseur: 2 },
+        { echelle: 0.78, opacite: 0.55, epaisseur: 1.6 },
+        { echelle: 0.56, opacite: 0.3, epaisseur: 1.3 },
+      ].map(({ echelle, opacite, epaisseur }) => (
+        <path
+          key={echelle}
+          d={ARC}
+          transform={`translate(140 368) scale(${echelle}) translate(-140 -368)`}
+          stroke="currentColor"
+          strokeOpacity={opacite}
+          strokeWidth={epaisseur / echelle}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+      {/* Le seuil : sans lui les trois arcs flottent. */}
+      <path d="M4 368h272" stroke="currentColor" strokeOpacity="0.35" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 function FlecheBas() {
   return (
@@ -67,8 +108,6 @@ export default function Hero() {
       long: true,
     },
   ]
-
-  const photo = PHOTOS.entree
 
   return (
     <section id="accueil" className="lp-section lp-hero" aria-labelledby="lp-hero-titre">
@@ -119,26 +158,11 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* La photo n'est pas décorative : elle montre le lieu où l'on se
-            rend. Elle porte donc un vrai texte alternatif et une légende. */}
-        {/* Cadre rectangulaire, et non le masque en arche du système : la
-            photo montre DÉJÀ un arc outrepassé. La découper en arche
-            produisait une arche dans une arche — illisible — et rognait
-            l'enseigne. L'arche reste le motif directeur ailleurs (la marque,
-            la bande d'arcade) ; ici c'est le bâtiment qui la porte. */}
-        <figure className="lp-hero__figure lp-hero__entree" style={{ '--entree-retard': '220ms' }}>
-          <div className="lp-hero__cadre">
-            <img
-              className="lp-hero__photo"
-              src={photo.src}
-              width={photo.largeur}
-              height={photo.hauteur}
-              alt={photo.alt}
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-        </figure>
+        {/* Purement décoratif, donc hors du flux de lecture : le portail ne
+            dit rien qu'un lecteur d'écran doive entendre. */}
+        <div className="lp-hero__decor-arc lp-hero__entree" style={{ '--entree-retard': '220ms' }}>
+          <Portail />
+        </div>
       </div>
 
       <div className="lp-wrap lp-hero__pied lp-hero__entree" style={{ '--entree-retard': '420ms' }}>

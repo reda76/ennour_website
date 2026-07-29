@@ -132,43 +132,27 @@
   margin-top: var(--sp-3);
 }
 
-/* ---------- La photo ---------- */
+/* ---------- Le portail ---------- */
 
-.lp-hero__figure {
-  margin: 0;
+.lp-hero__decor-arc {
   justify-self: end;
+  align-self: end;
+  display: block;
+  /* Il descend jusqu'au filet du pied : son seuil et la règle qui sépare
+     les repères se rejoignent, et le portail paraît alors posé sur le sol
+     de la page plutôt que suspendu. */
+  margin-bottom: calc(var(--sp-8) * -1);
+  pointer-events: none;
 }
 
-/* La photo native fait 214 × 553 px. On la borne à sa largeur réelle
-   plutôt que de l'étirer : agrandie, elle devient floue, et une image
-   floue d'un lieu de culte dessert le lieu. */
-.lp-hero__cadre {
+.lp-hero__portail {
   display: block;
-  width: clamp(180px, 20vw, 232px);
-  padding: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-2);
-  box-shadow: var(--shadow-lift);
-}
-
-/* 2:3 : assez haut pour contenir l'arc ENTIER — en 3:4 son pied était
-   coupé — et assez court pour ne pas dévorer l'écran mobile, où la photo
-   passe au-dessus du nom. Le trottoir, lui, n'apprend rien : il tombe. */
-.lp-hero__photo {
-  display: block;
-  width: 100%;
-  /* Indispensable : les attributs width/height de la balise <img> (214 × 553,
-     nécessaires pour réserver la place et éviter le saut de mise en page)
-     posent une hauteur en tant qu'attribut de présentation. Sans height:auto,
-     cette hauteur l'emporte et `aspect-ratio` ne s'applique jamais — la photo
-     restait dans son format natif, très haut, et dévorait l'écran mobile. */
+  width: clamp(200px, 26vw, 330px);
   height: auto;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  object-position: center 24%;
-  border-radius: calc(var(--r-2) - 4px);
-  background: var(--surface-3);
+  /* L'orange à pleine force écraserait le texte : le portail est une
+     architecture de fond, pas une illustration qui réclame le regard. */
+  color: var(--accent);
+  opacity: 0.42;
 }
 
 /* ---------- Pied : repères ---------- */
@@ -264,20 +248,18 @@
    RESPONSIVE
    ============================================================ */
 
-/* Une seule rupture : sous 900 px la photo passe au-dessus du texte. */
+/* Sous 900 px la colonne du portail disparaît. Le mettre au-dessus du
+   texte repousserait le nom de la mosquée sous la ligne de flottaison
+   pour un ornement — et le placer dessous ne ferait qu'allonger la page.
+   Le décor du premier écran reste alors la lueur et l'arcade. */
 @media (max-width: 900px) {
   .lp-hero__corps {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--sp-6);
   }
 
-  .lp-hero__figure {
-    order: -1;
-    justify-self: start;
-  }
-
-  .lp-hero__cadre {
-    width: clamp(160px, 44vw, 220px);
+  .lp-hero__decor-arc {
+    display: none;
   }
 
   .lp-hero__reperes {

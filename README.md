@@ -63,7 +63,6 @@ src/
     sections/*.css             un partial par section, classes préfixées lp-
   assets/                      arcade.svg (tuile de masque)
 public/favicon.svg
-public/photos/                 photographies du lieu
 ```
 
 ### Règles de contribution
@@ -102,7 +101,7 @@ Tout se passe dans **`src/data/contenu.js`**.
 | 7 | **Horaires du secrétariat** | `MENTION_SECRETARIAT` | libellé d’attente | Remplacer par les horaires réels (section Contact). |
 | 8 | **Mentions légales** | `PIED.mentionsLegales.url` | `null` | Page à rédiger puis à publier. Tant que l’URL est nulle, le colophon affiche une pastille « à publier » au lieu d’un lien mort. |
 | 9 | **Créneaux enfants et adolescents** | `CRENEAUX` | aucun — les 6 entrées portent `public: 'Adultes'` | **Le point le plus urgent.** La mission affiche « accessibles à tous à partir de 6 ans » ; sans créneau enfants, cette phrase envoie des parents chercher au planning des horaires qui n’y sont pas. En attendant, le premier écran accole une réserve (`HERO.mission.reserve`). Ajouter les créneaux la rend caduque — la supprimer alors. |
-| 10 | **Photographies du lieu** | `PHOTOS` + `public/photos/` | une seule image, **214 × 553 px** | Résolution trop faible pour autre chose que le cadre du premier écran. Fournir des vues en 1600 px de large minimum : façade en pied, salles de cours, intérieur. Le hero les bornera toujours en largeur — inutile de les agrandir artificiellement. |
+| 10 | **Photographies du lieu** | aucune | le site n’en utilise pas | La photo transmise ne l’avait été que comme référence de couleur : elle a servi à relever la palette puis a été retirée. Le premier écran s’appuie sur un portail dessiné. Pour en ajouter : déposer dans `public/photos/`, 1600 px de large minimum, et déclarer un export `PHOTOS` dans `contenu.js` — **chemins via `import.meta.env.BASE_URL`**, sinon ils cassent sur le sous-chemin de déploiement. |
 
 ### Points éditoriaux à trancher (pas des données manquantes)
 

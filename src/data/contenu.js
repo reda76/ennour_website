@@ -67,28 +67,16 @@ export const POLES = [
 ]
 
 /* ---------- Photographies du lieu ----------
-   TODO — la mosquée doit fournir des vues supplémentaires (salles de
-   cours, intérieur, façade en pied). La seule image disponible à ce jour
-   fait 214 × 553 px : elle suffit dans le cadre du premier écran, pas
-   pour un fond pleine largeur. Ne pas l'agrandir.
+   AUCUNE pour le moment. La photo de la façade transmise par la mosquée
+   ne l'avait été qu'à titre de RÉFÉRENCE DE COULEUR — elle a servi à
+   relever la palette (voir tokens.css) puis a été retirée du site.
 
-   BASE est INDISPENSABLE. Vite réécrit les chemins qu'il voit à la
-   compilation (CSS, index.html), mais pas une chaîne lue à l'exécution.
-   Écrit « /photos/… », le site cherchait l'image à la racine du domaine
-   alors que GitHub Pages le sert sous /lephare_website/ — la photo ne
-   se chargeait qu'en local. BASE_URL vaut « / » en développement et le
-   sous-chemin en production, et se termine toujours par une barre.      */
-const BASE = import.meta.env.BASE_URL
-
-export const PHOTOS = {
-  entree: {
-    src: `${BASE}photos/entree-mosquee.webp`,
-    repli: `${BASE}photos/entree-mosquee.jpg`,
-    largeur: 214,
-    hauteur: 553,
-    alt: 'L’entrée de la mosquée En-Nour au Havre : une façade orange percée d’un arc outrepassé, sous l’enseigne « مسجد النور — En-Nour Le Havre ».',
-  },
-}
+   Le premier écran s'appuie donc sur un portail dessiné, insensible à la
+   résolution. Le jour où de vraies photos arrivent (salles de cours,
+   intérieur, façade en pied, 1600 px de large minimum), les déposer dans
+   public/photos/ et déclarer un export PHOTOS ici. Attention : les chemins
+   doivent passer par import.meta.env.BASE_URL, sans quoi ils casseront sur
+   le sous-chemin de déploiement.                                        */
 
 /* ---------- Planning 2026-2027 ----------
    Transcrit des notes manuscrites de l'équipe.

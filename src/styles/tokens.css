@@ -4,12 +4,12 @@
    Import unique et global : voir src/main.jsx.
 
    La palette n'est pas choisie, elle est RELEVÉE : les valeurs
-   viennent d'un échantillonnage de la photo de la façade
-   (public/photos/entree-mosquee.webp). L'orange #e46024 est la
-   teinte dominante du bâtiment sur 16 300 pixels mesurés ; le
-   plâtre reprend l'enduit clair de l'arche, l'encre l'huisserie
-   sombre de la porte. Changer ces valeurs, c'est s'éloigner du
-   bâtiment réel.
+   viennent d'un échantillonnage de la photo de la façade transmise
+   par la mosquée — fournie pour cela et pour rien d'autre, puis
+   retirée du site. L'orange #e46024 est la teinte dominante du
+   bâtiment sur 16 300 pixels mesurés ; le plâtre reprend l'enduit
+   clair de l'arche, l'encre l'huisserie sombre de la porte.
+   Changer ces valeurs, c'est s'éloigner du bâtiment réel.
 
    Ordre : polices → couleurs de base → rôles → bordures → typo →
    espacements → rayons → ombres → motion → layout → classes de rôle.
