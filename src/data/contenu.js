@@ -69,12 +69,21 @@ export const POLES = [
 /* ---------- Photographies du lieu ----------
    TODO — la mosquée doit fournir des vues supplémentaires (salles de
    cours, intérieur, façade en pied). La seule image disponible à ce jour
-   fait 214 × 553 px : elle suffit dans le cadre en arche du premier écran,
-   pas pour un fond pleine largeur. Ne pas l'agrandir. */
+   fait 214 × 553 px : elle suffit dans le cadre du premier écran, pas
+   pour un fond pleine largeur. Ne pas l'agrandir.
+
+   BASE est INDISPENSABLE. Vite réécrit les chemins qu'il voit à la
+   compilation (CSS, index.html), mais pas une chaîne lue à l'exécution.
+   Écrit « /photos/… », le site cherchait l'image à la racine du domaine
+   alors que GitHub Pages le sert sous /lephare_website/ — la photo ne
+   se chargeait qu'en local. BASE_URL vaut « / » en développement et le
+   sous-chemin en production, et se termine toujours par une barre.      */
+const BASE = import.meta.env.BASE_URL
+
 export const PHOTOS = {
   entree: {
-    src: '/photos/entree-mosquee.webp',
-    repli: '/photos/entree-mosquee.jpg',
+    src: `${BASE}photos/entree-mosquee.webp`,
+    repli: `${BASE}photos/entree-mosquee.jpg`,
     largeur: 214,
     hauteur: 553,
     alt: 'L’entrée de la mosquée En-Nour au Havre : une façade orange percée d’un arc outrepassé, sous l’enseigne « مسجد النور — En-Nour Le Havre ».',
