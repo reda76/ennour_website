@@ -90,12 +90,15 @@
    la recette était recopiée, avec un padding plus serré que celui des
    cartes voisines — deux densités de carte cohabitaient sur la page. Seul
    le fond déroge : la section est déjà sur --surface. */
+/* Aucun `color-scheme` ici. Il valait « dark » pour le menu d'un <select>
+   qui n'existe plus, sur un site déclaré en thème clair unique — et il
+   dessinait les cases à cocher NON cochées en carrés pleins sombres, très
+   proches d'un état coché. Sur l'écran des formules, c'est le contrôle qui
+   décide de 300 € ou de 80 € : personne ne pouvait dire ce qu'il avait
+   sélectionné. Les fonds, les couleurs de texte et les accent-color sont
+   tous déclarés explicitement plus bas ; rien ne dépendait de lui. */
 .lp-inscription__panneau {
   background: var(--surface-2);
-  /* Les contrôles natifs (liste déroulante, case à cocher, curseur de
-     texte) doivent s'afficher en sombre : sans cela le menu du <select>
-     s'ouvre en blanc au milieu de la nuit. */
-  color-scheme: dark;
 }
 
 .lp-inscription__form,
@@ -144,8 +147,11 @@
 
 /* ---------- Champs de saisie ---------- */
 
+/* .lp-inscription__select a été retiré de ces cinq règles : le champ
+   « Public » et sa liste déroulante n'existent plus (PUBLICS ne porte
+   qu'une valeur). Le sélecteur fantôme servait d'argument à un
+   `color-scheme: dark` qui cassait les cases à cocher. */
 .lp-inscription__input,
-.lp-inscription__select,
 .lp-inscription__textarea {
   width: 100%;
   min-height: 48px;
@@ -169,22 +175,29 @@
 }
 
 .lp-inscription__input:hover,
-.lp-inscription__select:hover,
 .lp-inscription__textarea:hover { border-color: var(--border-strong); }
 
 .lp-inscription__input:focus,
-.lp-inscription__select:focus,
 .lp-inscription__textarea:focus { border-color: var(--border-accent-2); }
-
-.lp-inscription__select:disabled { color: var(--fg-disabled); cursor: not-allowed; }
 
 /* Champ en défaut. La palette ne comporte pas de rouge : l'erreur se
    signale par la lumière (une arête orange à l'attaque du champ) ET par
    un message écrit — jamais par la couleur seule. */
 .lp-inscription__input[aria-invalid='true'],
-.lp-inscription__select[aria-invalid='true'],
 .lp-inscription__textarea[aria-invalid='true'] {
   border-color: var(--border-accent-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* Le MÊME geste pour un groupe en défaut. Les deux <fieldset> portaient
+   bien leur état, mais aucune règle ne le dessinait : l'œil qui balaie un
+   panneau haut à la recherche des arêtes orange sautait précisément les
+   groupes fautifs. `data-invalid` et non `[aria-invalid]` : un <fieldset>
+   est exposé en role="group", qui ne prend pas en charge cet attribut
+   (voir Inscription.jsx). */
+.lp-inscription__fieldset[data-invalid] .lp-inscription__formules,
+.lp-inscription__fieldset[data-invalid] .lp-inscription__niveaux {
+  padding-left: var(--sp-3);
   box-shadow: inset 3px 0 0 var(--accent);
 }
 
@@ -204,13 +217,19 @@
   color: var(--accent);
 }
 
+/* Le fond passe de --surface-3 à --orange-5 : --accent-bright n'y tenait
+   que 4,20:1 pour un texte de 14px, sous le seuil AA de 4,5:1. Sur le
+   voile orange il donne 4,55:1, et c'est le fond de .lp-attente — donc la
+   même teinte pour le même rôle. C'est le résumé porté par role="alert",
+   le seul message qui annonce combien de champs sont à corriger : il ne
+   peut pas être le moins lisible du panneau. */
 .lp-inscription__resume {
   margin: 0;
   padding: var(--sp-3) var(--sp-4);
   border: 1px solid var(--border-accent);
   border-left-width: 3px;
   border-radius: var(--r-1);
-  background: var(--surface-3);
+  background: var(--orange-5);
   font-size: var(--fs-14);
   font-weight: var(--fw-medium);
   color: var(--accent-bright);
@@ -260,7 +279,13 @@
 
 .lp-inscription__niveau:hover span { border-color: var(--border-strong); color: var(--fg); }
 
+/* Même correction que sur le résumé d'erreur, et pour la même raison : sur
+   --surface-3, --accent-bright ne donnait que 4,20:1 — la tuile CHOISIE
+   était la moins lisible des trois, quand les deux autres tenaient 6,53:1
+   en --fg-muted. Le voile orange remonte le rapport à 4,55:1 et double le
+   signal d'un fond, en plus de la bordure et du soulignement. */
 .lp-inscription__niveau input:checked + span {
+  background: var(--orange-5);
   border-color: var(--border-accent-2);
   color: var(--accent-bright);
   box-shadow: inset 0 -2px 0 var(--accent);
@@ -274,6 +299,95 @@
 .lp-inscription__niveau input:focus-visible + span {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ---------- Formules cumulables ----------
+
+   Volontairement DIFFÉRENT des tuiles de niveau juste au-dessus : là-bas
+   des boutons radio, un seul choix ; ici des cases à cocher, plusieurs.
+   Deux contrôles de même apparence pour deux règles opposées se seraient
+   contredits en silence. D'où la case laissée visible — c'est elle qui dit
+   « vous pouvez en prendre plusieurs » — et un empilement en lignes plutôt
+   qu'une rangée de pastilles. */
+
+.lp-inscription__formules {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.lp-inscription__formule {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lp-inscription__formule:hover { border-color: var(--border-strong); }
+
+.lp-inscription__formule input {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+/* :focus autant que :focus-visible — la validation porte le focus au clavier
+   comme à la souris, et c'est alors le seul repère disponible. */
+.lp-inscription__formule:has(input:focus),
+.lp-inscription__formule:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* L'état coché ne tient pas à la seule couleur : la case elle-même est
+   cochée, l'arête n'est qu'un renfort. */
+.lp-inscription__formule:has(input:checked) {
+  border-color: var(--border-accent-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.lp-inscription__formule-corps {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lp-inscription__formule-nom {
+  font-weight: var(--fw-semibold);
+  color: var(--fg);
+}
+
+.lp-inscription__formule-rythme { color: var(--fg-dim); }
+
+.lp-inscription__formule-prix {
+  justify-self: end;
+  text-align: right;
+  white-space: nowrap;
+  font-weight: var(--fw-semibold);
+  color: var(--fg);
+}
+
+/* Sous 420 px, le prix ne tient plus sur la même ligne que le nom :
+   il passe dessous, aligné sur le texte et non sur la case. */
+@media (max-width: 26rem) {
+  .lp-inscription__formule {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .lp-inscription__formule-prix {
+    grid-column: 2;
+    justify-self: start;
+    text-align: left;
+  }
 }
 
 /* ---------- Consentement ---------- */

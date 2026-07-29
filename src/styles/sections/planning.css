@@ -4,16 +4,22 @@
    Rang dans l'alternance des fonds : 3ᵉ section (accueil, cours,
    planning) → fond --bg, cartes sur --surface.
 
-   Deux idées portent la section :
+   Trois idées portent la section :
    1. la semaine est une grille de sept colonnes, chaque colonne
-      empilant ses séances triées par heure — avec six créneaux,
-      une grille horaire proportionnelle serait vide à 90 % ;
-   2. le temps reste lisible grâce à la « barre du jour » : un filet
-      d'encre pâle où la lumière orange s'accroche à la plage horaire.
-      C'est la ligne d'horizon du site réduite à l'échelle d'une carte.
+      empilant ses séances triées par heure — avec quatre créneaux,
+      une grille horaire proportionnelle de 7 h à 22 h serait vide
+      à plus de 90 % ;
+   2. une séance « au choix » n'appartient à aucune colonne : elle
+      est rassemblée dans un bloc qui ENJAMBE les jours concernés,
+      tenu par une ACCOLADE — le seul geste graphique nouveau de la
+      section, et le seul endroit où elle hausse la voix. Il dit
+      exactement ce que l'affiche écrit : « Samedi OU Dimanche » ;
+   3. le temps reste lisible grâce à la « barre du jour » : un filet
+      d'encre où la lumière orange s'accroche à la plage horaire.
+      C'est la ligne d'horizon du site à l'échelle d'une carte.
 
-   Seules deux media queries, toutes deux STRUCTURELLES : passage de
-   la grille semaine à une liste par jour, puis de l'en-tête sur deux
+   Deux media queries, toutes deux STRUCTURELLES : passage de la
+   grille semaine à une liste par jour, puis de l'en-tête sur deux
    colonnes à une seule. Aucune taille de police n'y est retouchée.
    ============================================================ */
 
@@ -29,8 +35,7 @@
 /* ============================================================
    1. EN-TÊTE
    Contraste d'échelle : le titre en Alegreya à gauche, l'année
-   scolaire en orange à droite — c'est la donnée qui cadre tout
-   le reste de la section.
+   scolaire à droite — c'est la donnée qui cadre tout le reste.
    ============================================================ */
 
 .lp-planning__entete {
@@ -61,30 +66,25 @@
 }
 
 /* ============================================================
-   2. PANNEAU DE FILTRES
-   Il COMPOSE .lp-card (fond, bordure, rayon, arête éclairée,
-   padding) au lieu d'en recopier la recette : c'est une carte, et
-   il n'a aucune raison d'être le seul rectangle du site à 8px de
-   rayon ni le seul à 24px de padding. Les pastilles de pôle qui
-   ouvrent chaque option servent de légende à la grille — d'où
-   l'absence d'une légende séparée.
+   2. BARRE DE COMMANDE
+   L'ancien panneau de filtres était une carte à trois groupes
+   encadrés. Avec quatre séances et un seul axe de tri, il pesait
+   plus lourd que les données qu'il triait : il ne reste qu'une
+   LÉGENDE cliquable, posée sur un filet. Elle explique le codage
+   par teinte de la grille et elle la filtre — un seul objet.
    ============================================================ */
 
-.lp-planning__panneau {
+.lp-planning__barre-cmd {
   display: grid;
-  gap: var(--sp-5);
-}
-
-.lp-planning__filtres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-5) var(--sp-7);
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--border-hair);
 }
 
 /* Un fieldset reste en display: block — la mise en page d'un
    <legend> dans un conteneur grid ou flex est encore inégale
    d'un moteur à l'autre. */
-.lp-planning__groupe {
+.lp-planning__axe {
   min-inline-size: 0;
   margin: 0;
   padding: 0;
@@ -110,7 +110,7 @@
   gap: var(--sp-2);
   min-height: 36px;
   padding: 0 var(--sp-3);
-  background: var(--surface-2);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-1);
   color: var(--fg-muted);
@@ -131,9 +131,8 @@
 }
 
 .lp-planning__chip[aria-pressed='true'] {
-  /* Le voile orange du système, posé à plat. L'empilement sur --surface-2
-     du thème sombre n'a plus lieu d'être : sur le plâtre clair, --orange-5
-     se détache seul et reste le même lavis que .lp-attente. */
+  /* Le voile orange du système, posé à plat : sur le plâtre clair,
+     --orange-5 se détache seul et reste le même lavis que .lp-attente. */
   background: var(--orange-5);
   border-color: var(--border-accent-2);
   color: var(--accent-bright);
@@ -141,8 +140,8 @@
 
 /* Option sans résultat : elle reste FOCALISABLE (aria-disabled et non
    disabled — un bouton qui se désactive sous le focus le rend au <body>)
-   et donc LISIBLE : --fg-disabled tombe à 3,3:1 sur --surface, sous AA.
-   C'est le fond effacé et la bordure d'encre pâle qui disent l'état, avec le
+   et donc LISIBLE : --fg-disabled tombe à 3,3:1 sur --bg, sous AA. C'est
+   le fond effacé et la bordure d'encre pâle qui disent l'état, avec le
    compteur « 0 » qui l'écrit. */
 .lp-planning__chip[aria-disabled='true'] {
   color: var(--fg-dim);
@@ -169,17 +168,25 @@
   height: 10px;
   flex: none;
   border-radius: var(--r-0);
-  background: var(--lp-pole-teinte, var(--border-strong));
+  background: var(--lp-t1, var(--border-strong));
 }
 
 /* ---------- Codage des pôles ----------
    Un seul accent chaud sur le site : les pôles se distinguent donc
    par le NIVEAU du orange, jamais par une autre teinte. Les clés
    viennent de POLES (contenu.js) ; tout pôle inconnu retombe sur
-   une arête d'encre pâle neutre. */
-.lp-planning [data-pole='coran'] { --lp-pole-teinte: var(--accent-bright); }
-.lp-planning [data-pole='alphabetisation'] { --lp-pole-teinte: var(--accent); }
-.lp-planning [data-pole='sciences'] { --lp-pole-teinte: var(--accent-deep); }
+   une arête d'encre pâle neutre.
+
+   Deux jeux de règles, et non un seul : un créneau peut relever de
+   DEUX pôles (la séance du week-end sert le Coran et l'alphabétisation).
+   --lp-t1 porte le premier, --lp-t2 le second. */
+.lp-planning [data-pole='coran'] { --lp-t1: var(--accent-bright); }
+.lp-planning [data-pole='alphabetisation'] { --lp-t1: var(--accent); }
+.lp-planning [data-pole='sciences'] { --lp-t1: var(--accent-deep); }
+
+.lp-planning [data-pole-2='coran'] { --lp-t2: var(--accent-bright); }
+.lp-planning [data-pole-2='alphabetisation'] { --lp-t2: var(--accent); }
+.lp-planning [data-pole-2='sciences'] { --lp-t2: var(--accent-deep); }
 
 /* ---------- Ligne d'état ---------- */
 .lp-planning__etat {
@@ -188,8 +195,6 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-3) var(--sp-5);
-  padding-top: var(--sp-4);
-  border-top: 1px solid var(--border-hair);
 }
 
 .lp-planning__resume {
@@ -203,8 +208,7 @@
   font-weight: var(--fw-semibold);
 }
 
-.lp-planning__sep,
-.lp-planning__seances {
+.lp-planning__sep {
   color: var(--fg-dim);
 }
 
@@ -268,9 +272,6 @@
   /* Gouttière plus serrée que --gap-grille : sept colonnes à 24px
      mangeraient 144px de largeur utile. */
   gap: var(--sp-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .lp-planning__jour {
@@ -298,6 +299,13 @@
   color: var(--fg-dim);
 }
 
+/* Ce que le jour porte « au choix » n'est pas dans sa colonne mais dans
+   le bloc qui l'enjambe : la mention est donc en orange lisible, pour
+   qu'on la relie à l'accolade plutôt qu'au compte de la colonne. */
+.lp-planning__jour-choix {
+  color: var(--accent-bright);
+}
+
 /* Jour sans cours : la colonne reste en place — l'absence de cours
    est une information —, mais elle s'efface. */
 .lp-planning__jour[data-vide] .lp-planning__jour-nom {
@@ -314,7 +322,77 @@
 }
 
 /* ============================================================
-   4. LA CARTE D'UNE SÉANCE
+   4. LE BLOC GROUPÉ ET SON ACCOLADE
+   « Samedi OU Dimanche » : une seule séance, deux jours possibles.
+   Le bloc enjambe les colonnes concernées (variables posées par le
+   composant depuis les données, jamais en dur ici) et l'accolade
+   les rassemble physiquement. C'est le geste qui empêche de lire
+   deux cours là où il n'y en a qu'un.
+   ============================================================ */
+
+.lp-planning__groupe {
+  position: relative;
+  grid-column: var(--lp-col-debut, 1) / var(--lp-col-fin, -1);
+  /* Place laissée à l'accolade, qui vit au-dessus du bloc. */
+  margin-top: var(--sp-7);
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  background: var(--surface-2);
+  border-radius: var(--r-1);
+}
+
+/* L'accolade : deux jambes qui montent vers le centre de chaque colonne
+   enjambée, réunies par un trait. L'inset se calcule sur le NOMBRE de
+   colonnes — avec deux jours, les jambes tombent à 25 % et 75 %, soit
+   l'axe de chaque colonne. */
+.lp-planning__accolade {
+  position: absolute;
+  /* Hauteur = la marge laissée par le bloc : les jambes montent jusqu'à
+     la gouttière de la grille, au ras des cartes. Plus courtes, elles
+     flottaient entre deux et ne rattachaient plus rien. */
+  top: calc(var(--sp-7) * -1);
+  left: calc(100% / (2 * var(--lp-empan, 2)));
+  right: calc(100% / (2 * var(--lp-empan, 2)));
+  height: var(--sp-7);
+  border-bottom: 1px solid var(--border-accent);
+  border-left: 1px solid var(--border-accent);
+  border-right: 1px solid var(--border-accent);
+  border-radius: 0 0 var(--r-1) var(--r-1);
+}
+
+.lp-planning__groupe-tete {
+  display: grid;
+  gap: var(--sp-2);
+  max-width: var(--measure);
+}
+
+/* .lp-attente est un inline-flex : dans une grille, il s'étirerait
+   sur toute la largeur du bloc. */
+.lp-planning__groupe-tete .lp-attente {
+  justify-self: start;
+}
+
+/* Les séances d'un bloc groupé se rangent côte à côte quand la place le
+   permet ; 200px est la largeur sous laquelle « 19:00 – 21:00 » et un
+   intitulé cessent de cohabiter. Plafond à 320px et auto-fill : sur toute
+   la largeur d'un écran, deux cartes en 1fr s'étireraient à 500px chacune
+   et la barre du jour deviendrait une règle. */
+.lp-planning__groupe .lp-planning__pile {
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 320px));
+  justify-content: start;
+}
+
+/* Bloc d'attente (aucun aujourd'hui : il n'apparaît que si un créneau
+   revient sans jours arrêtés). Il ne s'ancre à aucune colonne, d'où le
+   traitement en encadré plutôt qu'en accolade. */
+.lp-planning__groupe[data-attente] {
+  background: transparent;
+  border: 1px solid var(--border-accent);
+}
+
+/* ============================================================
+   5. LA CARTE D'UNE SÉANCE
    Reprend .lp-card et la resserre : dans une colonne de 160px,
    le padding de carte standard ne laisse plus rien au contenu.
    ============================================================ */
@@ -322,10 +400,28 @@
 .lp-planning__creneau {
   gap: var(--sp-2);
   padding: var(--sp-4);
-  /* L'arête gauche porte le pôle ; c'est la seule bordure colorée
-     de la section. */
-  border-left: 3px solid var(--lp-pole-teinte, var(--border-strong));
+  /* Place de l'arête de pôle, qui est une couche et non une bordure :
+     elle doit pouvoir porter DEUX teintes. */
+  padding-left: calc(var(--sp-4) + 3px);
   height: 100%;
+  overflow: hidden;
+}
+
+/* L'arête gauche porte le ou les pôles. Un seul pôle : --lp-t2 retombe
+   sur --lp-t1 et l'arête est unie. Deux pôles : elle est partagée en
+   deux, franchement, sans dégradé — un fondu laisserait croire à une
+   troisième teinte. */
+.lp-planning__creneau::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    var(--lp-t1, var(--border-strong)) 0 50%,
+    var(--lp-t2, var(--lp-t1, var(--border-strong))) 50% 100%
+  );
 }
 
 /* Pas d'état de survol sur ces cartes : elles ne sont pas cliquables,
@@ -343,10 +439,8 @@
 
 /* L'heure ne se coupe jamais : « 20:00 – 21:30 » sur une ligne. C'est
    donc elle qui fixe la largeur minimale d'une carte, et par là celle
-   d'une colonne de la semaine — mesurée à ~154px en Inter, soit sous
-   les 160px de la colonne. La monter à 18px la faisait déborder du
-   gabarit dès que la police de repli était plus large (constaté au
-   rendu). Elle garde la vedette par la graisse, pas par la taille. */
+   d'une colonne de la semaine — mesurée à ~154px, soit sous les 160px
+   de la colonne. Elle garde la vedette par la graisse, pas par la taille. */
 .lp-planning__heure {
   margin: 0;
   font-size: var(--fs-16);
@@ -377,9 +471,9 @@
   left: var(--lp-seg-x, 0%);
   width: var(--lp-seg-l, 100%);
   background: linear-gradient(90deg, var(--accent), var(--accent-bright));
-  /* --orange-1 à 32 % : la lumière déborde légèrement du trait,
-     comme sur la ligne d'horizon. */
-  box-shadow: 0 0 8px rgba(228, 96, 36, 0.32);
+  /* La lumière déborde légèrement du trait, comme sur la ligne
+     d'horizon. --border-accent est le seul orange dilué du système. */
+  box-shadow: 0 0 8px var(--border-accent);
 }
 
 .lp-planning__intitule {
@@ -392,18 +486,25 @@
   color: var(--fg);
   text-wrap: balance;
   /* « Alphabétisation » frôle la largeur de la colonne de 160px, et la
-     dépasse dès que la police de repli est plus large qu'Inter. On
-     coupe le mot plutôt que de laisser le texte sortir de la carte
-     (anywhere, et non break-word : lui seul réduit aussi la largeur
-     min-content, donc empêche la colonne d'être poussée). */
+     dépasse dès que la police de repli est plus large. On coupe le mot
+     plutôt que de laisser le texte sortir de la carte (anywhere, et non
+     break-word : lui seul réduit aussi la largeur min-content, donc
+     empêche la colonne d'être poussée). */
   overflow-wrap: anywhere;
 }
 
-.lp-planning__meta {
+.lp-planning__detail {
   margin: 0;
   font-size: var(--fs-13);
   line-height: var(--lh-body);
   color: var(--fg-muted);
+}
+
+/* La ligature ﷺ est posée en Amiri par .lp-arabe, qui la dessine ;
+   elle ne doit pas pour autant grossir la ligne latine qui la porte. */
+.lp-planning__detail .lp-arabe {
+  font-size: 1.15em;
+  line-height: 1;
 }
 
 .lp-planning__salle {
@@ -413,14 +514,14 @@
   color: var(--fg-dim);
 }
 
-/* Salle non arrêtée : une donnée en attente est une lumière, pas
-   une erreur. On garde la pastille de .lp-attente sans son cadre —
-   neuf cartes sur onze porteraient sinon un encadré pointillé, et
-   le orange cesserait de vouloir dire quelque chose. La phrase
-   complète est reprise sous la grille. */
-/* Pastille en marqueur INLINE et non en boîte flex : quand la mention
-   passe sur deux lignes dans une colonne étroite, le point reste sur
-   la première ligne au lieu de se centrer verticalement. */
+/* Salle non arrêtée : une donnée en attente est une lumière, pas une
+   erreur. On garde la pastille de .lp-attente sans son cadre — toutes
+   les cartes porteraient sinon un encadré pointillé, et le orange
+   cesserait de vouloir dire quelque chose. La phrase complète est
+   reprise sous la grille.
+   Pastille en marqueur INLINE et non en boîte flex : quand la mention
+   passe sur deux lignes dans une colonne étroite, le point reste sur la
+   première ligne au lieu de se centrer verticalement. */
 .lp-planning__salle--attente::before {
   content: '';
   display: inline-block;
@@ -432,48 +533,10 @@
   background: var(--signal-attente);
 }
 
-.lp-planning__jours-attente {
-  margin: 0;
-}
-
-/* ============================================================
-   5. CRÉNEAUX EN ATTENTE DE PROGRAMMATION
-   ============================================================ */
-
-/* Compose .lp-card ; seule la bordure orange déroge — c'est elle qui
-   signale un bloc en attente. */
-.lp-planning__attente {
-  gap: var(--sp-5);
-  border-color: var(--border-accent);
-}
-
-.lp-planning__attente-tete {
-  display: grid;
-  gap: var(--sp-2);
-  max-width: var(--measure);
-}
-
-/* auto-fill et non auto-fit, plafonné à 320px : avec un seul créneau en
-   attente, auto-fit étirait la carte sur toute la largeur du panneau et
-   la barre du jour devenait une règle de 900px. */
-.lp-planning__attente-liste {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
-  justify-content: start;
-  gap: var(--sp-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* La carte d'un créneau en attente est posée sur un panneau
-   --surface : elle monte d'un cran pour rester détachée. */
-.lp-planning__attente .lp-planning__creneau {
-  background: var(--surface-2);
-}
-
 /* ============================================================
    6. AUCUN RÉSULTAT
+   Inatteignable avec les données du jour — une option sans créneau
+   est inerte. Garde-fou, pas parcours nominal.
    ============================================================ */
 
 .lp-planning__vide {
@@ -507,9 +570,11 @@
    8. STRUCTURE RESPONSIVE
    ============================================================ */
 
-/* En dessous de 1100px, sept colonnes deviennent illisibles :
-   la semaine passe en liste de jours, et les séances d'un même
-   jour se répartissent en cartes. */
+/* En dessous de 1100px, sept colonnes deviennent illisibles : la semaine
+   passe en liste de jours, et les séances d'un même jour se répartissent
+   en cartes. Le bloc groupé perd son ancrage — il n'y a plus de colonnes
+   à enjamber : il reprend toute la largeur et son accolade disparaît,
+   c'est alors son titre (« Samedi ou Dimanche ») qui porte seul le choix. */
 @media (max-width: 1100px) {
   .lp-planning__semaine {
     grid-template-columns: 1fr;
@@ -526,11 +591,20 @@
     font-size: var(--fs-14);
   }
 
-  /* auto-fill : un jour à une seule séance garde une carte de largeur
-     de carte. Avec auto-fit, elle s'étirait sur toute la page et la
-     barre du jour devenait une règle de 960px (constaté au rendu). */
+  /* auto-fill : un jour à une seule séance garde une largeur de carte.
+     Avec auto-fit, elle s'étirait sur toute la page et la barre du jour
+     devenait une règle de 960px (constaté au rendu). */
   .lp-planning__pile {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  }
+
+  .lp-planning__groupe {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .lp-planning__accolade {
+    display: none;
   }
 
   .lp-planning__cadre {
@@ -550,7 +624,7 @@
     text-align: left;
   }
 
-  .lp-planning__filtres {
-    gap: var(--sp-5);
+  .lp-planning__groupe {
+    padding: var(--sp-4);
   }
 }

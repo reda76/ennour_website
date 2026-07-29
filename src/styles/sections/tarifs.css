@@ -1,20 +1,28 @@
 /* ============================================================
    MOSQUÉE EN-NOUR — Section « Formules & tarifs ».
 
-   Le problème de départ : aucun montant n'est arrêté. Plutôt que de
-   masquer ce vide, la section en fait son sujet. Chaque carte porte une
-   ÉTAGÈRE — une bande pleine largeur, en --surface-3, qui traverse la
-   carte de bord à bord. Les quatre étagères tombent à la même hauteur :
-   mises côte à côte, elles ne lisent plus comme quatre badges répétés
-   mais comme une seule ligne d'horizon portant quatre points de lumière.
+   Le sujet a changé : les montants de l'affiche 2026-2027 sont
+   publics (300 € / 80 € / 80 €). La section n'annonce donc plus une
+   attente, elle fait COMPARER trois colonnes.
+
+   D'où le seul geste fort du bloc : l'ÉTAGÈRE. Chaque carte porte
+   une bande pleine largeur, en --surface-3, qui la traverse de bord
+   à bord et porte le prix. Les trois étagères tombent exactement à
+   la même hauteur — non par une hauteur réservée à la louche, mais
+   parce que les cartes partagent les lignes de la grille (subgrid).
+   Mises côte à côte, elles ne lisent plus comme trois badges répétés
+   mais comme une seule ligne d'horizon portant trois montants.
    C'est la signature du site rejouée à l'échelle d'une grille.
 
-   Conséquence : la section n'a ni faisceau, ni halo, ni trame. La chaleur
-   vient des données elles-mêmes. Une lumière de plus serait une de trop.
+   Conséquence : la section n'a ni faisceau, ni halo, ni trame, ni
+   carte mise en avant. Rien ne désigne « la bonne formule » — la
+   mosquée n'en recommande aucune. Une lumière de plus serait une
+   de trop.
 
-   Fond : --surface (4e section, position paire de l'alternance). Les cartes
-   passent donc sur --surface-2. Si l'intégration déplace la section, une
-   seule ligne est à reprendre : `.lp-tarifs { background }`.
+   Fond : --surface (4e section, position paire de l'alternance). Les
+   cartes et la bande « cumulables » passent donc sur --surface-2. Si
+   l'intégration déplace la section, une seule ligne est à reprendre :
+   `.lp-tarifs { background }`.
    ============================================================ */
 
 .lp-tarifs {
@@ -67,9 +75,10 @@
 
 /* ------------------------------------------------------------
    GRILLE DES FORMULES
-   4 → 2 → 1, jamais 3 : avec quatre cartes, une grille à trois colonnes
-   laisse une orpheline en dernière ligne. Les paliers sont donc explicites
-   plutôt qu'en auto-fit. Media queries de STRUCTURE uniquement.
+   3 colonnes → 1, sans palier intermédiaire : trois cartes sur deux
+   colonnes laisseraient une orpheline en seconde ligne, et une grille
+   de comparaison qui se lit en deux temps ne compare plus rien.
+   Media queries de STRUCTURE uniquement.
    ------------------------------------------------------------ */
 
 .lp-tarifs__grille {
@@ -79,12 +88,59 @@
   align-items: stretch;
 }
 
-@media (min-width: 640px) {
-  .lp-tarifs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Repli sans subgrid : la carte reste une colonne flex. Les cartes gardent
+   la même hauteur (align-items: stretch), seules leurs bandes internes ne
+   sont plus alignées au pixel. */
+.lp-tarifs__carte {
+  gap: var(--sp-4);
+  /* L'étagère déborde volontairement du padding : on recadre sur le rayon. */
+  overflow: hidden;
 }
 
-@media (min-width: 1100px) {
-  .lp-tarifs__grille { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+/* Entre les deux : une seule colonne de cartes, mais assez large pour que
+   les deux listes tiennent côte à côte. Sans cette passe, « Au programme »
+   et « Les séances » s'empilaient sur 380 px utiles et laissaient la moitié
+   droite de la carte vide sur toute sa hauteur. */
+@media (min-width: 640px) and (max-width: 999px) {
+  .lp-tarifs__carte {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+
+  .lp-tarifs__tete,
+  .lp-tarifs__prix,
+  .lp-tarifs__liens {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1000px) {
+  .lp-tarifs__grille {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--gap-grille);
+    /* Le pas vertical de la grille devient le pas INTERNE des cartes :
+       il doit valoir exactement le `gap` de la carte, sinon les lignes
+       partagées et le contenu se désynchronisent. */
+    row-gap: var(--sp-4);
+  }
+
+  /* Les cinq blocs de la carte occupent les cinq lignes de la grille :
+     tête, prix, programme, séances, lien. Toutes les cartes se partagent
+     donc les mêmes lignes — c'est ce qui aligne les trois montants.
+     Un sixième bloc dans la carte invaliderait `span 5`. */
+  @supports (grid-template-rows: subgrid) {
+    .lp-tarifs__grille {
+      grid-template-rows: repeat(5, auto);
+    }
+
+    .lp-tarifs__carte {
+      display: grid;
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+      row-gap: var(--sp-4);
+    }
+  }
 }
 
 /* ------------------------------------------------------------
@@ -93,30 +149,34 @@
    donc pas d'état de survol qui promettrait une cible inexistante.
    ------------------------------------------------------------ */
 
-.lp-tarifs__carte {
-  /* L'étagère déborde volontairement du padding : on recadre sur le rayon. */
-  overflow: hidden;
-}
-
 .lp-tarifs__tete {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
 }
 
-.lp-tarifs__rythme {
+/* Le numéro vient de l'affiche, où il sert de référence parlée
+   (« je prends la formule 2 »). Il ne classe pas les formules. */
+.lp-tarifs__numero {
   color: var(--fg-dim);
 }
 
-/* Dès que deux cartes sont côte à côte, les étagères doivent tomber à la
-   même hauteur — sinon la ligne d'horizon se brise sur un titre qui passe
-   à la ligne. On réserve deux lignes de titre, exprimées dans l'interlignage
-   du titre lui-même : la réserve suit le clamp() de --fs-h3 toute seule,
-   sans media query de taille. */
-@media (min-width: 640px) {
-  .lp-tarifs__nom {
-    min-height: calc(2 * var(--lh-title) * 1em);
-  }
+.lp-tarifs__nom {
+  /* « Coran & alphabétisation » dans une colonne de 254 px à 360 px de
+     large : on autorise la coupure plutôt que le débordement. */
+  overflow-wrap: break-word;
+}
+
+.lp-tarifs__sous {
+  margin: 0;
+  font-family: var(--ff-display);
+  font-size: var(--fs-18);
+  line-height: var(--lh-title);
+  color: var(--fg-muted);
+}
+
+.lp-tarifs__rythme {
+  color: var(--fg-dim);
 }
 
 /* L'ÉTAGÈRE — la bande de bord à bord qui porte le montant.
@@ -127,6 +187,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: var(--sp-2);
   margin-inline: calc(var(--sp-6) * -1);
   padding: var(--sp-5) var(--sp-6);
@@ -136,15 +197,47 @@
   border-block: 1px solid var(--border-hair);
 }
 
-/* Le montant, le jour où il existe. .lp-chiffre exige une taille explicite. */
+/* Le montant et sa période sur une même ligne de base : « 300 € » et
+   « l'année » forment un seul prix, pas une donnée et sa légende. */
 .lp-tarifs__montant {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin: 0;
+}
+
+.lp-tarifs__montant .lp-chiffre {
   font-size: var(--fs-38);
+}
+
+.lp-tarifs__periode {
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
+  color: var(--fg-dim);
 }
 
 /* Enveloppe des pastilles d'attente : un <p> pour la sémantique, sans
    le rythme d'un paragraphe. */
 .lp-tarifs__attente {
   margin: 0;
+}
+
+/* ------------------------------------------------------------
+   LES DEUX LISTES DE LA CARTE
+   « Au programme » dit ce qu'on apprend, « Les séances » quand on vient.
+   Deux listes de suite se confondent : la première est marquée d'un éclat
+   d'orange, la seconde est décrochée sur un filet vertical.
+   ------------------------------------------------------------ */
+
+.lp-tarifs__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  /* Cadre la mesure quand la carte occupe toute la largeur (< 1000 px) ;
+     sans effet une fois la grille en trois colonnes. */
+  max-width: var(--measure-tight);
 }
 
 /* Ce que la formule couvre. Le marqueur est un éclat d'orange de 10 × 1px :
@@ -180,8 +273,79 @@
   background: var(--accent);
 }
 
-/* Les liens sont poussés en pied de carte : leur ligne s'aligne d'une carte
-   à l'autre, comme l'étagère plus haut. */
+.lp-tarifs__seances {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Le filet vertical tient la séance ensemble : intitulé, précision et
+   horaire appartiennent à la même prise de rendez-vous. */
+.lp-tarifs__seance {
+  padding-left: var(--sp-4);
+  border-left: 1px solid var(--border-hair);
+}
+
+.lp-tarifs__seance-nom {
+  margin: 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-title);
+  color: var(--fg);
+}
+
+.lp-tarifs__seance-detail {
+  margin: var(--sp-1) 0 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  line-height: var(--lh-body);
+  color: var(--fg-dim);
+}
+
+/* La ligature ﷺ passe en Amiri : posée dans la chasse d'Alegreya Sans,
+   elle tomberait dans une police de repli et dépareillerait la ligne. */
+.lp-tarifs__seance-detail .lp-arabe {
+  font-size: 1.15em;
+}
+
+.lp-tarifs__quand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  margin: var(--sp-2) 0 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+}
+
+.lp-tarifs__jours {
+  color: var(--fg-muted);
+}
+
+.lp-tarifs__heure {
+  color: var(--fg);
+  font-weight: var(--fw-medium);
+}
+
+/* « Samedi OU Dimanche » : le mot porte toute la différence entre une
+   séance par week-end et deux. Il se voit, sans crier. */
+.lp-tarifs__ou {
+  font-style: normal;
+  font-weight: var(--fw-semibold);
+  color: var(--accent-bright);
+}
+
+.lp-tarifs__auchoix {
+  margin: 0;
+}
+
+/* Le lien est poussé en pied de carte : sa ligne s'aligne d'une carte à
+   l'autre, comme l'étagère plus haut. */
 .lp-tarifs__liens {
   display: flex;
   flex-wrap: wrap;
@@ -193,13 +357,82 @@
   font-weight: var(--fw-medium);
 }
 
-/* Les deux liens de pied de carte ne mesuraient que 22px de haut. La cible
-   monte à 44px ; le padding-top du bloc est repris par cette hauteur, la
-   ligne reste donc posée au même endroit. */
+/* Le lien de pied de carte ne mesurait que 22px de haut. La cible monte à
+   44px ; le padding-top du bloc est repris par cette hauteur, la ligne
+   reste donc posée au même endroit. */
 .lp-tarifs__liens a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+}
+
+/* ------------------------------------------------------------
+   LA BANDE « CUMULABLES »
+   Pleine largeur sous les trois colonnes, comme sur l'affiche : elle
+   change la façon de lire la grille, elle ne peut donc pas être une
+   note en petit. Le « plus » est deux .lp-filet croisés — 32 × 2 px
+   d'orange, exactement le filet des en-têtes de section. Aucun
+   pictogramme n'est importé sur ce site.
+   ------------------------------------------------------------ */
+
+.lp-tarifs__cumul {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-5);
+  margin-top: var(--gap-grille);
+  padding: var(--sp-6);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+}
+
+.lp-tarifs__plus {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  /* Descend le signe sur l'œil de la première ligne du titre. */
+  margin-top: var(--sp-2);
+}
+
+.lp-tarifs__plus::before,
+.lp-tarifs__plus::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  background: var(--accent);
+}
+
+.lp-tarifs__plus::before {
+  width: 32px;
+  height: 2px;
+}
+
+.lp-tarifs__plus::after {
+  width: 2px;
+  height: 32px;
+}
+
+.lp-tarifs__cumul-corps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* Sous 560 px, le signe et le texte se disputent une colonne de 254 px :
+   le signe passe au-dessus plutôt que de comprimer le titre. */
+@media (max-width: 559px) {
+  .lp-tarifs__cumul {
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding: var(--sp-5);
+  }
+
+  .lp-tarifs__plus {
+    margin-top: 0;
+  }
 }
 
 /* ------------------------------------------------------------
@@ -253,12 +486,64 @@
 
 /* La colonne d'action porte l'unique bouton primaire de la section. */
 .lp-tarifs__action {
-  gap: var(--sp-4);
+  align-items: flex-start;
+  gap: var(--sp-3);
 }
 
 .lp-tarifs__cta {
   /* Le bouton épouse son libellé : étiré sur toute la carte, il pèserait
-     plus lourd que les quatre formules réunies. */
+     plus lourd que les trois formules réunies. */
   align-self: flex-start;
-  margin-top: var(--sp-1);
+}
+
+/* Une information, pas une alarme : encre pâle, pas de rouge, pas de
+   capitales, aucune pastille. */
+.lp-tarifs__places {
+  color: var(--fg-dim);
+}
+
+/* ------------------------------------------------------------
+   LES TROIS MENTIONS DU BAS DE L'AFFICHE
+   Sur une ligne, en fin de section, dans le même marqueur que les
+   listes « Au programme » : ce sont des faits, pas des arguments de
+   vente, et rien ne les met en avant.
+   ------------------------------------------------------------ */
+
+.lp-tarifs__coupure-basse {
+  margin-block: var(--sp-7) var(--sp-5);
+}
+
+.lp-tarifs__arguments {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 760px) {
+  .lp-tarifs__arguments {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-5);
+  }
+}
+
+.lp-tarifs__argument {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+  color: var(--fg-muted);
+}
+
+.lp-tarifs__argument::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(var(--lh-body) * 0.5em);
+  width: 10px;
+  height: 1px;
+  background: var(--accent);
 }

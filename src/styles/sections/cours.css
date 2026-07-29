@@ -5,9 +5,9 @@
    rester détachées de leur fond.
 
    Hiérarchie de lecture dans une carte, du plus fort au plus faible :
-   titre (Alegreya) → accroche (Alegreya Sans, pleine lumière) → description
-   (Alegreya Sans, encre pâle) → points clés (courts, tiret orange) → pied
-   (ce que le pôle ouvre réellement + le lien vers le planning).
+   illustration (une image, on la voit avant de lire) → titre (Alegreya) →
+   accroche (Alegreya Sans, pleine lumière) → points clés (courts, tiret
+   orange) → pied (ce que le pôle ouvre réellement + le lien vers le planning).
    ============================================================ */
 
 .lp-cours {
@@ -111,9 +111,44 @@
   gap: var(--sp-3);
 }
 
-/* L'accroche est la phrase que le visiteur doit retenir : seule ligne du corps
-   de carte en pleine lumière, en Inter medium serré. Elle passe devant la
-   description, qui reste en encre pâle. */
+/* ------------------------------------------------------------
+   Plaque d'illustration
+   ------------------------------------------------------------ */
+
+/* La carte est en plâtre (--surface-2) : la plaque, elle, revient au blanc.
+   C'est l'inversion la plus économique qui soit — aucun nouveau ton dans la
+   palette — et elle suffit à faire du dessin une image posée sur la carte
+   plutôt qu'un ornement flottant dans le texte.
+   Le fond ne peut PAS être --orange-5 : les trois illustrations s'en servent
+   comme voile de remplissage, elles y disparaîtraient. */
+.lp-cours__plaque {
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--border-hair);
+  border-radius: var(--r-1);
+  /* Le trait des illustrations suit `currentColor`. Ni l'encre du texte, qui
+     ferait de chaque carte un pavé sombre, ni l'orange plein, qui crierait
+     trois fois de suite : le tan de l'enseigne, le ton explicitement prévu
+     pour ce qui ne doit pas rivaliser avec l'accent. Les quelques traits
+     en --accent que portent les dessins gardent ainsi leur avance. */
+  color: var(--tan-1);
+}
+
+/* Hauteur imposée, largeur libre : les trois dessins partagent le même
+   viewBox (0 0 200 150) et `preserveAspectRatio` par défaut, ils se posent
+   donc au MÊME format et sur la MÊME ligne d'une colonne à l'autre — c'est
+   la première chose que l'œil vérifie sur une grille de trois cartes.
+   Borner la hauteur plutôt que la largeur évite qu'une colonne large ne
+   fasse enfler son illustration. */
+.lp-cours__illu {
+  display: block;
+  width: 100%;
+  height: clamp(7rem, 22vw, 11rem);
+}
+
+/* L'accroche est la phrase que le visiteur doit retenir : depuis le retrait
+   des paragraphes de description, c'est la seule ligne de la carte en pleine
+   encre après le titre — d'où la graisse moyenne et l'interlettrage serré. */
 .lp-cours__accroche {
   margin: 0;
   font-family: var(--ff-body);
@@ -188,10 +223,11 @@
   color: var(--accent-bright);
 }
 
-/* Séparateur purement décoratif : --fg-disabled est réservé à cet usage. */
-.lp-cours__compte-g::before {
-  content: ' · ';
-  color: var(--fg-disabled);
+/* « Au choix : samedi ou dimanche ». Cette ligne corrige le décompte qui la
+   précède — elle doit donc lui rester collée, d'où le retrait de l'écart
+   commun du pied. */
+.lp-cours__choix {
+  margin-top: calc(var(--sp-3) * -1 + var(--sp-1));
 }
 
 /* ------------------------------------------------------------
@@ -256,6 +292,13 @@
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr);
     column-gap: var(--sp-7);
     align-items: start;
+  }
+
+  /* Le filet séparait les points de l'accroche ; ici la gouttière le fait
+     déjà, et il retomberait tout en haut du second volet — un trait qui
+     ne sépare plus rien se lit comme une erreur. */
+  .lp-cours__corps > .lp-rule {
+    display: none;
   }
 }
 

@@ -1,29 +1,74 @@
-import { POLES, CRENEAUX, COURS_INTRO } from '../data/contenu.js'
+import { POLES, CRENEAUX, COURS_INTRO, COURS_TEXTES, DEVISE } from '../data/contenu.js'
 import ScrollReveal from './ScrollReveal.jsx'
+import Coran from './illustrations/Coran.jsx'
+import Alphabetisation from './illustrations/Alphabetisation.jsx'
+import Sciences from './illustrations/Sciences.jsx'
 
 /**
- * Ce qu'un pôle ouvre réellement, déduit du planning.
- * Chaque entrée de CRENEAUX est un groupe (public + genre + horaire) : le
- * compte n'est donc jamais recopié à la main, il suit toute correction
- * apportée au planning.
+ * Correspondance explicite entre la clé portée par le contenu
+ * (`POLES[].illustration`) et le composant qui la dessine.
+ *
+ * Table et non import dynamique : le graphe des dépendances doit rester
+ * lisible à la compilation — un `import()` calculé sur une chaîne de
+ * données empêcherait le bundler de voir les trois fichiers. Une clé
+ * inconnue ne renvoie rien : la carte se rend sans illustration plutôt
+ * que de casser la page.
  */
-function lireGroupes(cle) {
-  const creneaux = CRENEAUX.filter((c) => c.pole === cle)
-  const genres = [...new Set(creneaux.map((c) => c.genre).filter(Boolean))]
+const ILLUSTRATIONS = {
+  coran: Coran,
+  alphabetisation: Alphabetisation,
+  sciences: Sciences,
+}
+
+/* La disjonction (« samedi ou dimanche ») est composée par Intl dans la
+   langue du site : la conjonction n'est écrite nulle part à la main, et
+   elle suivrait un changement de locale. DEVISE porte la seule locale que
+   le contenu déclare. */
+const LISTE_OU = new Intl.ListFormat(DEVISE.locale, { style: 'long', type: 'disjunction' })
+
+/**
+ * Ce qu'un pôle propose réellement dans une semaine, déduit du planning —
+ * jamais recopié à la main, le chiffre suit donc toute correction apportée
+ * à CRENEAUX.
+ *
+ * Trois précautions, qui sont les trois pièges des données :
+ * — un créneau appartient au pôle si `poles` (au PLURIEL) le contient ;
+ * — la séance du week-end relève de deux pôles mais reste UNE entrée :
+ *   elle compte une fois de chaque côté, jamais deux fois du même ;
+ * — `auChoix` vaut « Samedi OU Dimanche » : l'élève ne retient qu'un jour,
+ *   compter les deux doublerait l'offre annoncée par l'affiche.
+ */
+function lireSeances(cle) {
+  const creneaux = CRENEAUX.filter((c) => c.poles?.includes(cle))
+
+  const nombre = creneaux.reduce((total, c) => {
+    const jours = c.jours?.length ?? 0
+    return total + (c.auChoix ? Math.min(jours, 1) : jours)
+  }, 0)
+
+  /* Les jours entre lesquels il faudra choisir, tous créneaux confondus :
+     le Fiqh et la Sîra proposent le même couple, il n'est énoncé qu'une fois. */
+  const jours = [...new Set(creneaux.filter((c) => c.auChoix).flatMap((c) => c.jours ?? []))]
+
   return {
-    nombre: creneaux.length,
-    // Le genre se lit en toutes lettres — jamais par une couleur seule.
-    genres: genres.map((g) => g.toLocaleLowerCase('fr-FR')).join(' et '),
-    // Le Fiqh n'a pas encore de jours arrêtés : on l'annonce au lieu de le taire.
+    nombre,
+    auChoix:
+      jours.length > 1
+        ? COURS_TEXTES.auChoixGabarit.replace(
+            '{jours}',
+            LISTE_OU.format(jours).toLocaleLowerCase(DEVISE.locale),
+          )
+        : null,
+    // Un cours dont les jours ne sont pas arrêtés s'annonce, il ne se tait pas.
     joursIncomplets: creneaux.some((c) => !c.jours || c.jours.length === 0),
   }
 }
 
 /**
  * Le lien ancre nativement vers #planning (href réel : il fonctionne sans JS).
- * En complément on inscrit le pôle dans l'URL et on l'annonce par un événement.
- * Les DEUX sont désormais écoutés par Planning (lecture de `?pole=` au montage
- * et écoute de « lp:pole ») : l'URL partagée préfiltre réellement le planning.
+ * En complément on inscrit le pôle dans l'URL et on l'annonce par un événement,
+ * tous deux écoutés par Planning — l'adresse partagée préfiltre le planning.
+ * Le contrat n'a pas bougé : une CLÉ de pôle, celle de POLES[].key.
  */
 function annoncerPole(cle) {
   const url = new URL(window.location.href)
@@ -55,8 +100,10 @@ export default function Cours() {
 
         <ul className="lp-cours__grille">
           {POLES.map((pole, i) => {
-            const groupes = lireGroupes(pole.key)
+            const seances = lireSeances(pole.key)
             const points = Array.isArray(pole.points) ? pole.points : []
+            /* Repli : une clé d'illustration inconnue ne dessine rien. */
+            const Illustration = ILLUSTRATIONS[pole.illustration]
 
             return (
               <ScrollReveal
@@ -65,13 +112,21 @@ export default function Cours() {
                 className="lp-cours__item"
                 delay={80 * i}
               >
-                {/* Un seul liséré de lumière par grille : il perd son sens s'il
-                    est posé sur les trois cartes. */}
                 <article
-                  className={`lp-card lp-cours__carte${i === 0 ? ' lp-card--phare' : ''}`}
+                  className="lp-card lp-cours__carte"
                   aria-labelledby={`cours-pole-${pole.key}`}
                 >
                   <div className="lp-cours__tete">
+                    {/* La plaque est le seul aplat clair de la carte : elle
+                        détache le dessin du corps de texte et fixe la hauteur,
+                        pour que les trois illustrations s'alignent d'une
+                        colonne à l'autre. Le trait suit la couleur héritée. */}
+                    {Illustration && (
+                      <div className="lp-cours__plaque">
+                        <Illustration className="lp-cours__illu" />
+                      </div>
+                    )}
+
                     <h3 id={`cours-pole-${pole.key}`} className="lp-h3">
                       {pole.titre}
                     </h3>
@@ -97,21 +152,24 @@ export default function Cours() {
                     )}
 
                     <div className="lp-cours__pied">
-                      {groupes.nombre === 0 ? (
+                      {seances.nombre === 0 ? (
                         <p className="lp-cours__compte">
-                          <span className="lp-attente">{COURS_INTRO.groupesAConfirmer}</span>
+                          <span className="lp-attente">{COURS_TEXTES.seancesAConfirmer}</span>
                         </p>
                       ) : (
                         <p className="lp-small lp-cours__compte">
-                          <span className="lp-num lp-cours__compte-n">{groupes.nombre}</span>{' '}
-                          {groupes.nombre > 1 ? COURS_INTRO.groupes : COURS_INTRO.groupe}
-                          {groupes.genres && (
-                            <span className="lp-cours__compte-g">{groupes.genres}</span>
-                          )}
+                          <span className="lp-num lp-cours__compte-n">{seances.nombre}</span>{' '}
+                          {seances.nombre > 1 ? COURS_TEXTES.seances : COURS_TEXTES.seance}
                         </p>
                       )}
 
-                      {groupes.nombre > 0 && groupes.joursIncomplets && (
+                      {/* Sans cette ligne, « 2 séances » se lirait comme deux
+                          jours de présence là où l'affiche en propose un. */}
+                      {seances.auChoix && (
+                        <p className="lp-caption lp-cours__choix">{seances.auChoix}</p>
+                      )}
+
+                      {seances.nombre > 0 && seances.joursIncomplets && (
                         <p className="lp-cours__compte">
                           <span className="lp-attente">{COURS_INTRO.joursAConfirmer}</span>
                         </p>

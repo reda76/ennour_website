@@ -6,6 +6,7 @@ import {
   PIED_LIBELLES,
   MENTION_HORAIRES,
   NAV_CTA,
+  PIED_SECOURS,
   estAConfirmer,
   partieConnue,
 } from '../data/contenu.js'
@@ -108,10 +109,17 @@ export default function Footer() {
                 attente={PIED_LIBELLES.emailAConfirmer}
               />
             </dl>
-            {/* Un vide n'est pas un cul-de-sac : on dit par où passer en attendant. */}
+            {/* Un vide n'est pas un cul-de-sac : on dit par où passer en attendant.
+                Mais on ne dit QUE ce qui manque : depuis que l'affiche a donné
+                le numéro, annoncer l'absence de ligne téléphonique juste sous
+                un téléphone cliquable était un démenti à trois lignes d'écart. */}
             {(!telConfirme || !emailConfirme) && (
               <p className="lp-small lp-pied__secours">
-                {PIED.contactSecours}{' '}
+                {!telConfirme && !emailConfirme
+                  ? PIED_SECOURS.lesDeux
+                  : telConfirme
+                    ? PIED_SECOURS.email
+                    : PIED_SECOURS.tel}{' '}
                 <a className="lp-lien" href={`#${NAV_CTA.cible}`}>
                   {NAV_CTA.libelle}
                 </a>
@@ -141,8 +149,12 @@ export default function Footer() {
 
       <div className="lp-pied__colophon">
         <div className="lp-wrap lp-pied__colophon-corps">
+          {/* Le statut juridique n'est affiché que s'il est établi : c'est la
+              ligne la plus susceptible d'être reprise telle quelle par un
+              tiers, et « Association loi 1901 » n'avait aucune source. */}
           <p className="lp-caption">
-            <span className="lp-num">© {annee}</span> {ORG.nom} — {PIED.statut}
+            <span className="lp-num">© {annee}</span> {ORG.nom}
+            {PIED.statut ? ` — ${PIED.statut}` : ''}
           </p>
           <p className="lp-caption lp-pied__legal">
             {mentions?.url ? (

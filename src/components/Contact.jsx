@@ -63,8 +63,11 @@ export default function Contact() {
                 {telConnu ? (
                   <a className="lp-lien lp-num" href={ORG.telHref}>{ORG.tel}</a>
                 ) : (
-                  /* TODO — renseigner ORG.tel ET ORG.telHref ensemble : tant que le
-                     numéro n'est pas confirmé, on n'expose pas de lien tel: factice. */
+                  /* Le numéro et son href viennent de l'affiche 2026-2027 et
+                     concordent : le lien ci-dessus est le chemin normal. Ce
+                     repli ne joue que si ORG.tel redevient un marqueur
+                     d'attente — auquel cas ORG.telHref doit repartir avec lui,
+                     on n'expose jamais un lien tel: factice. */
                   <span className="lp-attente">{CONTACT_LIBELLES.telAConfirmer}</span>
                 )}
               </dd>

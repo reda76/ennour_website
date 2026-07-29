@@ -101,8 +101,13 @@ function construireModele() {
   const sansDate = entrees.filter((e) => !e.d)
   const ordonnees = [...datees, ...sansDate]
 
+  /* Aucune de ces dates n'a été confirmée par la mosquée : le drapeau
+     `provisoire` remonte la réserve en tête de section, là où on la lit
+     AVANT de poser ses congés dessus, et non en pied en petits caractères. */
+  const provisoire = entrees.some((e) => e.provisoire)
+
   if (!datees.length) {
-    return { vide: true, entrees: ordonnees, examens: [], mois: [], segments: [], statut: null }
+    return { vide: true, provisoire, entrees: ordonnees, types: new Set(), mois: [], segments: [], statut: null }
   }
 
   // L'axe court de bord de mois à bord de mois : les graduations
@@ -168,8 +173,13 @@ function construireModele() {
 
   return {
     vide: false,
+    provisoire,
     entrees: ordonnees.map((e) => ({ ...e, encours: periode ? e.key === periode.key : false })),
-    examens: datees.filter((e) => e.type === 'examen'),
+    /* Les types réellement portés par le calendrier. La légende s'y limite :
+       elle annonce des repères, elle ne peut pas en promettre un que le
+       registre ne montre nulle part (cf. les examens, retirés faute de
+       source). */
+    types: new Set(ordonnees.map((e) => e.type)),
     mois,
     segments,
     bande,
@@ -204,6 +214,15 @@ export default function Calendrier() {
               <hr className="lp-filet" />
               <h2 className="lp-h2" id="lp-calendrier-titre">{T.titre}</h2>
               <p className="lp-lead">{T.chapo}</p>
+              {/* La réserve était en pied de section, en .lp-small : personne
+                  ne la lit après avoir noté une date. Elle ouvre désormais
+                  la section, avec la pastille d'attente du reste du site. */}
+              {m.provisoire && (
+                <p className="lp-small lp-calendrier__mention">
+                  <span className="lp-attente">{T.datesAConfirmer}</span>{' '}
+                  {MENTION_CALENDRIER}
+                </p>
+              )}
             </div>
 
             {m.statut && (
@@ -293,7 +312,10 @@ export default function Calendrier() {
               <ScrollReveal delay={120}>
                 <h3 className="lp-visually-hidden">{T.legendeTitre}</h3>
                 <ul className="lp-calendrier__legende">
-                  {T.legende.map((l) => (
+                  {/* « cours » n'est pas un type d'entrée : c'est la bande
+                      allumée entre les jalons, elle est toujours là. Les
+                      autres postes ne s'annoncent que s'ils existent. */}
+                  {T.legende.filter((l) => l.key === 'cours' || m.types.has(l.key)).map((l) => (
                     <li key={l.key} className="lp-calendrier__legende-item">
                       <span className={`lp-calendrier__puce lp-calendrier__puce--${l.key}`} aria-hidden="true" />
                       <span className="lp-calendrier__legende-txt">
@@ -305,72 +327,48 @@ export default function Calendrier() {
                 </ul>
               </ScrollReveal>
 
-              <div className="lp-calendrier__corps">
-                <ScrollReveal delay={160}>
-                  <h3 className="lp-visually-hidden">{T.registreTitre}</h3>
-                  {/* <ol> assumé : le calendrier est une vraie séquence,
-                      l'ordre y porte de l'information. */}
-                  <ol className="lp-calendrier__registre">
-                    {m.entrees.map((e) => (
-                      <li
-                        key={e.key}
-                        className={[
-                          'lp-calendrier__entree',
-                          actif === e.key ? 'is-actif' : '',
-                          e.encours ? 'is-encours' : '',
-                        ].filter(Boolean).join(' ')}
-                        {...survol(e.key)}
-                      >
-                        <span
-                          className={`lp-calendrier__marque lp-calendrier__marque--${e.type}`}
-                          aria-hidden="true"
-                        />
-                        <h4 className="lp-h4 lp-calendrier__titre">
-                          {e.libelle}
-                          {e.encours && <span className="lp-calendrier__badge">{T.badgeEnCours}</span>}
-                        </h4>
-                        <p className="lp-calendrier__dates lp-num">{rendreDates(e)}</p>
-                        {e.d && (
-                          <p className="lp-caption lp-num lp-calendrier__meta">
-                            {e.f
-                              ? `${nbJours(e.d, e.f)} jours`
-                              : capitale(fJourSemaine.format(e.d))}
-                          </p>
-                        )}
-                      </li>
-                    ))}
-                  </ol>
-                </ScrollReveal>
-
-                {m.examens.length > 0 && (
-                  <ScrollReveal delay={200}>
-                    <div className="lp-card lp-card--phare lp-calendrier__examens">
-                      <h3 className="lp-h3">{T.examensTitre}</h3>
-                      <p className="lp-p">{T.examensTexte}</p>
-                      <hr className="lp-rule" />
-                      <ul className="lp-calendrier__sessions">
-                        {m.examens.map((e) => (
-                          <li
-                            key={e.key}
-                            className={`lp-calendrier__session${actif === e.key ? ' is-actif' : ''}`}
-                            {...survol(e.key)}
-                          >
-                            <span className="lp-calendrier__session-lib">{e.libelle}</span>
-                            <span className="lp-calendrier__session-date lp-num">{rendreDates(e)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </ScrollReveal>
-                )}
-              </div>
+              {/* Le conteneur .lp-calendrier__corps a disparu avec le panneau
+                  des examens qu'il mettait en regard du registre : à deux
+                  colonnes pour un seul enfant, il aurait laissé le registre
+                  à 70 % de la largeur et une colonne vide à côté. Le rétablir
+                  le jour où le panneau revient. */}
+              <ScrollReveal delay={160}>
+                <h3 className="lp-visually-hidden">{T.registreTitre}</h3>
+                {/* <ol> assumé : le calendrier est une vraie séquence,
+                    l'ordre y porte de l'information. */}
+                <ol className="lp-calendrier__registre">
+                  {m.entrees.map((e) => (
+                    <li
+                      key={e.key}
+                      className={[
+                        'lp-calendrier__entree',
+                        actif === e.key ? 'is-actif' : '',
+                        e.encours ? 'is-encours' : '',
+                      ].filter(Boolean).join(' ')}
+                      {...survol(e.key)}
+                    >
+                      <span
+                        className={`lp-calendrier__marque lp-calendrier__marque--${e.type}`}
+                        aria-hidden="true"
+                      />
+                      <h4 className="lp-h4 lp-calendrier__titre">
+                        {e.libelle}
+                        {e.encours && <span className="lp-calendrier__badge">{T.badgeEnCours}</span>}
+                      </h4>
+                      <p className="lp-calendrier__dates lp-num">{rendreDates(e)}</p>
+                      {e.d && (
+                        <p className="lp-caption lp-num lp-calendrier__meta">
+                          {e.f
+                            ? `${nbJours(e.d, e.f)} jours`
+                            : capitale(fJourSemaine.format(e.d))}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </ScrollReveal>
             </>
           )}
-
-          <div className="lp-calendrier__pied">
-            <hr className="lp-rule" />
-            <p className="lp-small lp-calendrier__mention">{MENTION_CALENDRIER}</p>
-          </div>
 
         </div>
       </section>

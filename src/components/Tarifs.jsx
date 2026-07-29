@@ -1,12 +1,28 @@
 import {
+  ARGUMENTS,
+  DEVISE,
   FORMULES,
+  FORMULES_CUMULABLES,
   MOYENS_REGLEMENT,
   ORG,
+  PLACES_LIMITEES,
   SECTIONS,
+  TARIFS_AFFICHE,
   TARIFS_MENTION,
   TARIFS_TEXTES,
 } from '../data/contenu.js'
 import ScrollReveal from './ScrollReveal.jsx'
+
+/* ============================================================
+   MOSQUÉE EN-NOUR — Section « Formules & tarifs ».
+
+   Refonte sur l'affiche 2026-2027 : trois formules, trois montants
+   publics. La section n'est plus une liste d'offres à confirmer,
+   c'est une GRILLE DE COMPARAISON — d'où les trois bandes de prix
+   qui tombent exactement à la même hauteur (voir tarifs.css), et
+   la bande « cumulables » qui traverse la grille pour dire qu'on
+   n'y choisit pas forcément une seule colonne.
+   ============================================================ */
 
 /* Le surtitre est repris de la navigation : un seul libellé à maintenir,
    et la section ne peut pas se désynchroniser du menu. */
@@ -14,45 +30,43 @@ const LIBELLE = SECTIONS.find((s) => s.id === 'tarifs')?.label ?? 'Formules & ta
 
 /* Deux formateurs figés au chargement du module : instancier un
    Intl.NumberFormat à chaque rendu coûte cher, et le cas décimal est
-   trop rare pour mériter un calcul d'options à la volée. */
-const EUR_ENTIER = new Intl.NumberFormat('fr-FR', {
+   trop rare pour mériter un calcul d'options à la volée.
+   La locale et la monnaie viennent de DEVISE : aucun « € » n'est écrit
+   à la main dans ce fichier. */
+const MONTANT_ENTIER = new Intl.NumberFormat(DEVISE.locale, {
   style: 'currency',
-  currency: 'EUR',
+  currency: DEVISE.monnaie,
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
 })
-const EUR_DECIMAL = new Intl.NumberFormat('fr-FR', {
+const MONTANT_DECIMAL = new Intl.NumberFormat(DEVISE.locale, {
   style: 'currency',
-  currency: 'EUR',
+  currency: DEVISE.monnaie,
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 })
 
 /**
- * Formate un montant en euros, ou renvoie `null` si la donnée n'est pas
- * arrêtée (prix à null, marqueur « __A_CONFIRMER__ », NaN…).
- *
- * C'est l'UNIQUE point de bascule de la section : le jour où le bureau
- * renseigne un nombre dans FORMULES[].prix, la carte affiche le montant
- * formaté sans aucune autre retouche de code ni de style.
+ * Formate un montant, ou renvoie `null` si la donnée n'est pas exploitable
+ * (prix à null, NaN…). Les trois tarifs sont ronds : ils sortent sans
+ * décimales — « 300 € », jamais « 300,00 € ».
  */
 function formaterPrix(prix) {
   if (typeof prix !== 'number' || !Number.isFinite(prix)) return null
-  return Number.isInteger(prix) ? EUR_ENTIER.format(prix) : EUR_DECIMAL.format(prix)
+  return Number.isInteger(prix) ? MONTANT_ENTIER.format(prix) : MONTANT_DECIMAL.format(prix)
 }
 
 /**
- * L'étagère du prix. Deux états, une seule et même place dans la carte :
- * une valeur en attente est une lumière, pas un trou.
+ * La bande du prix. Le chemin d'attente est conservé — il ne se déclenche
+ * plus aujourd'hui, les trois montants étant publics — pour qu'un `prix`
+ * remis à null n'ouvre pas un trou dans la grille.
  */
 function Prix({ prix, prixNote }) {
   const montant = formaterPrix(prix)
 
   if (montant === null) {
     /* Aucun repli codé en dur : la phrase d'attente appartient à la formule
-       (FORMULES[].prixNote). Sans note, on n'invente pas de texte — le bloc
-       ne s'affiche simplement pas, et la mise au point sur les montants,
-       en tête de section, reste la seule parole du site sur les tarifs. */
+       (FORMULES[].prixNote). Sans note, on n'invente pas de texte. */
     return prixNote ? (
       <p className="lp-tarifs__attente">
         <span className="lp-attente">{prixNote}</span>
@@ -62,39 +76,143 @@ function Prix({ prix, prixNote }) {
 
   return (
     <>
-      <p className="lp-chiffre lp-num lp-tarifs__montant">{montant}</p>
+      <p className="lp-tarifs__montant">
+        <span className="lp-chiffre lp-num">{montant}</span>{' '}
+        {/* La période fait partie du prix : « 300 € » seul se lirait comme
+            un tarif mensuel. */}
+        <span className="lp-tarifs__periode">{TARIFS_AFFICHE.parAn}</span>
+      </p>
       {prixNote ? <p className="lp-caption">{prixNote}</p> : null}
     </>
   )
 }
 
-function CarteFormule({ formule, delai }) {
-  const { nom, rythme, prix, prixNote, inclus } = formule
+/**
+ * Les jours d'une séance, énumérés en français.
+ * `auChoix` change la liaison ET son poids : « Samedi OU Dimanche » sur
+ * l'affiche veut dire un seul des deux jours. Rendu « et », il doublerait
+ * l'offre annoncée — le mot est donc mis en évidence.
+ */
+function Jours({ jours, auChoix }) {
+  if (!jours?.length) return null
+  if (jours.length === 1) return jours[0]
+
+  const premiers = jours.slice(0, -1).join(', ')
+  const dernier = jours[jours.length - 1]
+  const liaison = auChoix ? TARIFS_AFFICHE.ou : TARIFS_AFFICHE.et
 
   return (
-    <ScrollReveal as="article" className="lp-card lp-tarifs__carte" delay={delai}>
+    <>
+      {premiers}{' '}
+      {auChoix ? <em className="lp-tarifs__ou">{liaison}</em> : liaison} {dernier}
+    </>
+  )
+}
+
+/* Une séance de la formule : ce qu'on vient faire, quel jour, à quelle heure.
+   Les horaires gardent la notation de la section « Planning » (20:00 – 21:30) :
+   deux façons d'écrire l'heure sur une même page se liraient comme deux
+   plannings différents. */
+function Seance({ seance }) {
+  const { libelle, detail, salutation, jours, debut, fin, auChoix } = seance
+
+  return (
+    <li className="lp-tarifs__seance">
+      <p className="lp-tarifs__seance-nom">{libelle}</p>
+
+      {detail ? (
+        <p className="lp-tarifs__seance-detail">
+          {detail}
+          {salutation ? (
+            <>
+              {' '}
+              {/* Alegreya Sans ne possède pas la ligature ﷺ : isolée dans
+                  .lp-arabe, elle est dessinée par Amiri. `lang="ar"` la fait
+                  annoncer en arabe plutôt qu'épeler en français au milieu
+                  d'une phrase — comme au planning, sur le même caractère. */}
+              <span className="lp-arabe" lang="ar">{salutation}</span>
+            </>
+          ) : null}
+        </p>
+      ) : null}
+
+      <p className="lp-tarifs__quand">
+        <span className="lp-tarifs__jours">
+          <Jours jours={jours} auChoix={auChoix} />
+        </span>
+        <span className="lp-tarifs__heure lp-num">
+          <time dateTime={debut}>{debut}</time>
+          <span aria-hidden="true"> – </span>
+          <span className="lp-visually-hidden">à</span>
+          <time dateTime={fin}>{fin}</time>
+        </span>
+      </p>
+    </li>
+  )
+}
+
+/* La carte compte cinq blocs et pas un de plus : c'est ce découpage que la
+   grille aligne d'une colonne à l'autre (subgrid, voir tarifs.css). En
+   ajouter un sixième désalignerait les trois bandes de prix. */
+function CarteFormule({ formule, delai }) {
+  const { numero, nom, sousTitre, rythme, prix, prixNote, inclus, seances } = formule
+  const titreId = `tarifs-${formule.key}`
+  const auChoix = seances?.some((s) => s.auChoix)
+
+  return (
+    <ScrollReveal
+      as="article"
+      className="lp-card lp-tarifs__carte"
+      delay={delai}
+      aria-labelledby={titreId}
+    >
       <header className="lp-tarifs__tete">
-        <h3 className="lp-h3 lp-tarifs__nom">{nom}</h3>
-        {rythme ? <p className="lp-caption lp-num lp-tarifs__rythme">{rythme}</p> : null}
+        {typeof numero === 'number' ? (
+          <p className="lp-eyebrow lp-eyebrow--sourd lp-tarifs__numero">
+            {TARIFS_AFFICHE.formule} <span className="lp-num">{numero}</span>
+          </p>
+        ) : null}
+        <h3 className="lp-h3 lp-tarifs__nom" id={titreId}>
+          {nom}
+        </h3>
+        {sousTitre ? <p className="lp-tarifs__sous">{sousTitre}</p> : null}
+        {rythme ? <p className="lp-caption lp-tarifs__rythme">{rythme}</p> : null}
       </header>
 
       <div className="lp-tarifs__prix">
         <Prix prix={prix} prixNote={prixNote} />
       </div>
 
-      {inclus?.length ? (
-        <ul className="lp-tarifs__inclus">
-          {inclus.map((ligne) => (
-            <li key={ligne}>{ligne}</li>
-          ))}
-        </ul>
-      ) : null}
+      <div className="lp-tarifs__bloc">
+        {inclus?.length ? (
+          <>
+            <h4 className="lp-eyebrow lp-eyebrow--sourd">{TARIFS_AFFICHE.programme}</h4>
+            <ul className="lp-tarifs__inclus">
+              {inclus.map((ligne) => (
+                <li key={ligne}>{ligne}</li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+      </div>
+
+      <div className="lp-tarifs__bloc">
+        {seances?.length ? (
+          <>
+            <h4 className="lp-eyebrow lp-eyebrow--sourd">{TARIFS_AFFICHE.seances}</h4>
+            <ul className="lp-tarifs__seances">
+              {seances.map((seance) => (
+                <Seance key={`${seance.libelle}-${seance.debut}`} seance={seance} />
+              ))}
+            </ul>
+            {auChoix ? (
+              <p className="lp-small lp-tarifs__auchoix">{TARIFS_AFFICHE.auChoixNote}</p>
+            ) : null}
+          </>
+        ) : null}
+      </div>
 
       <p className="lp-tarifs__liens">
-        <a className="lp-lien" href="#cours">
-          {TARIFS_TEXTES.voirPole}
-          <span className="lp-visually-hidden"> — {nom}</span>
-        </a>
         <a className="lp-lien" href="#inscription">
           {TARIFS_TEXTES.sInscrire}
           <span className="lp-visually-hidden"> — {nom}</span>
@@ -107,8 +225,7 @@ function CarteFormule({ formule, delai }) {
 export default function Tarifs() {
   const formules = FORMULES ?? []
   const moyens = MOYENS_REGLEMENT ?? []
-  const famille = TARIFS_MENTION?.famille
-  const familleEnAttente = famille?.statut === 'a-confirmer'
+  const mentions = ARGUMENTS ?? []
 
   return (
     <section id="tarifs" className="lp-section lp-tarifs" aria-labelledby="tarifs-titre">
@@ -144,6 +261,20 @@ export default function Tarifs() {
           </p>
         )}
 
+        {/* La bande qui traverse la grille : sans elle, trois colonnes
+            côte à côte se lisent comme un choix exclusif. Le « plus » est
+            dessiné avec deux .lp-filet croisés — le vocabulaire du site,
+            pas un pictogramme importé. */}
+        {FORMULES_CUMULABLES ? (
+          <ScrollReveal className="lp-tarifs__cumul">
+            <span className="lp-tarifs__plus" aria-hidden="true" />
+            <div className="lp-tarifs__cumul-corps">
+              <h3 className="lp-h3">{FORMULES_CUMULABLES.titre}</h3>
+              <p className="lp-p">{FORMULES_CUMULABLES.texte}</p>
+            </div>
+          </ScrollReveal>
+        ) : null}
+
         <hr className="lp-horizon lp-horizon--sourd lp-tarifs__coupure" />
 
         <ScrollReveal className="lp-tarifs__pied">
@@ -165,26 +296,31 @@ export default function Tarifs() {
             )}
           </div>
 
-          {/* La colonne d'action : c'est elle qui porte la carte et l'unique
-              bouton primaire de la section. */}
+          {/* La colonne d'action : l'unique bouton primaire de la section,
+              et la seule mention de places — posée là parce que c'est au
+              moment d'agir qu'elle informe, pas quand elle alarme. */}
           <div className="lp-card lp-tarifs__action">
-            {famille ? (
-              <>
-                <h3 className="lp-h4">{famille.libelle}</h3>
-                <p className="lp-p">{famille.detail}</p>
-                {familleEnAttente ? (
-                  <p className="lp-tarifs__attente">
-                    <span className="lp-attente">{TARIFS_TEXTES.familleAConfirmer}</span>
-                  </p>
-                ) : null}
-                <hr className="lp-rule" />
-              </>
-            ) : null}
             <a className="lp-btn lp-btn--primaire lp-tarifs__cta" href="#inscription">
               {TARIFS_TEXTES.ctaInscription}
             </a>
+            {PLACES_LIMITEES ? (
+              <p className="lp-small lp-tarifs__places">{PLACES_LIMITEES}</p>
+            ) : null}
           </div>
         </ScrollReveal>
+
+        {mentions.length ? (
+          <>
+            <hr className="lp-rule lp-tarifs__coupure-basse" />
+            <ScrollReveal as="ul" className="lp-tarifs__arguments">
+              {mentions.map((mention) => (
+                <li key={mention.key} className="lp-tarifs__argument">
+                  {mention.libelle}
+                </li>
+              ))}
+            </ScrollReveal>
+          </>
+        ) : null}
       </div>
     </section>
   )

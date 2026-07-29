@@ -16,10 +16,17 @@ import { ORG, POLES, CRENEAUX, HERO, estAConfirmer } from '../data/contenu.js'
    été retirée, et le portail dessiné prend sa place.
    ============================================================ */
 
-/* Créneaux réellement programmés chaque semaine. Compter CRENEAUX.length
-   annoncerait 6 alors que « Fiqh — niveau 1 » n'a aucun jour arrêté et se
-   range, plus bas, sous « En attente de programmation ». */
-const NB_CRENEAUX_PROGRAMMES = CRENEAUX.filter((c) => c.jours?.length > 0).length
+/* Le repère compte des SÉANCES, pas des entrées de CRENEAUX : une entrée
+   posée sur trois jours vaut trois séances dans la semaine.
+   `auChoix` est l'exception qui compte pour UNE : l'affiche écrit « Samedi
+   OU Dimanche », l'élève ne vient qu'un des deux jours. La compter deux fois
+   annoncerait une offre deux fois plus large que celle qui existe.
+   Même règle que la section « Les cours » et que le planning — les trois
+   décomptes de la page doivent tomber sur le même chiffre. */
+const NB_SEANCES_SEMAINE = CRENEAUX.reduce(
+  (total, c) => total + (c.auChoix ? 1 : (c.jours?.length ?? 0)),
+  0,
+)
 
 /* Le portail : trois arcs emboîtés, la géométrie de la porte de la mosquée
    ramenée à ses lignes. Il remplace la photo — qui n'était fournie que comme
@@ -98,7 +105,7 @@ export default function Hero() {
     },
     {
       cle: 'creneaux',
-      valeur: NB_CRENEAUX_PROGRAMMES > 0 ? String(NB_CRENEAUX_PROGRAMMES) : null,
+      valeur: NB_SEANCES_SEMAINE > 0 ? String(NB_SEANCES_SEMAINE) : null,
       libelle: HERO.reperes.creneaux,
     },
     {
@@ -140,15 +147,25 @@ export default function Hero() {
             <p className="lp-eyebrow">{HERO.mission.surtitre}</p>
             <hr className="lp-filet lp-hero__filet" />
             <p className="lp-lead lp-hero__mission-texte">{HERO.mission.texte}</p>
-            {/* La réserve suit immédiatement la mention « à partir de 6 ans » :
-                elle n'a de sens qu'accolée à elle. */}
-            <p className="lp-hero__reserve">
-              <span className="lp-attente">{HERO.mission.reserve}</span>
-            </p>
+            {/* La réserve qui accompagnait « à partir de 6 ans » a été retirée
+                en même temps que cette mention : l'offre publiée est
+                exclusivement adulte, il n'y a plus rien à réserver. */}
             <p className="lp-small lp-hero__mixite">{HERO.chapo}</p>
           </div>
 
-          <div className="lp-hero__actions lp-hero__entree" style={{ '--entree-retard': '300ms' }}>
+          {/* L'annonce d'ouverture est la seule information datée du premier
+              écran, et la seule qui appelle un geste. Elle se pose donc contre
+              les boutons qui la servent, et non dans un bandeau flottant.
+              Volontairement PAS un titre : ouvrir un niveau de hiérarchie sous
+              le <h1> pour deux lignes désorganiserait le plan de la page.
+              Volontairement pas la pastille .lp-attente non plus — celle-ci
+              signale ce qui n'est pas arrêté ; ici tout l'est. */}
+          <p className="lp-hero__annonce lp-hero__entree" style={{ '--entree-retard': '240ms' }}>
+            <span className="lp-hero__annonce-titre">{HERO.annonce.titre}</span>
+            <span className="lp-hero__annonce-detail">{HERO.annonce.detail}</span>
+          </p>
+
+          <div className="lp-hero__actions lp-hero__entree" style={{ '--entree-retard': '320ms' }}>
             <a className="lp-btn lp-btn--primaire" href={HERO.ctaPrimaire.href}>
               {HERO.ctaPrimaire.libelle}
             </a>

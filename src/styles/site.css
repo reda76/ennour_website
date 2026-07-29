@@ -32,7 +32,10 @@ img, svg { max-width: 100%; }
   outline-offset: 2px;
   border-radius: var(--r-1);
 }
-::selection { background: var(--accent); color: var(--bg); }
+/* --fg-on-accent et non --bg : --accent est un APLAT (3,20:1 sous --bg),
+   on n'y pose pas de texte. L'encre y donne 4,79:1 — c'est déjà ce
+   qu'emploie .lp-btn--primaire sur le même aplat. */
+::selection { background: var(--accent); color: var(--fg-on-accent); }
 
 /* ---------- Layout ---------- */
 .lp-wrap {
@@ -63,13 +66,18 @@ img, svg { max-width: 100%; }
 }
 
 /* ---------- Accessibilité ---------- */
+/* C'est le tout premier élément qu'un utilisateur au clavier atteint sur la
+   page : il ne peut pas être celui qui échoue au contraste. --bg sur
+   --accent ne donnait que 3,20:1 pour un texte de 16px en gras — sous les
+   18,66px du « large text » de WCAG, le seuil AA reste donc 4,5:1.
+   --fg-on-accent porte le rôle et donne 4,79:1. */
 .lp-skip {
   position: absolute;
   left: -9999px;
   top: 0;
   z-index: 200;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--fg-on-accent);
   padding: 10px 18px;
   font-weight: var(--fw-semibold);
 }

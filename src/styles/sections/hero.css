@@ -115,12 +115,52 @@
   font-weight: var(--fw-regular);
 }
 
-.lp-hero__reserve {
-  margin: 0;
-}
-
 .lp-hero__mixite {
   max-width: 46ch;
+}
+
+/* ---------- L'annonce d'inscription ----------
+
+   Elle doit se distinguer de la pastille « à confirmer » (.lp-attente),
+   qui partage la même famille de orange : celle-ci est en pointillé sur
+   voile, l'annonce est pleine, posée sur du blanc et adossée à un montant
+   plein. Un document affiché, pas une réserve. */
+
+.lp-hero__annonce {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* max-content pour que le bloc s'arrête au texte : étiré sur la colonne,
+     il devenait une bannière et écrasait les boutons qu'il annonce. */
+  max-width: 100%;
+  width: max-content;
+  margin: 0;
+  padding: var(--sp-3) var(--sp-5);
+  /* Le montant orange à gauche : le même geste que .lp-filet, dressé. */
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r-0) var(--r-1) var(--r-1) var(--r-0);
+  background: var(--surface);
+  box-shadow: var(--edge-light);
+}
+
+.lp-hero__annonce-titre {
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  /* --accent-bright et non --accent : c'est du texte, à 5:1. */
+  color: var(--accent-bright);
+}
+
+.lp-hero__annonce-detail {
+  font-family: var(--ff-display);
+  font-size: var(--fs-20);
+  line-height: var(--lh-title);
+  color: var(--fg);
+  /* L'année « 2026 – 2027 » est un chiffre dans une phrase : chasse fixe,
+     sans passer par .lp-num, qui s'appliquerait à toute la ligne. */
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Actions ---------- */

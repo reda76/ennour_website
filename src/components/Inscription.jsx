@@ -2,8 +2,11 @@ import { useEffect, useId, useRef, useState } from 'react'
 import ScrollReveal from './ScrollReveal.jsx'
 import {
   ACTEURS_ETAPES,
+  DEVISE,
   ETAPES_INSCRIPTION,
   FORMULES,
+  INSCRIPTION_FORMULES,
+  INSCRIPTION_TEXTES,
   INTRO_INSCRIPTION,
   MENTION_CHAMPS_REQUIS,
   MENTION_CONSENTEMENT,
@@ -12,19 +15,28 @@ import {
   MOYENS_REGLEMENT,
   NIVEAUX,
   ORG,
-  PUBLICS_OUVERTS,
   SECTIONS,
+  TARIFS_AFFICHE,
   estAConfirmer,
 } from '../data/contenu.js'
 
-/* État initial du formulaire. Hors composant : il ne change jamais. */
+/* État initial du formulaire. Hors composant : il ne change jamais.
+
+   `formules` est un TABLEAU depuis que l'affiche annonce les formules
+   cumulables : un choix unique aurait obligé qui veut le Coran ET les
+   sciences musulmanes à mentir dans le formulaire, ou à l'écrire en
+   commentaire — c'est-à-dire à donner à l'équipe une donnée qu'elle ne
+   peut pas traiter.
+
+   Le champ « Public » a disparu : PUBLICS ne porte plus qu'« Adultes ».
+   Un choix à une seule option ne demande rien ; il fait seulement croire
+   qu'une autre réponse existe. */
 const VIDE = {
   prenom: '',
   nom: '',
   email: '',
   telephone: '',
-  formule: '',
-  public: '',
+  formules: [],
   niveau: '',
   message: '',
   consentement: false,
@@ -32,7 +44,15 @@ const VIDE = {
 
 /* Ordre de parcours pour porter le focus sur la PREMIÈRE erreur telle que
    l'œil la rencontre, pas telle que l'objet d'erreurs est construit. */
-const ORDRE_CHAMPS = ['prenom', 'nom', 'email', 'telephone', 'formule', 'public', 'niveau', 'consentement']
+const ORDRE_CHAMPS = ['prenom', 'nom', 'email', 'telephone', 'formules', 'niveau', 'consentement']
+
+/* Un seul formateur pour toute la section : la monnaie passe par Intl,
+   jamais par un « € » écrit à la main, et les tarifs sont ronds. */
+const EUROS = new Intl.NumberFormat(DEVISE.locale, {
+  style: 'currency',
+  currency: DEVISE.monnaie,
+  maximumFractionDigits: 0,
+})
 
 /* Volontairement permissif : un e-mail se vérifie à l'envoi, pas au clavier.
    On n'écarte ici que les saisies manifestement incomplètes. */
@@ -52,9 +72,15 @@ function valider(d) {
 
   /* Les listes viennent du contenu : si elles sont vides, on n'exige pas
      un choix impossible à faire. */
-  if (FORMULES.length && !d.formule) e.formule = 'Choisissez une formule.'
-  if (PUBLICS_OUVERTS.length && !d.public) e.public = 'Indiquez pour qui est cette inscription.'
-  if (NIVEAUX.length && !d.niveau) e.niveau = 'Indiquez votre niveau estimé.'
+  if (FORMULES.length && d.formules.length === 0) e.formules = INSCRIPTION_FORMULES.erreur
+
+  /* « Niveau estimé » n'est plus exigé. L'affiche ne publie aucune échelle
+     de niveaux, aucun groupe de niveau, aucun entretien de placement : un
+     débutant complet devait pourtant se classer sur une échelle qui
+     n'existe pas dans l'offre, faute de quoi sa demande était bloquée.
+     Le champ reste — il renseigne utilement le secrétariat — mais il
+     n'arrête plus personne. */
+
   if (!d.consentement) e.consentement = 'Votre accord est nécessaire pour que nous puissions traiter la demande.'
 
   return e
@@ -94,6 +120,18 @@ export default function Inscription() {
     })
   }
 
+  /* Les formules sont cochées, donc cumulées. L'ordre de FORMULES est
+     conservé plutôt que l'ordre des clics : le récapitulatif doit se lire
+     dans le même ordre que l'affiche et que la section « Formules ». */
+  function basculerFormule(cle, coche) {
+    modifier(
+      'formules',
+      coche
+        ? FORMULES.filter((f) => f.key === cle || donnees.formules.includes(f.key)).map((f) => f.key)
+        : donnees.formules.filter((k) => k !== cle),
+    )
+  }
+
   function soumettre(evt) {
     evt.preventDefault()
     const trouvees = valider(donnees)
@@ -118,21 +156,33 @@ export default function Inscription() {
     // se pose l'appel réel une fois le back-end en place :
     //   await fetch('/api/inscription', { method: 'POST', headers: {...},
     //     body: JSON.stringify(donnees) })
-    // puis, selon la formule choisie, la redirection vers la campagne
-    // HelloAsso correspondante. Tant que ce point de terminaison n'existe
+    // puis, si et seulement si la mosquée ouvre une campagne HelloAsso et
+    // en fournit l'URL, la redirection correspondante — et c'est alors
+    // seulement que l'entrée « HelloAsso » revient dans MOYENS_REGLEMENT.
+    // Tant que ce point de terminaison n'existe
     // pas, on n'appelle RIEN et on n'affiche jamais « demande envoyée » :
     // le récapitulatif ci-dessous est le seul état honnête possible.
   }
 
-  const formuleChoisie = FORMULES.find((f) => f.key === donnees.formule)
+  /* Le libellé porté au récapitulatif dit AUSSI le prix : c'est ce que la
+     personne transmettra au secrétariat, et un nom de formule seul obligerait
+     les deux parties à retourner à l'affiche pour savoir de quoi on parle.
+     Aucun total n'est calculé : l'affiche annonce les formules cumulables
+     mais ne dit rien d'un tarif de plusieurs formules — l'addition serait
+     une hypothèse, et c'est à la mosquée de la faire. */
+  function libelleFormule(f) {
+    const prix = f.prix == null ? f.prixNote : `${EUROS.format(f.prix)} ${TARIFS_AFFICHE.parAn}`
+    return prix ? `${f.nom} (${prix})` : f.nom
+  }
+
+  const formulesChoisies = FORMULES.filter((f) => donnees.formules.includes(f.key))
 
   const recapitulatif = [
     ['Prénom', donnees.prenom.trim()],
     ['Nom', donnees.nom.trim()],
     ['E-mail', donnees.email.trim()],
     ['Téléphone', donnees.telephone.trim()],
-    ['Formule souhaitée', formuleChoisie?.nom],
-    ['Public', donnees.public],
+    [INSCRIPTION_FORMULES.recap, formulesChoisies.map(libelleFormule).join(' + ')],
     ['Niveau estimé', donnees.niveau],
     ['Message', donnees.message.trim()],
   ].filter(([, valeur]) => valeur)
@@ -336,63 +386,85 @@ export default function Inscription() {
                     </div>
                   </div>
 
-                  <div className="lp-inscription__rang">
-                    <div className="lp-inscription__champ">
-                      <label className="lp-inscription__label" htmlFor={id('formule')}>Formule souhaitée</label>
-                      <select
-                        id={id('formule')}
-                        className="lp-inscription__select"
-                        name="formule"
-                        required
-                        value={donnees.formule}
-                        onChange={(e) => modifier('formule', e.target.value)}
-                        aria-invalid={erreurs.formule ? true : undefined}
-                        aria-describedby={decrit('formule', false)}
-                        ref={(el) => { champsRef.current.formule = el }}
-                        disabled={FORMULES.length === 0}
-                      >
-                        <option value="">Choisir une formule…</option>
-                        {FORMULES.map((f) => (
-                          <option key={f.key} value={f.key}>{f.nom} — {f.rythme}</option>
+                  {/* Cases à cocher et non liste déroulante : les formules sont
+                      cumulables. Le contrôle doit dire ce que la règle permet,
+                      sans quoi le formulaire contredit la section « Tarifs »
+                      deux écrans plus haut. Trois options tiennent à l'écran :
+                      les montrer toutes vaut mieux que les cacher dans un menu. */}
+                  {FORMULES.length > 0 ? (
+                    <fieldset
+                      className="lp-inscription__champ lp-inscription__fieldset"
+                      /* role explicite, et PAS d'aria-invalid : un <fieldset>
+                         est exposé en role="group", qui ne prend pas en charge
+                         cet attribut — contrairement au radiogroup du groupe
+                         « Niveau » juste en dessous. L'erreur est portée par
+                         aria-describedby, qui la fait lire, et par un
+                         data-invalid que le CSS accroche pour donner au groupe
+                         la même arête orange qu'à un champ de saisie. */
+                      role="group"
+                      data-invalid={erreurs.formules ? 'oui' : undefined}
+                      aria-describedby={decrit('formules', true)}
+                    >
+                      <legend className="lp-inscription__label">{INSCRIPTION_FORMULES.legende}</legend>
+                      <p className="lp-small" id={idAide('formules')}>{INSCRIPTION_FORMULES.aide}</p>
+                      <div className="lp-inscription__formules">
+                        {FORMULES.map((f, i) => (
+                          <label className="lp-inscription__formule" key={f.key}>
+                            <input
+                              type="checkbox"
+                              name="formules"
+                              value={f.key}
+                              checked={donnees.formules.includes(f.key)}
+                              onChange={(e) => basculerFormule(f.key, e.target.checked)}
+                              /* Le focus de validation se porte sur la première
+                                 case : c'est le début du groupe, pas une case
+                                 en particulier. */
+                              ref={i === 0 ? (el) => { champsRef.current.formules = el } : undefined}
+                            />
+                            <span className="lp-inscription__formule-corps">
+                              <span className="lp-inscription__formule-nom">{f.nom}</span>
+                              <span className="lp-small lp-inscription__formule-rythme">{f.rythme}</span>
+                            </span>
+                            <span className="lp-inscription__formule-prix">
+                              {f.prix == null ? (
+                                <span className="lp-attente">{f.prixNote ?? INSCRIPTION_FORMULES.prixAConfirmer}</span>
+                              ) : (
+                                <>
+                                  <span className="lp-num">{EUROS.format(f.prix)}</span>{' '}
+                                  <span className="lp-small">{TARIFS_AFFICHE.parAn}</span>
+                                </>
+                              )}
+                            </span>
+                          </label>
                         ))}
-                      </select>
-                      {FORMULES.length === 0 && <span className="lp-attente">Formules à confirmer</span>}
-                      {erreurs.formule && <p className="lp-inscription__erreur" id={idErreur('formule')}>{erreurs.formule}</p>}
-                    </div>
-
+                      </div>
+                      {erreurs.formules && (
+                        <p className="lp-inscription__erreur" id={idErreur('formules')}>{erreurs.formules}</p>
+                      )}
+                    </fieldset>
+                  ) : (
                     <div className="lp-inscription__champ">
-                      <label className="lp-inscription__label" htmlFor={id('public')}>Public</label>
-                      <select
-                        id={id('public')}
-                        className="lp-inscription__select"
-                        name="public"
-                        required
-                        value={donnees.public}
-                        onChange={(e) => modifier('public', e.target.value)}
-                        aria-invalid={erreurs.public ? true : undefined}
-                        aria-describedby={decrit('public', false)}
-                        ref={(el) => { champsRef.current.public = el }}
-                        disabled={PUBLICS_OUVERTS.length === 0}
-                      >
-                        <option value="">Choisir…</option>
-                        {PUBLICS_OUVERTS.map((p) => (
-                          <option key={p} value={p}>{p}</option>
-                        ))}
-                      </select>
-                      {erreurs.public && <p className="lp-inscription__erreur" id={idErreur('public')}>{erreurs.public}</p>}
+                      <span className="lp-inscription__label">{INSCRIPTION_FORMULES.legende}</span>
+                      <span className="lp-attente">{INSCRIPTION_FORMULES.aConfirmer}</span>
                     </div>
-                  </div>
+                  )}
 
                   {NIVEAUX.length > 0 && (
                     <fieldset
                       className="lp-inscription__champ lp-inscription__fieldset"
                       role="radiogroup"
                       aria-invalid={erreurs.niveau ? true : undefined}
+                      data-invalid={erreurs.niveau ? 'oui' : undefined}
                       aria-describedby={decrit('niveau', true)}
                     >
-                      <legend className="lp-inscription__label">Niveau estimé</legend>
+                      <legend className="lp-inscription__label">
+                        {INSCRIPTION_TEXTES.niveauLegende}{' '}
+                        <span className="lp-inscription__facultatif">
+                          {INSCRIPTION_TEXTES.facultatif}
+                        </span>
+                      </legend>
                       <p className="lp-small" id={idAide('niveau')}>
-                        Une estimation suffit : l’équipe pédagogique confirme le niveau à l’entretien.
+                        {INSCRIPTION_TEXTES.niveauAide}
                       </p>
                       <div className="lp-inscription__niveaux">
                         {NIVEAUX.map((niveau, i) => (
@@ -415,7 +487,10 @@ export default function Inscription() {
 
                   <div className="lp-inscription__champ">
                     <label className="lp-inscription__label" htmlFor={id('message')}>
-                      Message <span className="lp-inscription__facultatif">(facultatif)</span>
+                      Message{' '}
+                      <span className="lp-inscription__facultatif">
+                        {INSCRIPTION_TEXTES.facultatif}
+                      </span>
                     </label>
                     <textarea
                       id={id('message')}
@@ -465,11 +540,15 @@ export default function Inscription() {
 
             <aside className="lp-inscription__aide" aria-label="Inscription — informations pratiques">
               <ScrollReveal className="lp-card lp-inscription__bloc">
-                <h3 className="lp-h4">S’inscrire autrement</h3>
-                <p className="lp-p">
-                  Le formulaire n’est pas obligatoire : le secrétariat prend aussi les inscriptions par
-                  téléphone et sur place.
-                </p>
+                {/* Le bloc s'intitulait « S'inscrire autrement » et annonçait
+                    que « le secrétariat prend aussi les inscriptions par
+                    téléphone et sur place » — l'affiche dit l'inverse :
+                    « INSCRIPTION SUR LE SITE INTERNET DES COURS DE LA
+                    MOSQUÉE ». On n'ouvre pas un canal à la place de la
+                    mosquée ; on annonce le seul usage établi du numéro
+                    qu'elle publie : répondre aux questions. */}
+                <h3 className="lp-h4">{INSCRIPTION_TEXTES.aideTitre}</h3>
+                <p className="lp-p">{INSCRIPTION_TEXTES.aideTexte}</p>
                 <hr className="lp-rule" />
                 <dl className="lp-inscription__coord">
                   <div>
@@ -478,8 +557,10 @@ export default function Inscription() {
                       {telConnu ? (
                         <a className="lp-lien lp-num" href={ORG.telHref}>{ORG.tel}</a>
                       ) : (
-                        /* TODO — afficher le lien tel: dès que ORG.tel ET ORG.telHref
-                           sont renseignés : le href actuel est un numéro factice. */
+                        /* Le numéro vient de l'affiche 2026-2027 et ORG.telHref
+                           lui correspond : le lien tel: ci-dessus est le chemin
+                           NORMAL. Ce repli ne sert plus que si ORG.tel redevient
+                           un marqueur d'attente. */
                         <span className="lp-attente">Numéro à confirmer</span>
                       )}
                     </dd>
@@ -504,12 +585,14 @@ export default function Inscription() {
               {MOYENS_REGLEMENT.length > 0 && (
                 <ScrollReveal className="lp-card lp-inscription__bloc" delay={90}>
                   <h3 className="lp-h4">Règlement</h3>
-                  <p className="lp-small">Après validation pédagogique, jamais avant.</p>
+                  <p className="lp-small">{INSCRIPTION_TEXTES.reglementNote}</p>
                   <ul className="lp-inscription__reglement">
                     {MOYENS_REGLEMENT.map((moyen) => (
                       <li key={moyen.key}>
                         <span className="lp-inscription__moyen">{moyen.libelle}</span>
-                        <span className="lp-small">{moyen.detail}</span>
+                        {/* Un moyen peut n'avoir rien de plus à dire que son
+                            libellé : on ne pose pas un <span> vide. */}
+                        {moyen.detail ? <span className="lp-small">{moyen.detail}</span> : null}
                       </li>
                     ))}
                   </ul>
