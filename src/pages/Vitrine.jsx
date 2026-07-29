@@ -1,5 +1,6 @@
 import Nav from '../components/Nav.jsx'
 import Hero from '../components/Hero.jsx'
+import Facade from '../components/Facade.jsx'
 import Cours from '../components/Cours.jsx'
 import Planning from '../components/Planning.jsx'
 import Tarifs from '../components/Tarifs.jsx'
@@ -34,8 +35,11 @@ import Footer from '../components/Footer.jsx'
    ============================================================ */
 
 /* Abscisses du foyer lumineux, dans l'ordre des raccords. Jamais deux
-   valeurs voisines proches : le balayage doit se voir. */
-const HORIZONS = ['26%', '70%', '18%', '62%', '34%', '78%']
+   valeurs voisines proches : le déplacement doit se voir.
+   CINQ valeurs et non six : le raccord accueil → cours est désormais tenu
+   par le bandeau de façade, qui sépare bien plus franchement qu'un filet.
+   Retirer ou ajouter un raccord oblige à reprendre cette liste. */
+const HORIZONS = ['70%', '18%', '62%', '34%', '78%']
 
 function Horizon({ rang }) {
   return <hr className="lp-horizon" style={{ '--horizon-x': HORIZONS[rang] }} />
@@ -53,22 +57,23 @@ export default function Vitrine() {
           point d'atterrissage, pas un contrôle. */}
       <main id="contenu" tabIndex={-1}>
         <Hero />
-        <Horizon rang={0} />
+        {/* Le bandeau tient lieu de raccord : pas d'horizon ici. */}
+        <Facade />
 
         <Cours />
-        <Horizon rang={1} />
+        <Horizon rang={0} />
 
         <Planning />
-        <Horizon rang={2} />
+        <Horizon rang={1} />
 
         <Tarifs />
-        <Horizon rang={3} />
+        <Horizon rang={2} />
 
         <Calendrier />
-        <Horizon rang={4} />
+        <Horizon rang={3} />
 
         <Inscription />
-        <Horizon rang={5} />
+        <Horizon rang={4} />
 
         <Contact />
       </main>

@@ -119,16 +119,38 @@ export const LOGO_AME = {
 }
 
 /* ---------- Photographies du lieu ----------
-   AUCUNE pour le moment. La photo de la façade transmise par la mosquée
-   ne l'avait été qu'à titre de RÉFÉRENCE DE COULEUR — elle a servi à
-   relever la palette (voir tokens.css) puis a été retirée du site.
+   La première photo transmise (214 × 553 px) ne l'avait été qu'à titre de
+   référence de couleur : elle a servi à relever la palette puis a été
+   retirée. Celle-ci est une vraie prise de vue, 1672 × 941, en paysage.
 
-   Le premier écran s'appuie donc sur un portail dessiné, insensible à la
-   résolution. Le jour où de vraies photos arrivent (salles de cours,
-   intérieur, façade en pied, 1600 px de large minimum), les déposer dans
-   public/photos/ et déclarer un export PHOTOS ici. Attention : les chemins
-   doivent passer par import.meta.env.BASE_URL, sans quoi ils casseront sur
-   le sous-chemin de déploiement.                                        */
+   `srcset` s'arrête à 1672 px : c'est la largeur native du fichier. Au-delà,
+   on ne fabriquerait que du flou vendu comme de la définition. Conséquence
+   assumée : sur un écran très large à forte densité, le bandeau est
+   légèrement adouci. Une source plus grande le corrigerait.
+
+   `focus` est le point d'ancrage vertical du recadrage, et il est CALCULÉ,
+   pas estimé. Le bandeau fait 1440 × 400 sur un écran courant ; l'image
+   passée en `cover` y est mise à l'échelle en 1440 × 810, donc 410 px sortent
+   du cadre. L'enseigne « مسجد النور / MOSQUÉE EN-NOUR LE HAVRE » occupe la
+   bande 8–35 % de la hauteur : pour qu'elle tienne entière, la fenêtre doit
+   commencer au-dessus de 8 %, soit un focus ≤ 16 %. À 42 % elle démarrait à
+   21 % et le haut de l'enseigne était tranché — or c'est elle qui identifie
+   le lieu. 12 % laisse une marge, et un filet de ciel au-dessus.
+
+   Sans effet sur mobile : le cadre y est plus haut que large par rapport à
+   l'image, le recadrage s'y fait donc horizontalement.                    */
+export const PHOTOS = {
+  facade: {
+    src: `${BASE}photos/facade-ennour-1672.webp`,
+    srcset: `${BASE}photos/facade-ennour-1000.webp 1000w, ${BASE}photos/facade-ennour-1672.webp 1672w`,
+    largeur: 1672,
+    hauteur: 941,
+    focus: '12%',
+    alt:
+      'La façade de la mosquée En-Nour au Havre : deux grands arcs outrepassés orange sur un mur clair, surmontés d’une enseigne portant « مسجد النور » et « MOSQUÉE EN-NOUR LE HAVRE ».',
+    legende: 'La mosquée En-Nour, au Havre.',
+  },
+}
 
 /* ---------- Planning 2026-2027 ----------
    Transcrit des notes manuscrites de l'équipe.

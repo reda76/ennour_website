@@ -1,0 +1,80 @@
+/* ============================================================
+   MOSQUÉE EN-NOUR — Le bandeau de façade.
+
+   Pleine largeur, entre le premier écran et « Les cours ».
+   Il remplace le filet d'horizon de ce raccord.
+   ============================================================ */
+
+.lp-facade {
+  position: relative;
+  margin: 0;
+  /* La grille de page est bornée à --content-max ; ce bandeau doit en sortir.
+     Aucun `100vw` ici : sur un système à barre de défilement permanente,
+     100vw compte la barre et provoque un débordement horizontal de la page. */
+  width: 100%;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.lp-facade__image {
+  display: block;
+  width: 100%;
+  /* height: auto indispensable — les attributs width/height de la balise,
+     posés pour réserver la place, s'appliqueraient sinon comme hauteur de
+     présentation et `aspect-ratio` ne jouerait jamais. Déjà rencontré. */
+  height: auto;
+  /* Assez haut pour que l'enseigne et les deux arcs tiennent, assez court
+     pour rester une BANDE. À 62svh le bandeau faisait 558px sur un écran
+     courant : un second premier écran, qui repoussait « Les cours » à
+     1400px de haut. La borne haute en pixels compte autant que la relative,
+     sinon un grand écran vertical le laisse enfler. */
+  aspect-ratio: 16 / 9;
+  max-height: clamp(220px, 40svh, 420px);
+  object-fit: cover;
+  /* object-position est posé en ligne depuis les données (PHOTOS.facade.focus) :
+     c'est une propriété du cadrage de CETTE image, pas du gabarit. */
+}
+
+/* La légende flotte sur l'angle bas droit de l'image, sur une pastille de
+   plâtre : posée à même la photo, elle tombait sur les bambous et devenait
+   illisible. La pastille garantit le contraste quel que soit le recadrage. */
+.lp-facade__legende {
+  position: absolute;
+  right: var(--sp-4);
+  bottom: var(--sp-4);
+  max-width: calc(100% - var(--sp-8));
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--r-1);
+  background: var(--surface-voile);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--edge-light);
+}
+
+/* L'arcade du site, reprise en bas du bandeau : elle raccorde la photo à la
+   section suivante, et fait écho aux arcs réels qu'on voit juste au-dessus. */
+.lp-facade::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--bg), transparent);
+}
+
+/* 600px et non 700 : à 700 le bandeau passait d'un coup de 360 à 486px de
+   haut, un saut de 126px sur un pixel de largeur. Le format 4/3 n'a de sens
+   que sur un vrai téléphone, où le 16/9 réduirait le bâtiment à une frise. */
+@media (max-width: 600px) {
+  .lp-facade__image {
+    aspect-ratio: 4 / 3;
+    max-height: 54svh;
+  }
+
+  .lp-facade__legende {
+    right: var(--sp-3);
+    bottom: var(--sp-3);
+    padding: var(--sp-1) var(--sp-3);
+  }
+}
