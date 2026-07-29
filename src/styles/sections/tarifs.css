@@ -109,6 +109,7 @@
   }
 
   .lp-tarifs__tete,
+  .lp-tarifs__resume,
   .lp-tarifs__prix,
   .lp-tarifs__liens {
     grid-column: 1 / -1;
@@ -125,18 +126,19 @@
     row-gap: var(--sp-4);
   }
 
-  /* Les cinq blocs de la carte occupent les cinq lignes de la grille :
-     tête, prix, programme, séances, lien. Toutes les cartes se partagent
-     donc les mêmes lignes — c'est ce qui aligne les trois montants.
-     Un sixième bloc dans la carte invaliderait `span 5`. */
+  /* Les SIX blocs de la carte occupent les six lignes de la grille :
+     tête, résumé, programme, séances, prix, lien. Toutes les cartes se
+     partagent les mêmes lignes — c'est ce qui aligne les trois montants
+     malgré des listes de contenu de longueurs différentes.
+     Ajouter ou retirer un bloc oblige à reprendre les deux nombres. */
   @supports (grid-template-rows: subgrid) {
     .lp-tarifs__grille {
-      grid-template-rows: repeat(5, auto);
+      grid-template-rows: repeat(6, auto);
     }
 
     .lp-tarifs__carte {
       display: grid;
-      grid-row: span 5;
+      grid-row: span 6;
       grid-template-rows: subgrid;
       row-gap: var(--sp-4);
     }
@@ -153,6 +155,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
+}
+
+/* Le résumé. Emprunté au parti de l'institut Al-Furquan cité par le client :
+   une phrase entre le nom et le contenu, qui dit à qui la formule s'adresse.
+   Volontairement en encre pleine et non en gris : c'est la seule prose de la
+   carte, tout le reste est en listes, et elle doit tenir le regard. */
+.lp-tarifs__resume {
+  margin: 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-16);
+  line-height: var(--lh-body);
+  color: var(--fg);
+  text-wrap: pretty;
 }
 
 /* Le numéro vient de l'affiche, où il sert de référence parlée

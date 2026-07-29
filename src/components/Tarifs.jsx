@@ -151,11 +151,18 @@ function Seance({ seance }) {
   )
 }
 
-/* La carte compte cinq blocs et pas un de plus : c'est ce découpage que la
-   grille aligne d'une colonne à l'autre (subgrid, voir tarifs.css). En
-   ajouter un sixième désalignerait les trois bandes de prix. */
+/* La carte compte SIX blocs, dans cet ordre exact : tête → résumé →
+   programme → séances → prix → lien. La grille les aligne d'une colonne à
+   l'autre (subgrid, voir tarifs.css) ; en ajouter ou en retirer un oblige à
+   reprendre `grid-template-rows` dans le partial, sinon les trois bandes de
+   prix se désalignent.
+
+   L'ORDRE vient de la référence citée par le client, l'institut Al-Furquan :
+   le montant y arrive en DERNIER, après le contenu et les horaires. On lit
+   d'abord ce que l'on reçoit, puis ce que l'on paie — et non l'inverse. Le
+   résumé d'une phrase sous le nom vient de la même source. */
 function CarteFormule({ formule, delai }) {
-  const { numero, nom, sousTitre, rythme, prix, prixNote, inclus, seances } = formule
+  const { numero, nom, sousTitre, resume, rythme, prix, prixNote, inclus, seances } = formule
   const titreId = `tarifs-${formule.key}`
   const auChoix = seances?.some((s) => s.auChoix)
 
@@ -179,9 +186,9 @@ function CarteFormule({ formule, delai }) {
         {rythme ? <p className="lp-caption lp-tarifs__rythme">{rythme}</p> : null}
       </header>
 
-      <div className="lp-tarifs__prix">
-        <Prix prix={prix} prixNote={prixNote} />
-      </div>
+      {/* Une phrase, pas deux : elle dit à qui la formule s'adresse et ne
+          répète ni le contenu (ci-dessous) ni les horaires (plus bas). */}
+      <p className="lp-tarifs__resume">{resume}</p>
 
       <div className="lp-tarifs__bloc">
         {inclus?.length ? (
@@ -210,6 +217,11 @@ function CarteFormule({ formule, delai }) {
             ) : null}
           </>
         ) : null}
+      </div>
+
+      {/* Le prix ferme la carte, juste avant l'appel à l'action. */}
+      <div className="lp-tarifs__prix">
+        <Prix prix={prix} prixNote={prixNote} />
       </div>
 
       <p className="lp-tarifs__liens">

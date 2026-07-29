@@ -1,5 +1,5 @@
-import Logo from './Logo.jsx'
 import {
+  LOGO_AME,
   ORG,
   SECTIONS,
   PIED,
@@ -73,7 +73,22 @@ export default function Footer() {
           </div>
 
           <div className="lp-pied__identite">
-            <Logo titre="" />
+            {/* Le logo de l'ASSOCIATION, pas la marque du site. C'est le pied
+                de page qui porte « qui édite ce site » ; la barre de
+                navigation garde le petit sigle en arche, qui reste lisible à
+                32px là où « AME » se refermerait.
+                Image et non SVG : le fichier fourni est une photo détourée.
+                Les dimensions sont posées pour réserver la place et éviter le
+                saut de mise en page au chargement. */}
+            <img
+              className="lp-pied__logo-ame"
+              src={LOGO_AME.src}
+              width={LOGO_AME.largeur}
+              height={LOGO_AME.hauteur}
+              alt={LOGO_AME.alt}
+              loading="lazy"
+              decoding="async"
+            />
             <p className="lp-h3 lp-pied__nom">{ORG.nom}</p>
             <p className="lp-small">{ORG.baseline}</p>
             {/* Même traitement que dans les autres sections : libellé en

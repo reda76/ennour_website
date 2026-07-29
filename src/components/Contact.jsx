@@ -1,8 +1,8 @@
 import { useId } from 'react'
-import Logo from './Logo.jsx'
 import ScrollReveal from './ScrollReveal.jsx'
 import {
   CONTACT_LIBELLES,
+  LOGO_AME,
   INTRO_CONTACT,
   MENTION_CARTE,
   MENTION_SECRETARIAT,
@@ -98,8 +98,19 @@ export default function Contact() {
           <ScrollReveal as="figure" className="lp-card lp-contact__plan" delay={120}>
             <div className="lp-contact__releve" aria-hidden="true" />
             <div className="lp-contact__amer">
-              {/* Décoratif : le nom du centre est déjà écrit ailleurs sur la page. */}
-              <Logo titre="" className="lp-contact__logo" />
+              {/* Décoratif : le nom de l'association est déjà écrit dans le
+                  pied de page, et la ville juste en dessous. Un alt vide plutôt
+                  qu'un doublon vocal — le logo ne fait ici qu'habiller un
+                  emplacement réservé au futur plan d'accès. */}
+              <img
+                className="lp-contact__logo-ame"
+                src={LOGO_AME.src}
+                width={LOGO_AME.largeur}
+                height={LOGO_AME.hauteur}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
               <p className="lp-h4 lp-contact__ville">{ORG.ville}</p>
             </div>
             <figcaption className="lp-contact__legende">

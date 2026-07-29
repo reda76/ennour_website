@@ -567,7 +567,15 @@
   gap: var(--sp-3);
 }
 
-.lp-contact__logo { --logo-h: 64px; color: var(--fg); }
+/* Le logo de l'association au centre de l'amer. Même précaution de
+   `height: auto` que dans le pied de page. 150px : lisible, sans dominer
+   la légende du plan d'accès qu'il accompagne. */
+.lp-contact__logo-ame {
+  display: block;
+  width: 150px;
+  max-width: 100%;
+  height: auto;
+}
 
 .lp-contact__ville { letter-spacing: var(--tr-wide); }
 

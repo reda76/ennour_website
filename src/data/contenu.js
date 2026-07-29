@@ -80,6 +80,44 @@ export const POLES = [
   },
 ]
 
+/* Préfixe de toutes les ressources servies depuis public/.
+   Vite réécrit les chemins qu'il voit à la compilation (CSS, index.html) mais
+   PAS une chaîne lue à l'exécution : écrite « /logos/… », une image serait
+   cherchée à la racine du domaine alors que GitHub Pages sert le site sous
+   un sous-chemin. BASE_URL vaut « / » en développement, le sous-chemin en
+   production, et se termine toujours par une barre. Erreur déjà commise
+   une fois avec une photo : ne pas la refaire.
+
+   La lecture est défensive : `import.meta.env` n'existe QUE sous Vite. Un
+   script Node qui importerait ce fichier pour en vérifier les données —
+   ce qui est utile et doit rester possible — plantait sur cette ligne.   */
+const BASE = import.meta.env?.BASE_URL ?? '/'
+
+/* ---------- Le logo de l'association ----------
+   Fourni par le client en PNG sur fond BLANC OPAQUE (aucune transparence,
+   vérifié). Il a été détouré : l'aplat blanc est résolu en canal alpha, puis
+   « démultiplié » pour retrouver la couleur d'origine — sans quoi les bords
+   anticrénelés gardaient un halo blanc dès qu'on le posait ailleurs que sur
+   du blanc. Les marges du fichier d'origine ont été recadrées.
+
+   Deux limites relevées AU RENDU, à respecter pour tout nouvel emploi :
+   — en dessous d'environ 110 px de large, « AME » devient illisible ;
+   — sur un aplat orange, les lettres oranges du logo disparaissent. Le poser
+     sur du plâtre, du blanc ou de l'encre, jamais sur --accent.
+
+   TODO — le sigle AME n'a pas été développé par le client. Tant qu'on ne le
+   connaît pas, on n'invente pas : le texte alternatif dit « association AME »
+   et rien de plus.                                                          */
+export const LOGO_AME = {
+  src: `${BASE}logos/ame-640.webp`,
+  repli: `${BASE}logos/ame-640.png`,
+  largeur: 640,
+  hauteur: 503,
+  alt: 'Logo de l’association AME',
+  // Largeur minimale d'affichage, mesurée : en deçà le sigle se referme.
+  largeurMini: 110,
+}
+
 /* ---------- Photographies du lieu ----------
    AUCUNE pour le moment. La photo de la façade transmise par la mosquée
    ne l'avait été qu'à titre de RÉFÉRENCE DE COULEUR — elle a servi à
@@ -215,6 +253,9 @@ export const FORMULES = [
     key: 'coran-intensif',
     numero: 1,
     nom: 'Coran intensif',
+    /* Reformulation des `seances` : 3 en semaine + 2 le week-end = 5, de 20h
+       à 21h30 (le soir) et de 7h à 8h30 (tôt). Aucune donnée nouvelle. */
+    resume: 'Le rythme le plus soutenu : cinq séances par semaine, en soirée et tôt le week-end.',
     rythme: '3 cours par semaine + week-end',
     prix: 300,
     prixNote: null,
@@ -229,6 +270,7 @@ export const FORMULES = [
     key: 'coran-alphabetisation',
     numero: 2,
     nom: 'Coran & alphabétisation',
+    resume: 'Partir des lettres pour arriver à la lecture, sur les seuls week-ends.',
     rythme: 'Tous les week-ends',
     prix: 80,
     prixNote: null,
@@ -243,6 +285,7 @@ export const FORMULES = [
     numero: 3,
     nom: 'Sciences musulmanes',
     sousTitre: 'Sîra & Fiqh',
+    resume: 'La jurisprudence et la vie du Prophète, un jour de week-end au choix.',
     rythme: 'Le week-end',
     prix: 80,
     prixNote: null,

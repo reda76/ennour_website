@@ -418,13 +418,25 @@
 .lp-pied__intro .lp-filet { margin-block: var(--sp-1) var(--sp-2); }
 
 .lp-pied__identite {
-  --logo-h: 44px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sp-2);
   color: var(--fg);
 }
+/* Le logo de l'association. 168px : le relevé au rendu donne « AME »
+   illisible sous ~110px, on prend de la marge. `height: auto` est
+   indispensable — les attributs width/height de la balise <img>, posés pour
+   réserver la place, s'appliqueraient sinon comme hauteur de présentation et
+   l'image sortirait à 503px de haut. */
+.lp-pied__logo-ame {
+  display: block;
+  width: 168px;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: var(--sp-2);
+}
+
 .lp-pied__nom { margin-top: var(--sp-2); }
 .lp-pied__annee { color: var(--fg-dim); }
 
