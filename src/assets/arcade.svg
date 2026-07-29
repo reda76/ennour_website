@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="64" viewBox="0 0 240 64" fill="none">
+  <!-- Arcade d'arcs outrepassés brisés, relevés sur la porte de la mosquée.
+       Tuile de 240×64 répétable en X — le ratio 3.75 est celui qu'attend
+       .lp-arcade pour calculer sa hauteur.
+       Ce fichier sert de MASQUE : la couleur vient du CSS, pas d'ici.
+
+       TROIS travées de 80, pas quatre de 60 : à 60 les arcs étaient plus
+       hauts que larges et la bande se lisait comme une palissade. Un arc
+       d'arcade doit être trapu. -->
+  <g stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 64V46c-3-5-3-11 0-16 4-8 14-13 24-18 10 5 20 10 24 18 3 5 3 11 0 16v18" />
+    <path d="M96 64V46c-3-5-3-11 0-16 4-8 14-13 24-18 10 5 20 10 24 18 3 5 3 11 0 16v18" />
+    <path d="M176 64V46c-3-5-3-11 0-16 4-8 14-13 24-18 10 5 20 10 24 18 3 5 3 11 0 16v18" />
+  </g>
+  <!-- Le seuil : il relie les travées et évite que la bande paraisse flotter. -->
+  <path d="M0 63h240" stroke="#000" stroke-width="1.5" opacity="0.5" />
+</svg>

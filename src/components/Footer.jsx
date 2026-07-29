@@ -1,4 +1,4 @@
-import LogoPhare from './LogoPhare.jsx'
+import Logo from './Logo.jsx'
 import {
   ORG,
   SECTIONS,
@@ -30,7 +30,7 @@ function Coordonnee({ etiquette, valeur, href, attente }) {
   return (
     <div className="lp-pied__coord">
       {/* Le micro-libellé en capitales est un rôle partagé (.lp-eyebrow),
-          en variante sourde : le laiton reste aux surtitres de section. */}
+          en variante sourde : le orange reste aux surtitres de section. */}
       <dt className="lp-eyebrow lp-eyebrow--sourd">{etiquette}</dt>
       <dd className="lp-pied__valeur">
         {!manque && href && (
@@ -58,7 +58,7 @@ export default function Footer() {
      Il garde le sien, qui ne sert qu'à le désigner. */
   return (
     <footer id="pied-de-page" className="lp-pied">
-      <div className="lp-vagues lp-vagues--haut lp-vagues--fondu" aria-hidden="true" />
+      <div className="lp-arcade lp-arcade--haut lp-arcade--fondu" aria-hidden="true" />
 
       <div className="lp-wrap lp-pied__corps">
         <div className="lp-pied__haut">
@@ -72,7 +72,7 @@ export default function Footer() {
           </div>
 
           <div className="lp-pied__identite">
-            <LogoPhare titre="" />
+            <Logo titre="" />
             <p className="lp-h3 lp-pied__nom">{ORG.nom}</p>
             <p className="lp-small">{ORG.baseline}</p>
             {/* Même traitement que dans les autres sections : libellé en

@@ -28,7 +28,9 @@ pnpm-debug.log*
 # Artefacts Windows/WSL
 *:Zone.Identifier
 
-# Notes manuscrites de l'équipe (photos de travail, pas du code)
-*.jpeg
-*.jpg
-Sans titre.png
+# Notes manuscrites de l'équipe (photos de travail, pas du code).
+# Ciblé sur la RACINE : un `*.jpg` global écartait aussi les photos du
+# site, que la mosquée doit pouvoir déposer dans public/photos/.
+/*.jpeg
+/*.jpg
+/Sans titre.png

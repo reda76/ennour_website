@@ -1,5 +1,5 @@
 /* ============================================================
-   LE PHARE — Chrome : la barre de navigation et le pied de page.
+   MOSQUÉE EN-NOUR — Chrome : la barre de navigation et le pied de page.
    Le cadre qui tient le site. Deux règles le gouvernent :
 
    1. La barre est POSÉE SUR la page (position: fixed), jamais dans le
@@ -65,7 +65,7 @@
    <main id="contenu"> porte tabIndex={-1} pour que « Aller au contenu »
    déplace le FOCUS et pas seulement le défilement. Le focus n'y est jamais
    qu'un point d'atterrissage : on n'entoure pas la page entière d'un
-   contour laiton de 2px. C'est la seule exception au focus visible global. */
+   contour orange de 2px. C'est la seule exception au focus visible global. */
 #contenu:focus,
 #contenu:focus-visible {
   outline: none;
@@ -152,7 +152,7 @@
 }
 .lp-nav__lien:hover { color: var(--fg); }
 
-/* La section courante est marquée par un filet laiton — le même geste
+/* La section courante est marquée par un filet orange — le même geste
    que .lp-filet sous un surtitre. L'attribut aria-current le double :
    l'information n'est jamais portée par la seule couleur. */
 .lp-nav__lien::after {
@@ -200,7 +200,7 @@
   cursor: pointer;
   transition: border-color var(--dur-base) var(--ease-out);
 }
-.lp-nav__burger:hover { border-color: var(--border-brass); }
+.lp-nav__burger:hover { border-color: var(--border-accent); }
 
 /* Trois traits d'amplitudes décroissantes : la houle de la trame de
    vagues réduite à un pictogramme. */
@@ -388,12 +388,12 @@
   overflow: hidden;
 }
 
-/* La houle sert de raccord avec la section précédente, quel que soit
+/* L’arcade sert de raccord avec la section précédente, quel que soit
    son fond. Volontairement basse en intensité : c'est un seuil, pas un
    décor. */
-.lp-pied .lp-vagues {
-  --vagues-l: 380px;
-  --vagues-opacite: 0.18;
+.lp-pied .lp-arcade {
+  --arcade-l: 240px;
+  --arcade-opacite: 0.18;
 }
 
 /* Le motif vit sur --z-motif : le contenu doit repasser devant. */
@@ -500,7 +500,7 @@
 .lp-pied__plan-lien:hover {
   color: var(--fg);
   text-decoration: underline;
-  text-decoration-color: var(--border-brass);
+  text-decoration-color: var(--border-accent);
   text-underline-offset: 0.25em;
 }
 

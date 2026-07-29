@@ -1,12 +1,12 @@
 /* ============================================================
-   LE PHARE — Section « Les cours » (#cours).
+   MOSQUÉE EN-NOUR — Section « Les cours » (#cours).
    Deuxième section de la page : elle tombe sur --surface dans
    l'alternance, les cartes passent donc sur --surface-2 pour
    rester détachées de leur fond.
 
    Hiérarchie de lecture dans une carte, du plus fort au plus faible :
-   titre (Fraunces) → accroche (Inter, pleine lumière) → description
-   (Inter, brume) → points clés (courts, tiret laiton) → pied
+   titre (Alegreya) → accroche (Alegreya Sans, pleine lumière) → description
+   (Alegreya Sans, encre pâle) → points clés (courts, tiret orange) → pied
    (ce que le pôle ouvre réellement + le lien vers le planning).
    ============================================================ */
 
@@ -113,7 +113,7 @@
 
 /* L'accroche est la phrase que le visiteur doit retenir : seule ligne du corps
    de carte en pleine lumière, en Inter medium serré. Elle passe devant la
-   description, qui reste en brume. */
+   description, qui reste en encre pâle. */
 .lp-cours__accroche {
   margin: 0;
   font-family: var(--ff-body);
@@ -152,7 +152,7 @@
   color: var(--fg-muted);
 }
 
-/* Puce en tiret laiton : le .lp-filet à l'échelle d'une ligne, plutôt qu'un
+/* Puce en tiret orange : le .lp-filet à l'échelle d'une ligne, plutôt qu'un
    glyphe de liste qui n'appartiendrait à aucun des deux alphabets du site. */
 .lp-cours__point::before {
   content: '';
@@ -220,7 +220,7 @@
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25em;
-  text-decoration-color: var(--border-brass);
+  text-decoration-color: var(--border-accent);
   transition: text-decoration-color var(--dur-base) var(--ease-out);
 }
 

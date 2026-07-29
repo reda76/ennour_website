@@ -1,8 +1,8 @@
-# Le Phare — site vitrine
+# Mosquée En-Nour — site vitrine
 
-Site vitrine du centre de formation **Le Phare** (Le Havre) : apprentissage du Noble
-Coran, alphabétisation en arabe, sciences musulmanes (Fiqh, Sîra). Une seule page,
-sept sections, contenu piloté par un unique fichier de données.
+Site vitrine de la **Mosquée En-Nour** (Le Havre) : cours d’arabe, apprentissage du
+Noble Coran et sciences musulmanes (Fiqh, Sîra). Une seule page, sept sections,
+contenu piloté par un unique fichier de données.
 
 ---
 
@@ -14,7 +14,7 @@ sept sections, contenu piloté par un unique fichier de données.
 | UI | React 19 (composants fonctionnels, JSX) |
 | Routage | react-router-dom 7 (une seule route, `/`) |
 | Styles | CSS pur, système à tokens — **aucun framework CSS** |
-| Typographie | Fraunces (titres, axes `opsz`/`SOFT`/`WONK`) + Inter (tout le reste), via Google Fonts |
+| Typographie | Alegreya (titres) + Alegreya Sans (texte) + Amiri (arabe uniquement), via Google Fonts |
 
 Aucune autre dépendance d’exécution. Ne rien ajouter sans nécessité.
 
@@ -42,7 +42,7 @@ src/
                                et les lignes d’horizon inter-sections
   components/
     Nav.jsx                    barre fixe, menu mobile, progression de lecture
-    Hero.jsx                   #accueil    — le seul <h1>, le seul faisceau
+    Hero.jsx                   #accueil    — le seul <h1> : le nom de la mosquée
     Cours.jsx                  #cours      — les trois pôles
     Planning.jsx               #planning   — semaine filtrable
     Tarifs.jsx                 #tarifs     — formules et règlement
@@ -50,7 +50,7 @@ src/
     Inscription.jsx            #inscription— parcours + formulaire
     Contact.jsx                #contact    — coordonnées
     Footer.jsx                 pied de page (id « pied-de-page »)
-    LogoPhare.jsx              logo SVG inline
+    Logo.jsx                   la marque, SVG inline
     ScrollReveal.jsx           révélation au défilement
   hooks/                       useInView, useScrollY, useScrollProgress,
                                useCountUp, useReducedMotion
@@ -58,11 +58,12 @@ src/
     contenu.js                 ★ SOURCE UNIQUE DE VÉRITÉ DU CONTENU
   styles/
     tokens.css                 couleurs, typo, espacements + classes de rôle (.lp-*)
-    motifs.css                 faisceau, halo, vagues, grain, ligne d’horizon
+    motifs.css                 lueur, arcade, grain, ligne d’horizon
     site.css                   reset, layout, accessibilité, @import des partials
     sections/*.css             un partial par section, classes préfixées lp-
-  assets/                      logo-lephare.svg, vagues.svg
+  assets/                      arcade.svg (tuile de masque)
 public/favicon.svg
+public/photos/                 photographies du lieu
 ```
 
 ### Règles de contribution
@@ -75,8 +76,8 @@ public/favicon.svg
 - Les sections **alternent** les fonds `--bg` / `--surface` dans l’ordre du DOM.
   Déplacer une section dans `Vitrine.jsx` oblige à reprendre son `background`.
 - Les `<hr class="lp-horizon">` entre sections sont posés **dans `Vitrine.jsx`
-  uniquement**, avec un `--horizon-x` qui change à chaque fois : c’est le balayage
-  du phare à l’échelle de la page.
+  uniquement**, avec un `--horizon-x` qui change à chaque fois : le point de
+  lumière se déplace de haut en bas de la page.
 - Une donnée absente s’affiche avec `<span class="lp-attente">…</span>` — jamais un
   trou, jamais `undefined`, jamais un chiffre inventé.
 
@@ -100,14 +101,16 @@ Tout se passe dans **`src/data/contenu.js`**.
 | 6 | **Dates du calendrier scolaire** | `CALENDRIER[].debut` / `.fin` | 9 entrées, **non recalées sur le calendrier officiel zone B** | À vérifier une par une. Format ISO strict `AAAA-MM-JJ`. `fin: null` = jalon d’un seul jour. La frise, le registre et le bloc « prochaine rentrée » se recalculent seuls. |
 | 7 | **Horaires du secrétariat** | `MENTION_SECRETARIAT` | libellé d’attente | Remplacer par les horaires réels (section Contact). |
 | 8 | **Mentions légales** | `PIED.mentionsLegales.url` | `null` | Page à rédiger puis à publier. Tant que l’URL est nulle, le colophon affiche une pastille « à publier » au lieu d’un lien mort. |
+| 9 | **Créneaux enfants et adolescents** | `CRENEAUX` | aucun — les 6 entrées portent `public: 'Adultes'` | **Le point le plus urgent.** La mission affiche « accessibles à tous à partir de 6 ans » ; sans créneau enfants, cette phrase envoie des parents chercher au planning des horaires qui n’y sont pas. En attendant, le premier écran accole une réserve (`HERO.mission.reserve`). Ajouter les créneaux la rend caduque — la supprimer alors. |
+| 10 | **Photographies du lieu** | `PHOTOS` + `public/photos/` | une seule image, **214 × 553 px** | Résolution trop faible pour autre chose que le cadre du premier écran. Fournir des vues en 1600 px de large minimum : façade en pied, salles de cours, intérieur. Le hero les bornera toujours en largeur — inutile de les agrandir artificiellement. |
 
 ### Points éditoriaux à trancher (pas des données manquantes)
 
 | Sujet | Où | Question |
 |---|---|---|
-| **Tarif famille** | `TARIFS_MENTION.famille` | Ce bloc est une **hypothèse**, `statut: 'a-confirmer'`. Rien dans les données sources ne l’atteste. À valider **ou à supprimer**. |
-| **Mixité du Fiqh** | `CRENEAUX` → `fiqh-n1`, `genre: 'Mixte'` | Tous les autres groupes sont séparés hommes / femmes. Le Fiqh est-il réellement mixte ? `COURS_INTRO.mentionMixite` **et** `HERO.chapo` sont désormais formulés pour rester exacts dans les deux cas (« sauf mention contraire au planning »). Si le Fiqh n’est pas mixte, corriger `genre` — les deux textes peuvent alors être resserrés. |
-| **Publics « Ados » / « Enfants »** | `PUBLICS` | Aucun créneau ne les utilise. L’interface ne les propose donc **plus du tout** : les filtres du planning et le formulaire lisent `PUBLICS_OUVERTS`, déduit de `CRENEAUX`. `PUBLICS` reste la liste de référence de l’association. Pour ouvrir réellement ces publics, il faut leur **ajouter des créneaux** dans `CRENEAUX` — la liste se remplira seule. |
+| **Mixité du Fiqh** | `CRENEAUX` → `fiqh-n1`, `genre: 'Mixte'` | Tous les autres groupes sont séparés hommes / femmes. Le Fiqh est-il réellement mixte ? `COURS_INTRO.mentionMixite` **et** `HERO.chapo` sont formulés pour rester exacts dans les deux cas (« sauf mention contraire au planning »). Si le Fiqh n’est pas mixte, corriger `genre` — les deux textes peuvent alors être resserrés. |
+| **Publics « Ados » / « Enfants »** | `PUBLICS` | Aucun créneau ne les utilise. L’interface ne les propose donc **plus du tout** : les filtres du planning et le formulaire lisent `PUBLICS_OUVERTS`, déduit de `CRENEAUX`. `PUBLICS` reste la liste de référence. Pour ouvrir réellement ces publics, il faut leur **ajouter des créneaux** — la liste se remplira seule. |
+| **Ce qui a été retiré sur demande** | `POLES`, `FORMULES`, `TARIFS_MENTION` | La mosquée a demandé de **rester humble**. Ont été supprimés : les trois paragraphes `description` des pôles, « Suivi individuel », « Petits effectifs », « Supports fournis », et le bloc « tarif famille » (une réduction « à l’étude » que personne n’avait confirmée). Le modèle fourni mentionnait « des professeurs qualifiés » — **retiré expressément**. Ne rien réintroduire sans validation. |
 | **Texte sur les examens** | `CALENDRIER_TEXTES.examensTexte` | Déduit de `POLES.sciences` (« évaluations trimestrielles »). À faire relire par l’équipe pédagogique. |
 | **Acteurs des étapes** | `ACTEURS_ETAPES` | « Vous » / « L’équipe pédagogique » : lecture faite à partir de `ETAPES_INSCRIPTION`, à valider. |
 | **Chapô du hero** | `HERO.chapo` | Il nomme les trois pôles **en prose**. Si un pôle est renommé dans `POLES`, ce texte est à reprendre à la main. |

@@ -12,13 +12,13 @@ import {
 } from '../data/contenu.js'
 
 /* ============================================================
-   LE PHARE — Section « Planning & horaires ».
+   MOSQUÉE EN-NOUR — Section « Planning & horaires ».
 
    Parti pris de lecture : avec six créneaux seulement, une grille
    horaire proportionnelle de 7 h à 22 h serait vide à 90 %. On
    empile donc les séances par jour, triées par heure, et on rend
    le temps lisible autrement : chaque carte porte une « barre du
-   jour » — un filet de brume où la lumière s'accroche à la plage
+   jour » — un filet d'encre pâle où la lumière s'accroche à la plage
    horaire de la séance. C'est la ligne d'horizon du site, appliquée
    à la donnée : d'un coup d'œil on voit les soirées de semaine et
    les matinées de week-end.
@@ -285,7 +285,7 @@ export default function Planning() {
             {AXES.map(({ cle, legende }) => (
               <fieldset key={cle} className="lp-planning__groupe">
                 {/* Variante sourde du surtitre : même dessin que .lp-eyebrow,
-                    en brume. Le laiton reste aux en-têtes de section. */}
+                    en encre pâle. Le orange reste aux en-têtes de section. */}
                 <legend className="lp-eyebrow lp-eyebrow--sourd lp-planning__legende">
                   {legende}
                 </legend>
@@ -438,7 +438,7 @@ export default function Planning() {
         {/* ---------- Mentions ---------- */}
         <aside className="lp-card lp-planning__mention" aria-label="Précisions sur les horaires">
           {/* Variante sourde : « À noter » n'est pas un surtitre de section.
-              Le laiton de .lp-eyebrow doit rester lisible comme tel. */}
+              Le orange de .lp-eyebrow doit rester lisible comme tel. */}
           <p className="lp-eyebrow lp-eyebrow--sourd">{PLANNING_UI.aNoter}</p>
           <p className="lp-small">{MENTION_HORAIRES}</p>
           <p className="lp-small">{PLANNING_INTRO.salleNote}</p>

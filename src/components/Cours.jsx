@@ -80,11 +80,11 @@ export default function Cours() {
                     )}
                   </div>
 
+                  {/* Le paragraphe de description a été retiré à la demande de
+                      la mosquée : il décrivait une organisation qui n'est pas
+                      arrêtée. La carte s'en tient à l'accroche et aux points
+                      vérifiables. Ne pas le réintroduire sans validation. */}
                   <div className="lp-cours__corps">
-                    {pole.description && (
-                      <p className="lp-p">{pole.description}</p>
-                    )}
-
                     {points.length > 0 && (
                       <>
                         <hr className="lp-rule" />

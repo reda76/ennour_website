@@ -1,5 +1,5 @@
 /* ============================================================
-   LE PHARE — Section « Planning & horaires ».
+   MOSQUÉE EN-NOUR — Section « Planning & horaires ».
 
    Rang dans l'alternance des fonds : 3ᵉ section (accueil, cours,
    planning) → fond --bg, cartes sur --surface.
@@ -9,7 +9,7 @@
       empilant ses séances triées par heure — avec six créneaux,
       une grille horaire proportionnelle serait vide à 90 % ;
    2. le temps reste lisible grâce à la « barre du jour » : un filet
-      de brume où la lumière laiton s'accroche à la plage horaire.
+      d'encre pâle où la lumière orange s'accroche à la plage horaire.
       C'est la ligne d'horizon du site réduite à l'échelle d'une carte.
 
    Seules deux media queries, toutes deux STRUCTURELLES : passage de
@@ -28,8 +28,8 @@
 
 /* ============================================================
    1. EN-TÊTE
-   Contraste d'échelle : le titre en Fraunces à gauche, l'année
-   scolaire en laiton à droite — c'est la donnée qui cadre tout
+   Contraste d'échelle : le titre en Alegreya à gauche, l'année
+   scolaire en orange à droite — c'est la donnée qui cadre tout
    le reste de la section.
    ============================================================ */
 
@@ -131,21 +131,18 @@
 }
 
 .lp-planning__chip[aria-pressed='true'] {
-  /* --brass-1 à 10 %, EMPILÉ sur le palier de la puce et non substitué :
-     posé seul, ce lavis se compositait sur le fond du panneau et rendait
-     un gris-vert plus plat que l'état au repos — l'option retenue était
-     la seule surface non bleue de la page, et la moins détachée. */
-  background:
-    linear-gradient(rgba(201, 162, 39, 0.1), rgba(201, 162, 39, 0.1)),
-    var(--surface-2);
-  border-color: var(--border-brass-2);
+  /* Le voile orange du système, posé à plat. L'empilement sur --surface-2
+     du thème sombre n'a plus lieu d'être : sur le plâtre clair, --orange-5
+     se détache seul et reste le même lavis que .lp-attente. */
+  background: var(--orange-5);
+  border-color: var(--border-accent-2);
   color: var(--accent-bright);
 }
 
 /* Option sans résultat : elle reste FOCALISABLE (aria-disabled et non
    disabled — un bouton qui se désactive sous le focus le rend au <body>)
    et donc LISIBLE : --fg-disabled tombe à 3,3:1 sur --surface, sous AA.
-   C'est le fond effacé et la bordure de brume qui disent l'état, avec le
+   C'est le fond effacé et la bordure d'encre pâle qui disent l'état, avec le
    compteur « 0 » qui l'écrit. */
 .lp-planning__chip[aria-disabled='true'] {
   color: var(--fg-dim);
@@ -177,9 +174,9 @@
 
 /* ---------- Codage des pôles ----------
    Un seul accent chaud sur le site : les pôles se distinguent donc
-   par le NIVEAU du laiton, jamais par une autre teinte. Les clés
+   par le NIVEAU du orange, jamais par une autre teinte. Les clés
    viennent de POLES (contenu.js) ; tout pôle inconnu retombe sur
-   une arête de brume neutre. */
+   une arête d'encre pâle neutre. */
 .lp-planning [data-pole='coran'] { --lp-pole-teinte: var(--accent-bright); }
 .lp-planning [data-pole='alphabetisation'] { --lp-pole-teinte: var(--accent); }
 .lp-planning [data-pole='sciences'] { --lp-pole-teinte: var(--accent-deep); }
@@ -231,7 +228,7 @@
 }
 
 .lp-planning__reset:hover:not([aria-disabled='true']) {
-  border-color: var(--border-brass-2);
+  border-color: var(--border-accent-2);
   color: var(--accent-bright);
 }
 
@@ -289,7 +286,7 @@
 }
 
 /* Dessin hérité de .lp-eyebrow ; seules la taille et la couleur dérogent —
-   un nom de jour est une en-tête de colonne, pas un surtitre en laiton. */
+   un nom de jour est une en-tête de colonne, pas un surtitre en orange. */
 .lp-planning__jour-nom {
   font-size: var(--fs-13);
   color: var(--fg);
@@ -380,9 +377,9 @@
   left: var(--lp-seg-x, 0%);
   width: var(--lp-seg-l, 100%);
   background: linear-gradient(90deg, var(--accent), var(--accent-bright));
-  /* --brass-1 à 32 % : la lumière déborde légèrement du trait,
+  /* --orange-1 à 32 % : la lumière déborde légèrement du trait,
      comme sur la ligne d'horizon. */
-  box-shadow: 0 0 8px rgba(201, 162, 39, 0.32);
+  box-shadow: 0 0 8px rgba(228, 96, 36, 0.32);
 }
 
 .lp-planning__intitule {
@@ -419,7 +416,7 @@
 /* Salle non arrêtée : une donnée en attente est une lumière, pas
    une erreur. On garde la pastille de .lp-attente sans son cadre —
    neuf cartes sur onze porteraient sinon un encadré pointillé, et
-   le laiton cesserait de vouloir dire quelque chose. La phrase
+   le orange cesserait de vouloir dire quelque chose. La phrase
    complète est reprise sous la grille. */
 /* Pastille en marqueur INLINE et non en boîte flex : quand la mention
    passe sur deux lignes dans une colonne étroite, le point reste sur
@@ -443,11 +440,11 @@
    5. CRÉNEAUX EN ATTENTE DE PROGRAMMATION
    ============================================================ */
 
-/* Compose .lp-card ; seule la bordure laiton déroge — c'est elle qui
+/* Compose .lp-card ; seule la bordure orange déroge — c'est elle qui
    signale un bloc en attente. */
 .lp-planning__attente {
   gap: var(--sp-5);
-  border-color: var(--border-brass);
+  border-color: var(--border-accent);
 }
 
 .lp-planning__attente-tete {
@@ -493,16 +490,16 @@
    7. MENTIONS
    Exigence du client : les horaires peuvent bouger, et ça doit
    se lire. Discret, mais posé sur un fond et signalé par un filet
-   laiton — pas noyé en bas de page.
+   orange — pas noyé en bas de page.
    ============================================================ */
 
-/* Compose .lp-card ; dérogent la bordure (filet de brume, arête gauche
-   laiton) et la largeur de lecture. */
+/* Compose .lp-card ; dérogent la bordure (filet d'encre pâle, arête gauche
+   orange) et la largeur de lecture. */
 .lp-planning__mention {
   display: grid;
   gap: var(--sp-2);
   border-color: var(--border-hair);
-  border-left: 2px solid var(--border-brass);
+  border-left: 2px solid var(--border-accent);
   max-width: var(--measure);
 }
 

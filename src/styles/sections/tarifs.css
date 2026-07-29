@@ -1,5 +1,5 @@
 /* ============================================================
-   LE PHARE — Section « Formules & tarifs ».
+   MOSQUÉE EN-NOUR — Section « Formules & tarifs ».
 
    Le problème de départ : aucun montant n'est arrêté. Plutôt que de
    masquer ce vide, la section en fait son sujet. Chaque carte porte une
@@ -147,7 +147,7 @@
   margin: 0;
 }
 
-/* Ce que la formule couvre. Le marqueur est un éclat de laiton de 10 × 1px :
+/* Ce que la formule couvre. Le marqueur est un éclat d'orange de 10 × 1px :
    c'est .lp-filet réduit, donc du vocabulaire déjà en place — pas une puce
    importée d'ailleurs. */
 .lp-tarifs__inclus {

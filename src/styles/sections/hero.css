@@ -1,169 +1,233 @@
 /* ============================================================
-   LE PHARE — Section « accueil » (premier écran).
+   MOSQUÉE EN-NOUR — Premier écran (#accueil).
 
-   Composition : la nuit occupe le haut du cadre, le texte se pose en
-   bas. L'énergie vient du vide sombre au-dessus du titre et du seul
-   foyer chaud en haut à droite — pas d'un empilement centré.
+   Deux colonnes en desktop : le texte à gauche, la porte à droite.
+   La photo n'est pas un fond — elle ne fait que 214 px de large et
+   s'écroulerait en pleine largeur. Elle est donc traitée comme un
+   objet posé, borné, cadré par l'arche du bâtiment.
 
-   Aucune media query : les paliers de titre, le padding de section et
-   les repères sont déjà fluides. Rien à retoucher entre 360 et 1600px.
+   Sous 900 px la photo passe AU-DESSUS du texte : sur un téléphone,
+   voir d'abord la porte qu'on va pousser vaut mieux que lire d'abord.
    ============================================================ */
 
 .lp-hero {
-  /* Le premier écran ne dépasse jamais la hauteur visible, et se plafonne
-     à 820px : au-delà, le titre décroche des repères et le faisceau perd
-     son foyer. min-height (jamais height) pour que le contenu puisse
-     pousser la section sur un écran court ou avec une police agrandie. */
-  min-height: min(calc(100vh - var(--nav-height)), 820px);
-  min-height: min(calc(100svh - var(--nav-height)), 820px);
-  /* SEULE section du site à redéclarer son rythme vertical, et pour une
-     raison mesurée : avec --sp-9 en haut ET en bas, le contenu du premier
-     écran dépasse le plafond de 820px sur grand écran. Le haut se cale
-     donc sur la barre de navigation (la seule contrainte réelle), et le
-     vide au-dessus du titre est produit par la répartition flex — il
-     grandit avec l'écran au lieu d'être figé. */
-  padding-block: var(--nav-height) var(--sp-9);
-  display: grid;
-  /* Le décor est peint dans son propre contexte d'empilement : aucun
-     motif ne peut remonter au-dessus d'une section voisine. */
-  isolation: isolate;
+  position: relative;
+  overflow: clip;
+  /* Pas de hauteur d'écran forcée : le contenu est court depuis que le
+     slogan a été retiré, et 100svh creuserait un vide sous les boutons. */
+  padding-block: var(--sp-8) var(--sp-7);
+  background: var(--bg);
 }
 
-/* ------------------------------------------------------------
-   1. LE DÉCOR
-   Un conteneur dédié porte l'overflow, PAS la section : si la section
-   découpait, le contour de focus d'un bouton en bord de cadre serait
-   rogné. Il est le seul enfant à vivre sur --z-motif.
-   ------------------------------------------------------------ */
+/* ---------- Décor ---------- */
 
 .lp-hero__decor {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: var(--z-motif);
   pointer-events: none;
+  z-index: var(--z-motif);
 }
 
-/* Le foyer est posé haut à droite, là où serait la lanterne. À l'arrêt
-   (mouvement réduit : rotation figée à 24°), le départ de 186° amène le
-   lobe principal en diagonale descendante vers le titre — le faisceau
-   reste un faisceau, jamais un disque arrêté au hasard. */
-.lp-hero__faisceau {
-  /* Plus large que le défaut : au diamètre standard, le cône traverse le
-     cadre en un trait fin qui se lit comme une rayure et non comme de la
-     lumière. Le lobe garde son angle, c'est sa portée en pixels qui gagne. */
-  --faisceau-taille: 160vmax;
+.lp-hero__nour {
+  --lueur-x: 68%;
+  --lueur-y: -16rem;
+  --lueur-taille: 88rem;
 }
 
 .lp-hero__grain {
-  --grain-opacite: 0.05;
+  --grain-opacite: 0.03;
 }
 
-/* La houle ferme le cadre par le bas et se dissout vers le haut. Réglée
-   plus discrète que le défaut : elle passe derrière les repères. */
-.lp-hero__vagues {
-  --vagues-opacite: 0.16;
+.lp-hero__arcade {
+  --arcade-l: 300px;
+  --arcade-opacite: 0.16;
 }
 
-/* ------------------------------------------------------------
-   2. LE CORPS
-   ------------------------------------------------------------ */
+/* ---------- Corps ---------- */
 
 .lp-hero__corps {
   position: relative;
   z-index: var(--z-base);
-  display: flex;
-  flex-direction: column;
-  /* Le texte se pose au bas du cadre ; la nuit et le faisceau occupent
-     le haut. Sur un écran court la section grandit, rien n'est coupé. */
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: var(--sp-8);
 }
 
-/* ---- Bloc d'introduction ----
-   Chaque écart est déclaré sur l'élément qui le suit : pas de `gap`
-   uniforme ici, la séquence surtitre → filet → titre → chapô → actions
-   a un rythme volontairement inégal. */
 .lp-hero__intro {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: var(--sp-4);
+  min-width: 0;
 }
 
-.lp-hero__filet { margin-top: var(--sp-3); }
-.lp-hero__titre { margin-top: var(--sp-5); }
-.lp-hero__lead  { margin-top: var(--sp-5); }
+/* Le nom latin et le nom arabe empilés : ils forment UN titre, pas deux.
+   L'arabe est plus petit et en orange — il accompagne, il ne double pas. */
+.lp-hero__titre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  max-width: none;
+}
+
+.lp-hero__nom {
+  display: block;
+}
+
+/* align-self indispensable : sans lui l'élément s'étire à la largeur du
+   titre et le `direction: rtl` colle le nom arabe à droite, loin du nom
+   latin qu'il accompagne. Réduit à son contenu, il se cale dessous. */
+.lp-hero__arabe {
+  align-self: flex-start;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  font-weight: var(--fw-regular);
+  color: var(--accent-bright);
+  /* Amiri porte des descendantes très basses : sans cette réduction, le
+     nom arabe creusait un vide sous le titre. */
+  line-height: 1.2;
+}
+
+.lp-hero__lieu {
+  margin-top: calc(var(--sp-2) * -1);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  font-weight: var(--fw-semibold);
+}
+
+/* ---------- Mission ---------- */
+
+.lp-hero__mission {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+
+.lp-hero__filet {
+  margin-bottom: var(--sp-1);
+}
+
+.lp-hero__mission-texte {
+  max-width: 44ch;
+  color: var(--fg);
+  font-weight: var(--fw-regular);
+}
+
+.lp-hero__reserve {
+  margin: 0;
+}
+
+.lp-hero__mixite {
+  max-width: 46ch;
+}
+
+/* ---------- Actions ---------- */
 
 .lp-hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-4);
-  margin-top: var(--sp-7);
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
 }
 
-/* Seule media query du partial, et elle change bien une STRUCTURE :
-   sous ~416px les deux boutons ne tiennent plus côte à côte et se
-   retrouvaient empilés à des largeurs différentes. Une colonne pleine
-   largeur est à la fois plus nette et plus facile à viser au pouce. */
-@media (max-width: 26rem) {
-  .lp-hero__actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
+/* ---------- La photo ---------- */
+
+.lp-hero__figure {
+  margin: 0;
+  justify-self: end;
 }
 
-/* ---- Le titre ----
-   Deux blocs de ligne : les coupes sont composées, pas subies. */
-.lp-hero__ligne {
+/* La photo native fait 214 × 553 px. On la borne à sa largeur réelle
+   plutôt que de l'étirer : agrandie, elle devient floue, et une image
+   floue d'un lieu de culte dessert le lieu. */
+.lp-hero__cadre {
   display: block;
+  width: clamp(180px, 20vw, 232px);
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2);
+  box-shadow: var(--shadow-lift);
 }
 
-/* Le seul geste typographique de la page : la ligne qui s'allume est
-   aussi celle qui monte d'un pas. Le décalage reste sous 3rem — au-delà
-   il désaxerait le bloc de texte au lieu de le nuancer. */
-.lp-hero__ligne--lumiere {
-  color: var(--accent-bright);
-  margin-left: clamp(0.75rem, 3vw, 3rem);
+/* 2:3 : assez haut pour contenir l'arc ENTIER — en 3:4 son pied était
+   coupé — et assez court pour ne pas dévorer l'écran mobile, où la photo
+   passe au-dessus du nom. Le trottoir, lui, n'apprend rien : il tombe. */
+.lp-hero__photo {
+  display: block;
+  width: 100%;
+  /* Indispensable : les attributs width/height de la balise <img> (214 × 553,
+     nécessaires pour réserver la place et éviter le saut de mise en page)
+     posent une hauteur en tant qu'attribut de présentation. Sans height:auto,
+     cette hauteur l'emporte et `aspect-ratio` ne s'applique jamais — la photo
+     restait dans son format natif, très haut, et dévorait l'écran mobile. */
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  object-position: center 24%;
+  border-radius: calc(var(--r-2) - 4px);
+  background: var(--surface-3);
 }
 
-/* ------------------------------------------------------------
-   3. LE PIED : descente + repères
-   ------------------------------------------------------------ */
+/* ---------- Pied : repères ---------- */
 
 .lp-hero__pied {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-5);
+  position: relative;
+  z-index: var(--z-base);
+  margin-top: var(--sp-8);
 }
 
-/* La barre du bas : les trois repères à gauche, la descente à droite,
-   tous alignés sur la même ligne de pied. Un seul rang plutôt que deux —
-   le premier écran n'a pas la hauteur pour empiler. */
+.lp-hero__rule {
+  margin-bottom: var(--sp-5);
+}
+
 .lp-hero__barre {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
+  justify-content: space-between;
   gap: var(--sp-5);
 }
 
-/* Indication de descente : un lien réel vers la section suivante, calé
-   à l'opposé des repères pour tenir le bas de cadre. La marge auto la
-   maintient à droite même lorsqu'elle passe à la ligne sous 480px. */
-/* min-height : 25px de haut, c'était une cible tactile trop petite pour
-   l'unique raccourci vers la suite de la page. */
+.lp-hero__reperes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-8);
+  margin: 0;
+}
+
+/* dt avant dd dans le DOM, valeur au-dessus du libellé à l'écran. */
+.lp-hero__repere {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--sp-2);
+}
+
+.lp-hero__repere-valeur {
+  margin: 0;
+  font-size: var(--fs-38);
+}
+
+.lp-hero__repere-valeur--long {
+  font-size: var(--fs-24);
+  align-self: flex-start;
+}
+
+.lp-hero__repere-libelle {
+  max-width: 16ch;
+}
+
 .lp-hero__descente {
-  flex: none;
-  margin-inline-start: auto;
-  padding-bottom: var(--sp-1);
   display: inline-flex;
-  min-height: 44px;
   align-items: center;
   gap: var(--sp-2);
+  min-height: 44px;
+  color: var(--fg-muted);
   font-family: var(--ff-body);
-  font-size: var(--fs-13);
+  font-size: var(--fs-14);
   font-weight: var(--fw-medium);
-  letter-spacing: var(--tr-wide);
-  color: var(--fg-dim);
   text-decoration: none;
   transition: color var(--dur-base) var(--ease-out);
 }
@@ -171,86 +235,58 @@
 .lp-hero__descente:hover { color: var(--accent-bright); }
 
 .lp-hero__fleche {
-  flex: none;
   transition: transform var(--dur-base) var(--ease-out);
 }
 
 .lp-hero__descente:hover .lp-hero__fleche { transform: translateY(3px); }
 
-.lp-hero__rule { width: 100%; }
+/* ============================================================
+   ENTRÉE
+   Une seule séquence, au chargement. Ce n'est pas une boucle : le
+   site n'en comporte aucune.
+   ============================================================ */
 
-/* ---- Les repères ----
-   Trois valeurs calculées, alignées sur le filet. Aucun trait vertical
-   entre les colonnes : c'est la gouttière qui sépare. */
-.lp-hero__reperes {
-  flex: 1 1 auto;
-  display: flex;
-  flex-wrap: wrap;
-  /* Les chiffres n'ont pas tous la même taille (l'année est plus longue,
-     donc plus petite) : c'est leur LIGNE DE BASE qui les aligne, pas le
-     haut de leur boîte. Sans quoi l'année flottait 4px trop haut. */
-  align-items: baseline;
-  gap: var(--sp-5);
-  margin: 0;
-  min-width: 0;
+.lp-hero__entree {
+  animation: lp-hero-entree var(--dur-slow) var(--ease-out) backwards;
+  animation-delay: var(--entree-retard, 0ms);
 }
-
-.lp-hero__repere {
-  /* Base courte : deux repères par ligne à 360px, trois dès ~560px.
-     Le plafond évite qu'ils s'étalent sur toute la largeur en 1600px. */
-  flex: 1 1 8.5rem;
-  max-width: 16rem;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
-/* Le <dt> précède le <dd> dans le DOM (ordre attendu d'une liste de
-   définitions) ; `order` remonte la valeur au-dessus de son libellé.
-   On inverse par `order` et non par column-reverse : ce dernier empile
-   depuis le BAS, si bien qu'un libellé passant sur deux lignes décalait
-   son chiffre vers le haut et cassait l'alignement de la barre. */
-.lp-hero__repere-valeur {
-  order: -1;
-  margin: 0;
-  font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.25rem);
-}
-
-/* L'année scolaire est une donnée numérique, pas un compteur : onze
-   signes au lieu d'un. Un cran de corps en moins lui évite de déborder
-   de sa colonne sous 400px ; la ligne de base la raccroche aux autres. */
-.lp-hero__repere-valeur--long {
-  font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
-}
-
-/* Le libellé vit sous le chiffre : on le laisse respirer sur deux
-   lignes plutôt que de le tronquer. */
-.lp-hero__repere-libelle {
-  text-wrap: balance;
-}
-
-/* ------------------------------------------------------------
-   4. ENTRÉE EN SCÈNE
-   Une seule passe au chargement, lente, dans l'ordre de lecture.
-   Ce n'est pas une boucle : la seule boucle de la page est le faisceau.
-   ------------------------------------------------------------ */
 
 @keyframes lp-hero-entree {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: none; }
 }
 
-.lp-hero__entree {
-  animation: lp-hero-entree var(--dur-reveal) var(--ease-out) both;
-  animation-delay: var(--entree-retard, 0ms);
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero__entree { animation: none; }
 }
 
-/* Le reset global écrase la DURÉE mais pas le RETARD : sans cette règle,
-   un visiteur en mouvement réduit verrait le hero vide pendant un demi-
-   seconde (le fill-mode `both` maintient l'état initial pendant le délai). */
-@media (prefers-reduced-motion: reduce) {
-  .lp-hero__entree {
-    animation: none;
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Une seule rupture : sous 900 px la photo passe au-dessus du texte. */
+@media (max-width: 900px) {
+  .lp-hero__corps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-6);
   }
+
+  .lp-hero__figure {
+    order: -1;
+    justify-self: start;
+  }
+
+  .lp-hero__cadre {
+    width: clamp(160px, 44vw, 220px);
+  }
+
+  .lp-hero__reperes {
+    gap: var(--sp-6);
+  }
+}
+
+@media (max-width: 520px) {
+  .lp-hero__repere-valeur { font-size: var(--fs-30); }
+  .lp-hero__repere-valeur--long { font-size: var(--fs-20); }
+  .lp-hero__reperes { gap: var(--sp-5); }
 }

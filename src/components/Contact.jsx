@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import LogoPhare from './LogoPhare.jsx'
+import Logo from './Logo.jsx'
 import ScrollReveal from './ScrollReveal.jsx'
 import {
   CONTACT_LIBELLES,
@@ -96,7 +96,7 @@ export default function Contact() {
             <div className="lp-contact__releve" aria-hidden="true" />
             <div className="lp-contact__amer">
               {/* Décoratif : le nom du centre est déjà écrit ailleurs sur la page. */}
-              <LogoPhare titre="" className="lp-contact__logo" />
+              <Logo titre="" className="lp-contact__logo" />
               <p className="lp-h4 lp-contact__ville">{ORG.ville}</p>
             </div>
             <figcaption className="lp-contact__legende">

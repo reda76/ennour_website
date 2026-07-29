@@ -9,7 +9,7 @@ import Contact from '../components/Contact.jsx'
 import Footer from '../components/Footer.jsx'
 
 /* ============================================================
-   LE PHARE — la page unique.
+   MOSQUÉE EN-NOUR — la page unique.
 
    Trois responsabilités, et trois seulement :
 
@@ -29,7 +29,7 @@ import Footer from '../components/Footer.jsx'
       ailleurs : leur seul intérêt est que le point lumineux se DÉPLACE
       d'une occurrence à l'autre, ce qu'aucune section ne peut décider
       seule. À l'échelle de la page, ce déplacement reconstitue le
-      balayage du phare. Le raccord contact → pied de page fait
+      déplacement du foyer. Le raccord contact → pied de page fait
       exception : c'est la houle du pied qui le tient.
    ============================================================ */
 

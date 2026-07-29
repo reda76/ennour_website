@@ -186,7 +186,7 @@ export default function Inscription() {
               {ETAPES_INSCRIPTION.map((etape, i) => {
                 const acteur = ACTEURS_ETAPES[etape.n]
                 /* L'étape où la main passe à l'équipe est celle où votre
-                   demande attend : son filet passe en pointillé laiton. */
+                   demande attend : son filet passe en pointillé orange. */
                 const attente = Boolean(acteur) && acteur !== acteurCandidat
                 return (
                   <ScrollReveal

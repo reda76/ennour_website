@@ -1,13 +1,19 @@
 /* ============================================================
-   LE PHARE — Source unique de vérité du contenu éditorial.
+   MOSQUÉE EN-NOUR — Source unique de vérité du contenu éditorial.
    Toutes les sections lisent leurs données ici. Les valeurs
    marquées TODO viennent des notes manuscrites et restent à
-   confirmer par l'équipe pédagogique avant mise en prod.
+   confirmer par l'équipe avant mise en prod.
+
+   RÈGLE DE FOND, demandée par la mosquée : on reste humble.
+   Aucune promesse de qualification, d'encadrement ou de moyens qui
+   ne soit pas vérifiable aujourd'hui. Dans le doute, on retire.
    ============================================================ */
 
 export const ORG = {
-  nom: 'Le Phare',
-  baseline: 'Centre de formation — Le Havre',
+  nom: 'Mosquée En-Nour',
+  // Tel qu'il figure sur l'enseigne de la façade.
+  nomArabe: 'مسجد النور',
+  baseline: 'Le Havre',
   ville: 'Le Havre',
   // TODO — à confirmer : adresse postale exacte
   adresse: '__ADRESSE_A_CONFIRMER__, 76600 Le Havre',
@@ -18,19 +24,23 @@ export const ORG = {
   anneeScolaire: '2026 – 2027',
 }
 
-/* ---------- Les trois pôles d'enseignement ---------- */
+/* ---------- Les trois pôles d'enseignement ----------
+   Le champ `description` a été RETIRÉ des trois pôles à la demande de la
+   mosquée : les paragraphes décrivaient une organisation (groupes par
+   niveau, sessions intensives, petits effectifs, supports fournis) qui
+   n'est pas arrêtée. Ne pas les réintroduire sans validation.
+
+   Les `points` ont été ramenés à ce que les notes manuscrites établissent :
+   des jours, des salles, des publics. Tout le reste était une promesse. */
 export const POLES = [
   {
     key: 'coran',
     titre: 'Apprentissage du Noble Coran',
     court: 'Coran',
-    accroche: 'Lecture, tajwîd et mémorisation, du déchiffrage aux longues sourates.',
-    description:
-      "Un parcours progressif centré sur la lecture correcte, les règles du tajwîd et la mémorisation. Les groupes sont constitués par niveau, avec des sessions intensives en semaine et des créneaux week-end pour ceux qui travaillent.",
+    accroche: 'Lecture, tajwîd et mémorisation.',
     points: [
       'Groupes séparés hommes et femmes',
-      'Formule intensive en semaine ou formule week-end',
-      'Suivi de mémorisation individuel',
+      'En semaine ou le week-end',
     ],
   },
   {
@@ -38,11 +48,9 @@ export const POLES = [
     titre: 'Alphabétisation',
     court: 'Alphabétisation',
     accroche: 'Lire et écrire l’arabe, depuis les toutes premières lettres.',
-    description:
-      "Un cours pensé pour les grands débutants : reconnaissance des lettres, liaisons, voyelles courtes et longues, puis lecture autonome. Une séance hebdomadaire, en petit groupe, dans une salle dédiée.",
     points: [
       'Aucun prérequis',
-      'Petits effectifs, salles dédiées',
+      'Salle dédiée',
       'Une séance par semaine, le week-end',
     ],
   },
@@ -50,16 +58,28 @@ export const POLES = [
     key: 'sciences',
     titre: 'Sciences musulmanes',
     court: 'Sciences musulmanes',
-    accroche: 'Fiqh et Sîra, structurés par niveaux.',
-    description:
-      "L’étude des fondements : jurisprudence (Fiqh) et biographie prophétique (Sîra). Les cours suivent une progression par niveaux, avec des supports écrits et des évaluations trimestrielles.",
+    accroche: 'Jurisprudence (Fiqh) et biographie prophétique (Sîra).',
     points: [
-      'Fiqh — niveau 1 ouvert cette année',
-      'Sîra — parcours biographique complet',
-      'Supports écrits fournis',
+      'Fiqh — niveau 1',
+      'Sîra',
     ],
   },
 ]
+
+/* ---------- Photographies du lieu ----------
+   TODO — la mosquée doit fournir des vues supplémentaires (salles de
+   cours, intérieur, façade en pied). La seule image disponible à ce jour
+   fait 214 × 553 px : elle suffit dans le cadre en arche du premier écran,
+   pas pour un fond pleine largeur. Ne pas l'agrandir. */
+export const PHOTOS = {
+  entree: {
+    src: '/photos/entree-mosquee.webp',
+    repli: '/photos/entree-mosquee.jpg',
+    largeur: 214,
+    hauteur: 553,
+    alt: 'L’entrée de la mosquée En-Nour au Havre : une façade orange percée d’un arc outrepassé, sous l’enseigne « مسجد النور — En-Nour Le Havre ».',
+  },
+}
 
 /* ---------- Planning 2026-2027 ----------
    Transcrit des notes manuscrites de l'équipe.
@@ -156,7 +176,7 @@ export const FORMULES = [
     rythme: '3 séances par semaine',
     prix: null, // TODO
     prixNote: 'Tarif à confirmer',
-    inclus: ['Coran, tajwîd et mémorisation', 'Suivi individuel', 'Examens trimestriels'],
+    inclus: ['Coran, tajwîd et mémorisation', 'Examens trimestriels'],
     poles: ['coran'],
   },
   {
@@ -177,7 +197,7 @@ export const FORMULES = [
     rythme: '1 séance par semaine',
     prix: null, // TODO
     prixNote: 'Tarif à confirmer',
-    inclus: ['Lecture et écriture de l’arabe', 'Petits effectifs', 'Supports fournis'],
+    inclus: ['Lecture et écriture de l’arabe', 'Aucun prérequis'],
     poles: ['alphabetisation'],
   },
   {
@@ -373,7 +393,7 @@ export const MENTION_CHAMPS_REQUIS =
   'Tous les champs sont nécessaires, sauf mention contraire.'
 
 export const MENTION_CONSENTEMENT =
-  'J’accepte que Le Phare conserve ces informations pour traiter ma demande d’inscription. Elles ne sont ni cédées, ni revendues.'
+  'J’accepte que la Mosquée En-Nour conserve ces informations pour traiter ma demande d’inscription. Elles ne sont ni cédées, ni revendues.'
 
 /* TODO — supprimer cette mention le jour où l'envoi est branché. */
 export const MENTION_ENVOI_INDISPONIBLE =
@@ -392,9 +412,9 @@ export const MENTION_SECRETARIAT = 'Horaires du secrétariat à confirmer'
    qu'aucun texte ne vive en dur dans le composant. */
 export const COURS_INTRO = {
   surtitre: 'Les trois pôles',
-  titre: 'Ce que l’on apprend au Phare',
+  titre: 'Ce que l’on apprend ici',
   chapeau:
-    "Trois enseignements ouverts en priorité aux adultes, du tout premier alphabet jusqu’aux longues sourates. Chaque pôle a ses niveaux, ses horaires et ses formules.",
+    "Trois enseignements, du tout premier alphabet jusqu’aux longues sourates.",
   // Information pratique attendue, énoncée une seule fois. Formulée pour rester
   // exacte : un créneau de sciences musulmanes est noté « Mixte » au planning.
   mentionMixite:
@@ -422,7 +442,7 @@ export const PIED = {
      immédiatement le pied porte déjà « Contact / Nous joindre ». Deux
      en-têtes identiques bout à bout se lisaient comme une répétition.
      Le pied récapitule, il n'ouvre pas un second contact. */
-  titre: 'Le centre, en bref',
+  titre: 'La mosquée, en bref',
   intro:
     "Le secrétariat répond aux demandes d’inscription et oriente chaque personne vers le groupe adapté à son niveau.",
   statut: 'Association loi 1901',
@@ -437,20 +457,35 @@ export const PIED = {
    Ajout de la passe « hero ». La copie du premier écran est du contenu
    éditorial, pas de la mise en page : elle vit ici pour rester relisible
    par l'équipe sans ouvrir un composant.
-   `titre.lumiere` est la ligne qui s'allume en laiton — une seule.
+   `titre.lumiere` est la ligne qui s'allume en orange — une seule.
    Les libellés de repères accompagnent des valeurs CALCULÉES depuis
    POLES, CRENEAUX et ORG : aucun chiffre n'est écrit ici.             */
 export const HERO = {
-  titre: {
-    lignes: ['Apprendre,'],
-    lumiere: 's’élever.',
+  /* Le surtitre « Centre de formation — Le Havre » et le titre d'accroche
+     « Apprendre, s'élever. » ont été RETIRÉS à la demande de la mosquée.
+     Le premier écran ne porte plus de slogan : il porte le nom du lieu,
+     sa photo, et ce que la mosquée propose. Le <h1> est désormais
+     ORG.nom — ce qui est aussi le titre le plus juste pour la page. */
+  mission: {
+    surtitre: 'Notre mission',
+    /* Texte fourni par la mosquée. La mention « enseignés par des
+       professeurs qualifiés » du modèle d'origine a été retirée sur
+       demande expresse : elle ne correspond pas à la réalité de
+       l'équipe. Ne pas la remettre. */
+    texte:
+      'La Mosquée En-Nour met à votre disposition des cours d’arabe, de Coran et de sciences musulmanes, accessibles à tous à partir de 6 ans.',
+    /* TODO — à lever dès qu'un créneau enfants ou adolescents existe.
+       Les six entrées de CRENEAUX portent toutes « Adultes » : sans cette
+       réserve, la mention « à partir de 6 ans » ci-dessus enverrait des
+       parents chercher au planning des horaires qui n'y sont pas. */
+    reserve: 'Créneaux enfants et adolescents à publier',
   },
   /* « sauf mention contraire au planning » n'est pas une précaution de style :
      le créneau « Fiqh — niveau 1 » est noté Mixte dans CRENEAUX. Le premier
      écran ne peut pas promettre ce que le planning dément deux sections
      plus bas. Même formulation que COURS_INTRO.mentionMixite. */
   chapo:
-    'Au Havre, trois enseignements pour adultes — le Noble Coran, l’alphabétisation en arabe, les sciences musulmanes — en groupes séparés hommes et femmes, sauf mention contraire au planning.',
+    'Groupes séparés hommes et femmes, sauf mention contraire au planning.',
   ctaPrimaire: { libelle: 'S’inscrire', href: '#inscription' },
   ctaSecondaire: { libelle: 'Voir le planning', href: '#planning' },
   descente: { libelle: 'Les cours', href: '#cours' },
@@ -474,14 +509,9 @@ export const TARIFS_MENTION = {
   montants:
     "Les montants ne sont pas encore arrêtés. Ils vous sont communiqués par l’équipe au moment de la validation de votre inscription, avant tout règlement.",
   reglementTitre: 'Moyens de règlement',
-  // TODO — à confirmer : existence même et barème d'un tarif famille.
-  // Tant que `statut` vaut 'a-confirmer', l'interface l'affiche comme une attente.
-  famille: {
-    libelle: 'Tarif famille et inscriptions multiples',
-    detail:
-      "Une réduction pour les foyers inscrivant plusieurs personnes est à l’étude. Ni le principe ni le barème ne sont arrêtés à ce jour.",
-    statut: 'a-confirmer',
-  },
+  /* Le bloc « tarif famille » a été RETIRÉ : il annonçait une réduction
+     « à l'étude » que personne n'avait confirmée. Une offre hypothétique
+     n'a pas sa place sur une page de tarifs. */
 }
 
 /* ============================================================

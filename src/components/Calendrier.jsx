@@ -3,9 +3,9 @@ import { CALENDRIER, MENTION_CALENDRIER, CALENDRIER_TEXTES, ORG } from '../data/
 import ScrollReveal from './ScrollReveal.jsx'
 
 /* ============================================================
-   LE PHARE — Section « Calendrier de l'année ».
+   MOSQUÉE EN-NOUR — Section « Calendrier de l'année ».
 
-   Parti pris : l'année est lue comme le feu d'un phare.
+   Parti pris : l'année est lue comme une bande de lumière.
    Une bande allumée court d'un bout à l'autre (les cours), les
    vacances l'éteignent (éclipses), les examens la font flamber
    (éclats). Le même vocabulaire de formes sert dans la frise
@@ -208,7 +208,7 @@ export default function Calendrier() {
 
             {m.statut && (
               <p className="lp-calendrier__statut">
-                {/* Rôle partagé : ce micro-libellé en capitales laiton est
+                {/* Rôle partagé : ce micro-libellé en capitales orange est
                     exactement .lp-eyebrow, il n'a plus à être redessiné. */}
                 <span className="lp-eyebrow">{m.statut.lib}</span>
                 {m.statut.iso ? (

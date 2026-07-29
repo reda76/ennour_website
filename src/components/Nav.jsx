@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import LogoPhare from './LogoPhare.jsx'
+import Logo from './Logo.jsx'
 import { ORG, SECTIONS, NAV_CTA, NAV_EXCLUS } from '../data/contenu.js'
 import { useScrollY } from '../hooks/useScrollY.js'
 import { useScrollProgress } from '../hooks/useScrollProgress.js'
@@ -165,7 +165,7 @@ export default function Nav() {
           href={`#${ancreContenu}`}
           onClick={(e) => allerVers(e, ancreContenu)}
         >
-          <LogoPhare titre="" />
+          <Logo titre="" />
           <span className="lp-nav__marque-texte">
             <span className="lp-h3 lp-nav__nom">{ORG.nom}</span>
             <span className="lp-nav__baseline">{ORG.baseline}</span>
@@ -218,7 +218,7 @@ export default function Nav() {
         </div>
       </div>
 
-      {/* L'arête basse : filet de brume + foyer laiton qui avance avec la
+      {/* L'arête basse : filet d'encre pâle + foyer orange qui avance avec la
           lecture. Purement visuel, la position de lecture n'est pas une
           information à annoncer. */}
       <div className="lp-nav__horizon" aria-hidden="true" />

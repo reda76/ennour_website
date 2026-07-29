@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#0d1b2a"/><path d="M21.4 57.0 L21.4 48.0 L20.4 48.0 L20.4 46.0 L22.0 46.0 Q24.7 37.2 25.2 28.5 L21.2 28.5 L21.2 23.0 L25.2 23.0 L25.2 14.0 L22.0 14.0 L22.0 12.2 L29.4 6.0 L34.6 6.0 L42.0 12.2 L42.0 14.0 L38.8 14.0 L38.8 23.0 L42.8 23.0 L42.8 28.5 L38.8 28.5 Q39.3 37.2 42.0 46.0 L43.6 46.0 L43.6 48.0 L42.6 48.0 L42.6 57.0 Z" fill="#eef2f6"/><rect x="27.3" y="15.6" width="9.4" height="6.200000000000001" fill="#f0d878"/><rect x="27.3" y="20.2" width="9.4" height="1.6" fill="#c9a227"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Mosquée En-Nour — favicon. Dérivé du logo, simplifié pour 16px :
+       l'aplat orange de la façade porte l'arche en plâtre. À cette taille
+       un contour de 1px disparaîtrait, d'où la silhouette pleine. -->
+  <rect width="32" height="32" rx="6" fill="#e46024" />
+  <path
+    d="M9 27V16.5c-1.6-2.6-1.6-5.6 0-8.2C10.6 4.7 13 3 16 1c3 2 5.4 3.7 7 7.3 1.6 2.6 1.6 5.6 0 8.2V27z"
+    fill="#f7f4f1"
+  />
+</svg>
