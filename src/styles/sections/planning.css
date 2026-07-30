@@ -507,6 +507,60 @@
   line-height: 1;
 }
 
+/* Le groupe (hommes / femmes). Une étiquette, pas une carte : elle se lit
+   entre l'intitulé et la salle, et ne doit peser ni plus ni moins que la
+   salle qui la suit. L'encre pleine plutôt que l'orange — le orange est
+   réservé aux pôles, et deux codes couleur dans la même carte se
+   neutraliseraient. */
+.lp-planning__groupe-nom {
+  display: inline-flex;
+  align-self: flex-start;
+  margin: 0;
+  padding: 2px var(--sp-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--surface-2);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-wide);
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+/* L'état de la séance : classe fermée, classe ouverte, ou séance hors
+   formule. Il ferme la carte, après la salle. */
+.lp-planning__etat-seance {
+  margin: 0;
+}
+
+/* Une classe ouverte n'est pas une attente : elle emprunte la forme de
+   .lp-attente mais en vert de signal, jamais en ocre — l'ocre du site veut
+   dire « donnée manquante », et l'employer ici en inverserait le sens. */
+.lp-planning__ouvert {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid rgba(47, 107, 82, 0.42);   /* --signal-ok à 42 % */
+  border-radius: var(--r-1);
+  background: rgba(47, 107, 82, 0.07);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+  color: var(--signal-ok);
+}
+
+.lp-planning__ouvert::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--r-full);
+  background: var(--signal-ok);
+}
+
 .lp-planning__salle {
   margin: 0;
   font-size: var(--fs-12);

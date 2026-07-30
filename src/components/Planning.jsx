@@ -8,6 +8,7 @@ import {
   PLANNING_INTRO,
   PLANNING_TEXTES,
   PLANNING_UI,
+  ETATS_SEANCE,
   POLES,
 } from '../data/contenu.js'
 
@@ -47,12 +48,28 @@ const POLE_PAR_CLE = Object.fromEntries(POLES.map((p) => [p.key, p]))
    option ne filtre rien — il occupe la place et suggère un tri qui n'existe
    pas. C'est ce qui retire aujourd'hui le filtre « public » (un seul public
    ouvert) ; le jour où un second existera, l'axe reparaîtra de lui-même. */
+/* Les groupes réellement nommés par le classeur, dans l'ordre où ils y
+   apparaissent. Déduits, jamais écrits en dur : le jour où un troisième
+   existe, l'axe le proposera de lui-même. */
+const GROUPES = [...new Set(CRENEAUX.map((c) => c.groupe).filter(Boolean))]
+
 const AXES_POSSIBLES = [
   {
     cle: 'pole',
     legende: T.filtreLegende,
     valeurs: (creneau) => creneau.poles,
     options: POLES.map((p) => ({ valeur: p.key, libelle: p.court, complet: p.titre })),
+  },
+  {
+    cle: 'groupe',
+    legende: T.filtreGroupe,
+    valeurs: (creneau) => (creneau.groupe ? [creneau.groupe] : []),
+    /* Une séance dont le classeur ne nomme pas le groupe — le Fiqh, la Sîra —
+       n'est PAS exclue par un filtre de groupe. On ignore si elle concerne
+       les hommes ou les femmes : la masquer serait affirmer qu'elle ne les
+       concerne pas. Elle reste donc visible quel que soit le filtre. */
+    neutreSiVide: true,
+    options: GROUPES.map((g) => ({ valeur: g, libelle: g, complet: `Groupe ${g}` })),
   },
 ]
 
@@ -111,11 +128,21 @@ const motAccorde = (n, mot) => (n > 1 ? mot.plusieurs : mot.un)
    sélectionnée ou l'une des siennes l'est. `axeIgnore` sert au comptage à
    facettes : le compteur d'un axe ne doit pas dépendre de lui-même. */
 function correspond(creneau, filtres, axeIgnore) {
-  return AXES.every(({ cle, valeurs }) => {
-    if (cle === axeIgnore) return true
-    const choisies = filtres[cle] ?? []
-    return choisies.length === 0 || valeurs(creneau).some((v) => choisies.includes(v))
+  return AXES.every((axe) => {
+    if (axe.cle === axeIgnore) return true
+    const choisies = filtres[axe.cle] ?? []
+    if (choisies.length === 0) return true
+    return porte(axe, creneau, choisies)
   })
+}
+
+/* Le créneau relève-t-il de l'une des valeurs demandées sur cet axe ?
+   Sur un axe `neutreSiVide`, un créneau qui ne porte pas l'axe répond oui :
+   voir le commentaire de l'axe « groupe ». */
+function porte(axe, creneau, valeurs) {
+  const siennes = axe.valeurs(creneau)
+  if (axe.neutreSiVide && siennes.length === 0) return true
+  return siennes.some((v) => valeurs.includes(v))
 }
 
 /* Identifiant d'ancrage lisible, accents retirés : les jours n'en portent
@@ -228,6 +255,14 @@ function Creneau({ creneau }) {
 
       <h4 className="lp-planning__intitule">{creneau.intitule}</h4>
 
+      {/* `groupe-nom` et non `groupe` : cette dernière classe est déjà prise
+          par le panneau « Au choix », dont la carte héritait ici du padding
+          et du fond. Un nom de classe repris, c'est un style hérité par
+          accident. */}
+      {creneau.groupe && (
+        <p className="lp-planning__groupe-nom">{creneau.groupe}</p>
+      )}
+
       {creneau.detail && (
         <p className="lp-planning__detail">
           {creneau.detail}
@@ -249,6 +284,26 @@ function Creneau({ creneau }) {
           {PLANNING_INTRO.salleCourt}
         </p>
       )}
+
+      {/* Deux états que le classeur a rendus nécessaires. Ils ne se cumulent
+          pas : une classe fermée n'a pas à discuter de sa formule. */}
+      {creneau.inscriptionsOuvertes === false ? (
+        <p className="lp-planning__etat-seance">
+          <span className="lp-attente">{ETATS_SEANCE.anciensEleves}</span>
+        </p>
+      ) : creneau.inscriptionsOuvertes === true ? (
+        /* Le pendant POSITIF, et il n'est pas décoratif : le Fiqh a deux
+           niveaux au même horaire, dont un fermé. Sans cette mention, le
+           lecteur devrait déduire de l'absence d'étiquette sur l'autre
+           carte qu'il s'agit de celle qui l'accueille. */
+        <p className="lp-planning__etat-seance">
+          <span className="lp-planning__ouvert">{ETATS_SEANCE.nouvelleClasse}</span>
+        </p>
+      ) : creneau.formules?.length === 0 ? (
+        <p className="lp-planning__etat-seance">
+          <span className="lp-attente">{ETATS_SEANCE.horsFormule}</span>
+        </p>
+      ) : null}
     </article>
   )
 }
@@ -346,9 +401,15 @@ export default function Planning() {
      autres axes, jamais du sien. Une option à 0 est rendue inerte
      (aria-disabled) — on ne propose pas un cul-de-sac, mais on ne retire
      pas non plus le bouton du parcours au clavier. */
+  /* Le compteur emploie le MÊME prédicat que le filtre (`porte`), et non
+     une inclusion stricte : sans cela, une puce « Femmes 7 » aurait affiché
+     10 séances une fois cliquée, les trois séances sans groupe déclaré
+     restant visibles. Conséquence assumée : la somme des puces d'un axe
+     neutre dépasse le total, ces séances comptant dans les deux. Chaque
+     nombre répond juste à « combien restera-t-il si je clique ici ». */
   const compter = (axe, valeur) =>
     CRENEAUX.filter(
-      (c) => axe.valeurs(c).includes(valeur) && correspond(c, filtres, axe.cle),
+      (c) => porte(axe, c, [valeur]) && correspond(c, filtres, axe.cle),
     ).reduce((n, c) => n + occurrences(c), 0)
 
   // Séances posées sur des jours fermes : elles vivent dans leurs colonnes.

@@ -1,0 +1,138 @@
+/* ============================================================
+   MOSQUÉE EN-NOUR — Questions fréquentes (#faq).
+
+   Rang dans l'alternance des fonds : elle suit « Calendrier » et
+   précède « Inscription » → fond --surface-2.
+
+   Une colonne de lecture, pas une grille : on lit une FAQ de haut
+   en bas, une question à la fois. La borner à --content-narrow
+   évite des lignes de 1200px de large.
+   ============================================================ */
+
+.lp-faq {
+  background: var(--surface-2);
+}
+
+.lp-faq__wrap {
+  display: grid;
+  gap: var(--sp-7);
+}
+
+.lp-faq__entete {
+  display: grid;
+  gap: var(--sp-3);
+  max-width: var(--content-narrow);
+}
+
+.lp-faq__liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: var(--content-narrow);
+  /* Un seul filet entre deux questions : la liste se lit comme un registre,
+     pas comme une pile de cartes. Le premier filet vient du bloc lui-même. */
+  border-top: 1px solid var(--border-hair);
+}
+
+.lp-faq__item {
+  border-bottom: 1px solid var(--border-hair);
+}
+
+.lp-faq__bloc {
+  /* Sans cette borne, Safari donne au <details> une largeur de contenu. */
+  width: 100%;
+}
+
+/* ---------- La question ---------- */
+
+.lp-faq__q {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  /* 48px de haut minimum : c'est une cible tactile, pas seulement du texte. */
+  min-height: 48px;
+  padding-block: var(--sp-4);
+  cursor: pointer;
+  font-family: var(--ff-body);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-semibold);
+  color: var(--fg);
+  list-style: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+/* Le marqueur natif du <summary> : retiré sur les deux moteurs. Le chevron
+   du JSX le remplace, et lui suit l'état d'ouverture. */
+.lp-faq__q::-webkit-details-marker { display: none; }
+.lp-faq__q::marker { content: ''; }
+
+.lp-faq__q:hover { color: var(--accent-bright); }
+
+/* Le contour de focus porte sur la ligne entière, pas sur le texte seul :
+   c'est la ligne qui est cliquable. */
+.lp-faq__q:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--r-1);
+}
+
+.lp-faq__rang {
+  flex: none;
+  min-width: 2.2ch;
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  color: var(--fg-dim);
+}
+
+.lp-faq__intitule {
+  flex: 1;
+  text-wrap: pretty;
+}
+
+.lp-faq__chevron {
+  flex: none;
+  align-self: center;
+  color: var(--accent-bright);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+[open] > .lp-faq__q .lp-faq__chevron { transform: rotate(180deg); }
+
+/* ---------- La réponse ---------- */
+
+.lp-faq__r {
+  /* Alignée sur l'intitulé, pas sur le numéro : la réponse prolonge la
+     question, elle ne repart pas de la marge. */
+  padding-left: calc(2.2ch + var(--sp-4));
+  padding-bottom: var(--sp-5);
+}
+
+.lp-faq__r .lp-p {
+  max-width: 62ch;
+}
+
+/* ---------- L'issue de secours ---------- */
+
+.lp-faq__reste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-3);
+  max-width: var(--content-narrow);
+}
+
+.lp-faq__tel {
+  font-size: var(--fs-18);
+  font-weight: var(--fw-semibold);
+}
+
+@media (max-width: 560px) {
+  .lp-faq__q {
+    gap: var(--sp-3);
+    font-size: var(--fs-16);
+  }
+
+  .lp-faq__r {
+    padding-left: calc(2.2ch + var(--sp-3));
+  }
+}

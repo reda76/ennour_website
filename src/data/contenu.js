@@ -61,9 +61,12 @@ export const POLES = [
        n'y en a pas, c'est édicter une règle d'admission à la place de la
        mosquée — au même titre que les « petits effectifs » retirés plus
        haut. À réintroduire seulement si l'équipe le confirme. */
+    /* « Tous les week-ends » était FAUX : le classeur place l'alphabétisation
+       le dimanche de 16h à 17h, et le cours d'arabe des sœurs le mercredi.
+       Rien ne se tient le samedi. */
     points: [
       'Alphabétisation arabe',
-      'Tous les week-ends',
+      'Groupes hommes et femmes',
     ],
   },
   {
@@ -72,10 +75,12 @@ export const POLES = [
     court: 'Sciences musulmanes',
     accroche: 'Jurisprudence (Fiqh) et biographie prophétique (Sîra).',
     illustration: 'sciences',
+    /* « Le week-end, au choix » était FAUX : il n'y a aucun choix de jour.
+       Le Fiqh a deux niveaux à deux jours fixes, la Sîra est le samedi. */
     points: [
-      'Cours de Fiqh',
+      'Fiqh — niveaux 1 et 2',
       'Cours de Sîra',
-      'Le week-end, au choix',
+      'Le week-end',
     ],
   },
 ]
@@ -163,94 +168,181 @@ export const PHOTOS = {
 export const PUBLICS = ['Adultes']
 
 /* ---------- Les séances de la semaine ----------
-   Transcrites de l'affiche « Inscriptions ouvertes — Cours adultes 2026-2027 »,
-   qui fait foi : c'est le document public, daté, tarifé, qui ouvre les
-   inscriptions. Les horaires de la note manuscrite qu'elle ne reprend pas sont
-   conservés plus bas, dans CRENEAUX_A_RECONCILIER, et NE SONT PAS AFFICHÉS.
+   Transcrites du classeur « planning des Salles Ennour.xlsx » fourni par la
+   mosquée : six feuilles, une par salle, en grille hebdomadaire à la
+   demi-heure. C'est la source la plus complète et la plus récente — elle
+   PRIME sur l'affiche et sur la note manuscrite, qu'elle corrige toutes deux.
 
-   `auChoix: true` traduit le « Samedi OU Dimanche » de l'affiche : l'élève
-   choisit un des deux jours, il ne vient pas aux deux. Le confondre avec un
-   « Samedi ET Dimanche » doublerait le nombre de séances annoncées.
+   Ce qu'elle a tranché :
+   — L'ALPHABÉTISATION ne se tient pas de 7h à 8h30 comme le site l'affichait
+     d'après la formule 2 de l'affiche, mais le DIMANCHE de 16h à 17h, en
+     salle 3 pour les hommes et salle 4 pour les femmes. C'est l'erreur que
+     la mosquée a signalée.
+   — Le FIQH n'est pas « samedi ou dimanche » : ce sont DEUX NIVEAUX à deux
+     jours différents. Niveau 1 le dimanche (classe nouvelle, inscriptions
+     ouvertes), niveau 2 le samedi (anciens élèves uniquement).
+   — La SÎRA adultes est le SAMEDI seulement. Le créneau du dimanche
+     après-midi que l'affiche laissait supposer est la Sîra des ados.
+   — Le CORAN FEMMES existe bien : lundi, mardi et jeudi de 14h30 à 16h. Il
+     était resté en attente d'arbitrage faute de source ; il est confirmé.
+   — Toutes les SALLES sont désormais connues.
 
-   `poles` est un TABLEAU : la séance du week-end sert à la fois le Coran et
-   l'alphabétisation (formule 2), une séance peut donc relever de deux pôles.
+   Ce qui en est volontairement EXCLU :
+   — les cours enfants et ados (35 créneaux au classeur). La mosquée ne
+     communique pas encore dessus : « pour l'instant c'est que pour les
+     adultes ». Ne pas les ajouter sans son accord.
+   — les NOMS DES ENSEIGNANTS, qui figurent au classeur (annotations de
+     planning interne). Publier le nom de quelqu'un est une décision qui
+     appartient à la mosquée, pas au site.
 
-   AUCUN champ `genre` : l'affiche n'attribue aucune séance à un groupe
-   hommes ou femmes. La note manuscrite le faisait, mais ses horaires ne
-   concordent pas avec l'affiche — trancher à sa place afficherait un site
-   d'apparence masculine, ou inventerait des horaires féminins. La séparation
-   des groupes reste énoncée une fois, en clair, dans COURS_INTRO. */
+   `groupe` remplace l'ancien `genre`, retiré quand l'affiche ne disait rien
+   des groupes. Le classeur, lui, les nomme explicitement. */
 export const CRENEAUX = [
   {
-    id: 'coran-semaine',
+    id: 'coran-h-semaine',
     poles: ['coran'],
-    intitule: 'Coran — en semaine',
+    intitule: 'Coran',
+    groupe: 'Hommes',
     public: 'Adultes',
     debut: '20:00',
     fin: '21:30',
     jours: ['Lundi', 'Mercredi', 'Vendredi'],
-    auChoix: false,
-    salle: null,
+    salle: 'Salle 5',
     formules: ['coran-intensif'],
   },
   {
-    id: 'coran-weekend',
-    poles: ['coran', 'alphabetisation'],
-    intitule: 'Coran et alphabétisation — le week-end',
+    id: 'coran-h-weekend',
+    poles: ['coran'],
+    intitule: 'Coran',
+    groupe: 'Hommes',
     public: 'Adultes',
     debut: '07:00',
     fin: '08:30',
     jours: ['Samedi', 'Dimanche'],
-    auChoix: false,
-    salle: null,
+    salle: 'Salle 5',
     formules: ['coran-intensif', 'coran-alphabetisation'],
   },
   {
-    id: 'fiqh',
+    id: 'coran-f-semaine',
+    poles: ['coran'],
+    intitule: 'Coran',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: '14:30',
+    fin: '16:00',
+    jours: ['Lundi', 'Mardi', 'Jeudi'],
+    salle: 'Salle 5',
+    /* TODO — à confirmer : ce créneau tient trois séances par semaine, comme
+       la formule 1 côté hommes, mais le classeur ne le rattache à aucune
+       formule et l'affiche ne le mentionne pas. On ne le suppose pas. */
+    formules: [],
+  },
+  {
+    id: 'alpha-h',
+    poles: ['alphabetisation'],
+    intitule: 'Alphabétisation',
+    groupe: 'Hommes',
+    public: 'Adultes',
+    debut: '16:00',
+    fin: '17:00',
+    jours: ['Dimanche'],
+    salle: 'Salle 3',
+    formules: ['coran-alphabetisation'],
+  },
+  {
+    id: 'alpha-f',
+    poles: ['alphabetisation'],
+    intitule: 'Alphabétisation',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: '16:00',
+    fin: '17:00',
+    jours: ['Dimanche'],
+    salle: 'Salle 4',
+    formules: ['coran-alphabetisation'],
+  },
+  {
+    id: 'fiqh-n1',
     poles: ['sciences'],
-    intitule: 'Fiqh',
+    intitule: 'Fiqh — niveau 1',
     public: 'Adultes',
     debut: '17:00',
     fin: '19:00',
-    jours: ['Samedi', 'Dimanche'],
-    auChoix: true,
-    salle: null,
+    jours: ['Dimanche'],
+    salle: 'Salle 5',
     formules: ['sciences'],
+    /* La classe est nouvelle : c'est celle qui reçoit les inscriptions. */
+    inscriptionsOuvertes: true,
+  },
+  {
+    id: 'fiqh-n2',
+    poles: ['sciences'],
+    intitule: 'Fiqh — niveau 2',
+    public: 'Adultes',
+    debut: '17:00',
+    fin: '19:00',
+    jours: ['Samedi'],
+    salle: 'Salle 2',
+    formules: ['sciences'],
+    /* Réservé aux anciens élèves : l'afficher sans le dire enverrait des
+       débutants s'inscrire à un cours qui ne les accueillera pas. */
+    inscriptionsOuvertes: false,
   },
   {
     id: 'sira',
     poles: ['sciences'],
     intitule: 'Sîra',
     detail: 'Biographie du Prophète',
-    /* La ligature ﷺ (U+FDFA) est séparée du texte : Alegreya Sans ne la
-       possède pas, et un caractère isolé en repli système dépareille au
-       milieu d'une phrase. Rendue à part, elle peut être posée en Amiri
-       (classe .lp-arabe), qui la dessine correctement. */
     salutation: 'ﷺ',
     public: 'Adultes',
     debut: '19:00',
     fin: '21:00',
-    jours: ['Samedi', 'Dimanche'],
-    auChoix: true,
-    salle: null,
+    jours: ['Samedi'],
+    salle: 'Salle 5',
     formules: ['sciences'],
   },
-]
-
-/* ---------- EN ATTENTE D'ARBITRAGE — ne rien afficher d'ici ----------
-   Horaires figurant sur la note manuscrite de l'équipe mais ABSENTS de
-   l'affiche 2026-2027. Les deux documents se contredisent : l'affiche place
-   l'alphabétisation le week-end de 7h à 8h30 (formule 2), la note la plaçait
-   de 16h à 17h en salles 3 et 4, et la note portait un cours de Coran féminin
-   dont l'affiche ne dit rien.
-
-   Conservés pour ne rien perdre, JAMAIS rendus : afficher deux horaires
-   contradictoires pour le même cours est pire que n'en afficher qu'un.
-   À trancher avec la mosquée, puis basculer dans CRENEAUX ou supprimer. */
-export const CRENEAUX_A_RECONCILIER = [
-  { id: 'coran-f', intitule: 'Coran — groupe femmes', debut: '14:30', fin: '16:00', jours: ['Lundi', 'Mardi', 'Jeudi'], salle: null },
-  { id: 'alpha-h', intitule: 'Alphabétisation — groupe hommes', debut: '16:00', fin: '17:00', jours: ['Samedi'], salle: 'Salle 3' },
-  { id: 'alpha-f', intitule: 'Alphabétisation — groupe femmes', debut: '16:00', fin: '17:00', jours: ['Dimanche'], salle: 'Salle 4' },
+  /* Les trois séances suivantes figurent au classeur mais sur AUCUNE des
+     trois formules de l'affiche. Elles sont affichées — ce sont de vraies
+     séances adultes, et les taire priverait les femmes de la moitié de
+     l'offre qui les concerne — mais rattachées à aucune formule.
+     TODO — la mosquée doit dire si elles sont ouvertes aux inscriptions et
+     à quelles conditions. */
+  {
+    id: 'fiqh-coran-f',
+    poles: ['coran', 'sciences'],
+    intitule: 'Fiqh et Coran',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: '14:00',
+    fin: '16:00',
+    jours: ['Lundi'],
+    salle: 'Salle 2',
+    formules: [],
+  },
+  {
+    id: 'arabe-f',
+    poles: ['alphabetisation'],
+    intitule: 'Arabe',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: '14:00',
+    fin: '16:00',
+    jours: ['Mercredi'],
+    salle: 'Salle 2',
+    formules: [],
+  },
+  {
+    id: 'coran-tafsir-f',
+    poles: ['coran'],
+    intitule: 'Coran et tafsîr',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: '17:00',
+    fin: '19:00',
+    jours: ['Dimanche'],
+    salle: 'Salle 2',
+    formules: [],
+  },
 ]
 
 export const JOURS_SEMAINE = [
@@ -297,8 +389,12 @@ export const FORMULES = [
     prix: 80,
     prixNote: null,
     inclus: ['Alphabétisation arabe', 'Lecture du Coran', 'Tajwîd', 'Mémorisation'],
+    /* DEUX séances et non une. L'affiche ne portait que le créneau de 7h à
+       8h30, ce qui laissait croire que l'alphabétisation s'y tenait — l'erreur
+       signalée par la mosquée. Le classeur lui donne son propre horaire. */
     seances: [
-      { libelle: 'Le week-end', jours: ['Samedi', 'Dimanche'], debut: '07:00', fin: '08:30', auChoix: false },
+      { libelle: 'Coran, le week-end', jours: ['Samedi', 'Dimanche'], debut: '07:00', fin: '08:30', auChoix: false },
+      { libelle: 'Alphabétisation', jours: ['Dimanche'], debut: '16:00', fin: '17:00', auChoix: false },
     ],
     poles: ['coran', 'alphabetisation'],
   },
@@ -307,14 +403,23 @@ export const FORMULES = [
     numero: 3,
     nom: 'Sciences musulmanes',
     sousTitre: 'Sîra & Fiqh',
-    resume: 'La jurisprudence et la vie du Prophète, un jour de week-end au choix.',
+    /* Plus aucun « au choix » : le classeur donne des jours fermes. Pour un
+       nouvel inscrit, la formule 3 vaut Sîra le samedi et Fiqh niveau 1 le
+       dimanche — le niveau 2 du samedi ne prend pas de nouvel élève. */
+    resume: 'Deux soirées de week-end : la vie du Prophète le samedi, la jurisprudence le dimanche.',
     rythme: 'Le week-end',
     prix: 80,
     prixNote: null,
     inclus: ['Cours de Sîra', 'Cours de Fiqh'],
+    /* Le « Samedi OU Dimanche » de l'affiche n'était PAS un choix de jour :
+       le classeur montre deux niveaux de Fiqh à deux jours fixes, et une
+       Sîra le samedi seulement. `auChoix` disparaît donc partout.
+       Le niveau 2 est signalé fermé : l'afficher sans le dire enverrait des
+       débutants s'inscrire à un cours qui ne les accueillera pas. */
     seances: [
-      { libelle: 'Cours de Sîra', detail: 'Biographie du Prophète', salutation: 'ﷺ', jours: ['Samedi', 'Dimanche'], debut: '19:00', fin: '21:00', auChoix: true },
-      { libelle: 'Cours de Fiqh', jours: ['Samedi', 'Dimanche'], debut: '17:00', fin: '19:00', auChoix: true },
+      { libelle: 'Cours de Sîra', detail: 'Biographie du Prophète', salutation: 'ﷺ', jours: ['Samedi'], debut: '19:00', fin: '21:00', auChoix: false },
+      { libelle: 'Fiqh — niveau 1', jours: ['Dimanche'], debut: '17:00', fin: '19:00', auChoix: false },
+      { libelle: 'Fiqh — niveau 2', jours: ['Samedi'], debut: '17:00', fin: '19:00', auChoix: false, note: 'anciensEleves' },
     ],
     poles: ['sciences'],
   },
@@ -435,6 +540,7 @@ export const SECTIONS = [
   { id: 'planning', label: 'Planning' },
   { id: 'tarifs', label: 'Formules & tarifs' },
   { id: 'calendrier', label: 'Calendrier' },
+  { id: 'faq', label: 'Questions fréquentes' },
   { id: 'inscription', label: 'Inscription' },
   { id: 'contact', label: 'Contact' },
 ]
@@ -773,6 +879,18 @@ export const TARIFS_AFFICHE = {
 }
 
 /* ---------- Section « Planning » — libellés d'interface ---------- */
+/* Libellés des deux états introduits par le classeur : une classe fermée aux
+   nouvelles inscriptions, et une séance rattachée à aucune formule. */
+export const ETATS_SEANCE = {
+  anciensEleves: 'Anciens élèves uniquement',
+  anciensElevesDetail:
+    'Cette classe poursuit le programme de l’an dernier : elle ne reçoit pas de nouvelle inscription cette année.',
+  nouvelleClasse: 'Nouvelle classe — inscriptions ouvertes',
+  horsFormule: 'Nous consulter',
+  horsFormuleDetail:
+    'Cette séance ne figure sur aucune des trois formules de l’affiche. Contactez le secrétariat pour connaître les conditions.',
+}
+
 export const PLANNING_UI = {
   annee: 'Année scolaire',
   toutAfficher: 'Tout afficher',
@@ -817,8 +935,18 @@ export const COURS_TEXTES = {
    cas où une autre section le lirait. */
 export const PLANNING_TEXTES = {
   lead:
-    'La semaine type de l’année scolaire. Chaque pôle a sa teinte : sélectionnez-en un pour ne garder que ses séances.',
+    'La semaine type de l’année scolaire. Filtrez par pôle ou par groupe pour ne garder que les séances qui vous concernent.',
   filtreLegende: 'Filtrer par pôle',
+  /* Le tri par GROUPE est revenu avec le classeur des salles, qui nomme
+     explicitement les groupes hommes et femmes — l'affiche n'en disait rien,
+     l'axe avait donc été retiré. Le tri par public, lui, reste absent : une
+     seule valeur ouverte, et un filtre à une option ne filtre rien. */
+  filtreGroupe: 'Groupe',
+  /* Dit pourquoi un filtre de groupe laisse passer des séances qui n'en
+     portent pas : sans cette phrase, l'écart entre la puce et la grille
+     passerait pour un défaut d'affichage. */
+  groupeNote:
+    'Les séances dont le groupe n’est pas précisé restent affichées quel que soit le filtre.',
 
   /* L'affiche écrit « Samedi OU Dimanche » : l'élève choisit UN des deux
      jours. Poser le cours dans les deux colonnes de la semaine annoncerait
@@ -903,4 +1031,84 @@ export const INSCRIPTION_TEXTES = {
   niveauAide: 'Indication facultative : elle situe votre point de départ.',
   facultatif: '(facultatif)',
   reglementNote: 'Après confirmation de votre inscription, jamais avant.',
+}
+
+/* ============================================================
+   FAQ — demandée par la mosquée (« on a pensé à mettre une FAQ
+   sur le site, est-ce que c'est possible ? »).
+
+   AUCUNE question n'a été fournie : celles-ci sont déduites de ce
+   que le site établit déjà, et chaque réponse est TRAÇABLE à une
+   source — l'affiche 2026-2027, le classeur des salles, ou une
+   consigne écrite de la mosquée. Rien n'y est inventé, et aucune
+   n'annonce un service dont je n'ai pas la preuve.
+
+   Deux sujets sont volontairement ABSENTS :
+   — les cours enfants et ados, qui existent au classeur mais dont la
+     mosquée ne veut pas communiquer pour l'instant. Y répondre, même
+     par la négative, serait communiquer.
+   — l'adresse et l'accès, tant que l'adresse exacte n'est pas connue.
+
+   C'est une PROPOSITION : à relire, à couper, à compléter par les
+   questions que le secrétariat reçoit vraiment au téléphone.       */
+export const FAQ = {
+  surtitre: 'Questions fréquentes',
+  titre: 'Ce qu’on nous demande le plus',
+  chapeau:
+    'Une réponse rapide aux questions qui reviennent. Si la vôtre n’y est pas, le secrétariat répond au téléphone.',
+  /* `source` n'est pas affiché : il documente d'où vient la réponse, pour
+     que la mosquée puisse vérifier chaque ligne avant publication. */
+  questions: [
+    {
+      id: 'public',
+      q: 'À qui s’adressent les cours ?',
+      r: 'Aux adultes, pour l’année scolaire 2026-2027. Les groupes sont séparés hommes et femmes.',
+      source: 'affiche + classeur',
+    },
+    {
+      id: 'cumul',
+      q: 'Peut-on suivre plusieurs formules à la fois ?',
+      r: 'Oui. Les trois formules sont cumulables : vous pouvez en choisir une seule ou en combiner plusieurs selon vos objectifs.',
+      source: 'affiche',
+    },
+    {
+      id: 'tarifs',
+      q: 'Combien coûtent les cours ?',
+      r: 'Coran intensif : 300 € l’année. Coran & alphabétisation : 80 € l’année. Sciences musulmanes : 80 € l’année.',
+      source: 'affiche',
+    },
+    {
+      id: 'reglement',
+      q: 'Comment régler ?',
+      r: 'En ligne via HelloAsso, ou sur place au secrétariat. Le règlement peut être fait en une fois ou échelonné.',
+      source: 'affiche + note manuscrite',
+    },
+    {
+      id: 'debutant',
+      q: 'Je ne sais pas lire l’arabe, puis-je commencer ?',
+      r: 'Oui. L’alphabétisation part des toutes premières lettres. Elle a lieu le dimanche de 16 h à 17 h, en salle 3 pour les hommes et salle 4 pour les femmes.',
+      source: 'classeur des salles',
+    },
+    {
+      id: 'fiqh-niveaux',
+      q: 'Le cours de Fiqh a deux niveaux : lequel choisir ?',
+      r: 'Le niveau 1 est une nouvelle classe, le dimanche de 17 h à 19 h : c’est celle qui reçoit les inscriptions. Le niveau 2, le samedi à la même heure, poursuit le programme de l’an dernier et est réservé aux anciens élèves.',
+      source: 'message de la mosquée du 30/07',
+    },
+    {
+      id: 'inscription',
+      q: 'Comment s’inscrire ?',
+      r: 'Par le formulaire en ligne de ce site, ou par téléphone auprès du secrétariat. Les places sont limitées.',
+      source: 'affiche',
+    },
+    {
+      id: 'horaires-changent',
+      q: 'Les horaires peuvent-ils changer en cours d’année ?',
+      r: 'Oui. Les horaires et les salles peuvent être modifiés en fonction des besoins pédagogiques et des effectifs. Toute modification est communiquée aux inscrits.',
+      source: 'note manuscrite',
+    },
+  ],
+  /* Le renvoi au téléphone ferme la liste : une FAQ ne peut pas tout
+     couvrir, et laisser le lecteur sans issue serait pire que de l'admettre. */
+  reste: 'Votre question n’y est pas ?',
 }
