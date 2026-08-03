@@ -24,11 +24,32 @@
   max-width: var(--content-narrow);
 }
 
+/* Les trois familles, empilées. L'écart entre elles est celui de deux blocs
+   d'une même section (--sp-7), pas celui de deux sections. */
+.lp-faq__familles {
+  display: grid;
+  gap: var(--sp-7);
+  max-width: var(--content-narrow);
+}
+
+.lp-faq__famille {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+/* Le titre de famille se distingue des questions par sa SERIF et sa
+   couleur, pas par sa taille : à peine plus gros, il ferait un troisième
+   niveau de titre là où deux suffisent. */
+.lp-faq__famille-titre {
+  font-family: var(--ff-display);
+  font-size: var(--fs-h3);
+  color: var(--accent-bright);
+}
+
 .lp-faq__liste {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-width: var(--content-narrow);
   /* Un seul filet entre deux questions : la liste se lit comme un registre,
      pas comme une pile de cartes. Le premier filet vient du bloc lui-même. */
   border-top: 1px solid var(--border-hair);

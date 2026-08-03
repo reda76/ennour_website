@@ -530,7 +530,7 @@ export const ETAPES_INSCRIPTION = [
 export const MOYENS_REGLEMENT = [
   { key: 'helloasso', libelle: 'En ligne — HelloAsso', detail: 'Sans frais pour la mosquée.', url: null },
   { key: 'especes', libelle: 'Sur place', detail: 'Au secrétariat de la mosquée.' },
-  { key: 'echelonnement', libelle: 'En une fois ou échelonné', detail: null },
+  { key: 'echelonnement', libelle: 'En une fois ou échelonné', detail: 'Par prélèvements automatiques ou par chèques remis à l’inscription.' },
 ]
 
 /* ---------- Navigation ---------- */
@@ -1034,81 +1034,158 @@ export const INSCRIPTION_TEXTES = {
 }
 
 /* ============================================================
-   FAQ — demandée par la mosquée (« on a pensé à mettre une FAQ
-   sur le site, est-ce que c'est possible ? »).
+   FAQ — texte fourni par la mosquée le 03/08, 19 questions.
 
-   AUCUNE question n'a été fournie : celles-ci sont déduites de ce
-   que le site établit déjà, et chaque réponse est TRAÇABLE à une
-   source — l'affiche 2026-2027, le classeur des salles, ou une
-   consigne écrite de la mosquée. Rien n'y est inventé, et aucune
-   n'annonce un service dont je n'ai pas la preuve.
+   Il remplace intégralement les huit questions que j'avais
+   proposées : celles-ci venaient de moi, celles-là viennent d'elle.
 
-   Deux sujets sont volontairement ABSENTS :
-   — les cours enfants et ados, qui existent au classeur mais dont la
-     mosquée ne veut pas communiquer pour l'instant. Y répondre, même
-     par la négative, serait communiquer.
-   — l'adresse et l'accès, tant que l'adresse exacte n'est pas connue.
+   Trois écarts avec le reste du site ont dû être arbitrés. Ils sont
+   signalés ici pour que la mosquée tranche :
 
-   C'est une PROPOSITION : à relire, à couper, à compléter par les
-   questions que le secrétariat reçoit vraiment au téléphone.       */
+   1. NUMÉROTATION DES FORMULES. La FAQ écrit « Formule 1 : Sciences
+      islamiques » et « Formule 3 : intensive » ; l'affiche imprimée
+      dit l'inverse (1 = Coran intensif à 300 €, 3 = Sciences
+      musulmanes à 80 €). La 2 concorde. La réponse ci-dessous suit
+      l'AFFICHE — c'est le document public, tarifé, déjà distribué, et
+      c'est lui que les cartes de tarifs affichent. Une page qui se
+      contredit d'une section à l'autre serait pire que tout.
+   2. « Formulaire de contact » (question 7) : le site n'en a pas de
+      distinct. La réponse renvoie au formulaire d'inscription, qui
+      porte un champ de message libre, et au téléphone.
+   3. Orthographe : « Mosquée En-Nour », comme sur l'enseigne du
+      bâtiment, et non « Ennour ».
+
+   Les questions sont regroupées en trois familles. L'ordre d'origine
+   mêlait inscription, déroulement et contact ; le texte n'a pas
+   changé, seul son rangement. Deux paires font doublon dans la source
+   (1/8 sur le cumul, 2/6/11 sur le présentiel) : elles sont conservées
+   telles quelles — on cherche une FAQ par sa question exacte.        */
 export const FAQ = {
   surtitre: 'Questions fréquentes',
   titre: 'Ce qu’on nous demande le plus',
   chapeau:
     'Une réponse rapide aux questions qui reviennent. Si la vôtre n’y est pas, le secrétariat répond au téléphone.',
-  /* `source` n'est pas affiché : il documente d'où vient la réponse, pour
-     que la mosquée puisse vérifier chaque ligne avant publication. */
-  questions: [
+  groupes: [
     {
-      id: 'public',
-      q: 'À qui s’adressent les cours ?',
-      r: 'Aux adultes, pour l’année scolaire 2026-2027. Les groupes sont séparés hommes et femmes.',
-      source: 'affiche + classeur',
+      id: 'formules',
+      titre: 'Les formules et l’inscription',
+      questions: [
+        {
+          id: 'formules-proposees',
+          q: 'Quelles sont les formules proposées ?',
+          r: 'Trois formules, pour répondre aux besoins et aux objectifs de chacun : la formule 1, Coran intensif, destinée aux personnes souhaitant un apprentissage plus soutenu ; la formule 2, alphabétisation, lecture du Coran, tajwîd et mémorisation ; la formule 3, sciences musulmanes. Il est également possible de s’inscrire à plusieurs formules, sous réserve de la compatibilité des horaires.',
+        },
+        {
+          id: 'plusieurs-formules',
+          q: 'Puis-je m’inscrire à plusieurs formules en même temps ?',
+          r: 'Oui. Il est tout à fait possible de suivre plusieurs formules simultanément, sous réserve de la compatibilité des horaires.',
+        },
+        {
+          id: 'reduction',
+          q: 'Bénéficie-t-on d’une réduction en cas d’inscription à plusieurs formules ?',
+          r: 'Les modalités concernant les réductions éventuelles sont précisées lors de l’inscription. N’hésitez pas à contacter le secrétariat pour plus d’informations.',
+        },
+        {
+          id: 'reglement',
+          q: 'En combien de fois puis-je régler ma formation ?',
+          r: 'Le règlement peut être effectué en une seule fois ou échelonné sur l’année. L’inscription doit toutefois être finalisée en début d’année. En cas de paiement échelonné, celui-ci s’effectue par prélèvements automatiques ou par chèques remis lors de l’inscription, qui seront encaissés selon l’échéancier prévu.',
+        },
+        {
+          id: 'places',
+          q: 'Le nombre de places est-il limité ?',
+          r: 'Oui. Afin de garantir un enseignement de qualité, le nombre de places est limité. Nous vous conseillons de vous inscrire dès l’ouverture des inscriptions.',
+        },
+        {
+          id: 'en-cours-annee',
+          q: 'Puis-je rejoindre une session en cours d’année ?',
+          r: 'Oui, cela est possible, sous réserve de l’accord du professeur. Vous pourrez rejoindre la session en cours d’année après validation de celui-ci.',
+        },
+        {
+          id: 'niveau',
+          q: 'Quel est le niveau requis ?',
+          r: 'Nos formations sont accessibles à différents niveaux, du débutant à l’élève plus avancé. Si nécessaire, nous vous orienterons vers la formule la plus adaptée à votre niveau.',
+        },
+        {
+          id: 'abandon',
+          q: 'Que se passe-t-il en cas d’abandon en cours d’année ?',
+          r: 'En cas d’abandon en cours d’année, l’année de formation reste due dans son intégralité. L’inscription étant un engagement pour l’année complète, aucun remboursement ne pourra être effectué en cas d’arrêt en cours de formation.',
+          /* Le seul engagement financier de la page. Signalé pour que la
+             section Tarifs puisse y renvoyer : personne ne doit payer sans
+             l'avoir lu. */
+          cle: true,
+        },
+      ],
     },
     {
-      id: 'cumul',
-      q: 'Peut-on suivre plusieurs formules à la fois ?',
-      r: 'Oui. Les trois formules sont cumulables : vous pouvez en choisir une seule ou en combiner plusieurs selon vos objectifs.',
-      source: 'affiche',
+      id: 'deroulement',
+      titre: 'Le déroulement des cours',
+      questions: [
+        {
+          id: 'deroulement-cours',
+          q: 'Comment se déroulent les cours ?',
+          r: 'Les cours se déroulent en présentiel à la Mosquée En-Nour. Selon la formule choisie, ils ont lieu en semaine ou le week-end, conformément au planning communiqué lors de l’inscription.',
+        },
+        {
+          id: 'presentiel',
+          q: 'Les cours sont-ils dispensés en présentiel, en ligne ou dans les deux formats ?',
+          r: 'Les cours sont dispensés uniquement en présentiel, à la Mosquée En-Nour.',
+        },
+        {
+          id: 'materiel',
+          q: 'De quoi ai-je besoin pour suivre les cours ?',
+          r: 'Il vous suffit de prévoir le nécessaire pour prendre des notes : cahier, stylo. Selon la matière enseignée, le professeur pourra également vous demander d’apporter du matériel ou des ouvrages spécifiques.',
+        },
+        {
+          id: 'supports',
+          q: 'Les supports de cours sont-ils fournis ?',
+          r: 'Oui. Les supports pédagogiques nécessaires au bon déroulement des cours sont mis à disposition des élèves. Certains ouvrages pourront toutefois être demandés selon la formule choisie.',
+        },
+        {
+          id: 'devoirs',
+          q: 'Y a-t-il des devoirs et des évaluations ?',
+          r: 'Oui. Des évaluations trimestrielles sont organisées afin de suivre votre progression. Les devoirs sont laissés à l’appréciation de chaque professeur et peuvent varier selon la matière.',
+        },
+        {
+          id: 'mixite',
+          q: 'Les cours sont-ils ouverts aux hommes et aux femmes ?',
+          r: 'Oui. Les cours sont ouverts aux hommes et aux femmes, dans le respect de l’organisation mise en place par la mosquée.',
+        },
+        {
+          id: 'absence',
+          q: 'Que se passe-t-il si je ne peux pas assister à un cours ?',
+          r: 'En cas d’absence, nous vous demandons de prévenir votre professeur dès que possible.',
+        },
+        {
+          id: 'enregistrement',
+          q: 'Les cours sont-ils enregistrés ?',
+          r: 'Non. Les cours ne sont pas enregistrés : ils sont dispensés uniquement en présentiel.',
+        },
+        {
+          id: 'conferences',
+          q: 'Que se passe-t-il lorsqu’une conférence est organisée ?',
+          r: 'Dans le cadre de notre projet pédagogique, certains cours peuvent exceptionnellement être remplacés par une conférence organisée par la Mosquée En-Nour. Ces conférences font pleinement partie de la formation : elles sont une occasion d’approfondir ses connaissances, de bénéficier des enseignements de conférenciers invités et de profiter d’un rappel bénéfique. La participation des élèves y est vivement encouragée.',
+        },
+      ],
     },
     {
-      id: 'tarifs',
-      q: 'Combien coûtent les cours ?',
-      r: 'Coran intensif : 300 € l’année. Coran & alphabétisation : 80 € l’année. Sciences musulmanes : 80 € l’année.',
-      source: 'affiche',
-    },
-    {
-      id: 'reglement',
-      q: 'Comment régler ?',
-      r: 'En ligne via HelloAsso, ou sur place au secrétariat. Le règlement peut être fait en une fois ou échelonné.',
-      source: 'affiche + note manuscrite',
-    },
-    {
-      id: 'debutant',
-      q: 'Je ne sais pas lire l’arabe, puis-je commencer ?',
-      r: 'Oui. L’alphabétisation part des toutes premières lettres. Elle a lieu le dimanche de 16 h à 17 h, en salle 3 pour les hommes et salle 4 pour les femmes.',
-      source: 'classeur des salles',
-    },
-    {
-      id: 'fiqh-niveaux',
-      q: 'Le cours de Fiqh a deux niveaux : lequel choisir ?',
-      r: 'Le niveau 1 est une nouvelle classe, le dimanche de 17 h à 19 h : c’est celle qui reçoit les inscriptions. Le niveau 2, le samedi à la même heure, poursuit le programme de l’an dernier et est réservé aux anciens élèves.',
-      source: 'message de la mosquée du 30/07',
-    },
-    {
-      id: 'inscription',
-      q: 'Comment s’inscrire ?',
-      r: 'Par le formulaire en ligne de ce site, ou par téléphone auprès du secrétariat. Les places sont limitées.',
-      source: 'affiche',
-    },
-    {
-      id: 'horaires-changent',
-      q: 'Les horaires peuvent-ils changer en cours d’année ?',
-      r: 'Oui. Les horaires et les salles peuvent être modifiés en fonction des besoins pédagogiques et des effectifs. Toute modification est communiquée aux inscrits.',
-      source: 'note manuscrite',
+      id: 'contact',
+      titre: 'Rester en contact',
+      questions: [
+        {
+          id: 'secretariat',
+          q: 'Comment puis-je contacter le secrétariat ?',
+          /* La source disait « le formulaire de contact disponible sur le
+             site » : il n'en existe pas de distinct. On nomme ce qui existe
+             — le formulaire d'inscription porte un champ de message libre. */
+          r: 'Par le formulaire d’inscription de ce site, qui comporte un champ de message libre, par téléphone, ou directement à la Mosquée En-Nour pendant les horaires d’ouverture.',
+        },
+        {
+          id: 'annonces',
+          q: 'Comment serai-je informé des changements d’horaires ou des annonces importantes ?',
+          r: 'Les informations importantes concernant les cours, les éventuels changements d’horaires et les annonces sont communiquées via ce site internet et les groupes WhatsApp dédiés.',
+        },
+      ],
     },
   ],
-  /* Le renvoi au téléphone ferme la liste : une FAQ ne peut pas tout
-     couvrir, et laisser le lecteur sans issue serait pire que de l'admettre. */
   reste: 'Votre question n’y est pas ?',
 }
