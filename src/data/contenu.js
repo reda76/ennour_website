@@ -64,8 +64,12 @@ export const POLES = [
     /* « Tous les week-ends » était FAUX : le classeur place l'alphabétisation
        le dimanche de 16h à 17h, et le cours d'arabe des sœurs le mercredi.
        Rien ne se tient le samedi. */
+    /* « Le dimanche » et non « le week-end » : le classeur ne place rien le
+       samedi, et il n'y a pas d'alphabétisation en semaine — la mosquée l'a
+       confirmé. C'est une formule à part entière, pas un complément. */
     points: [
       'Alphabétisation arabe',
+      'Le dimanche',
       'Groupes hommes et femmes',
     ],
   },
@@ -321,7 +325,17 @@ export const CRENEAUX = [
   },
   {
     id: 'arabe-f',
-    poles: ['alphabetisation'],
+    /* AUCUN pôle, et c'est délibéré. Ce cours avait été rangé dans
+       « alphabétisation » par déduction — c'est de l'arabe, donc de
+       l'alphabétisation. La mosquée a corrigé : « pour l'alphabétisation, il
+       n'y en a pas en semaine, c'est une formule à part ». Le classeur lui
+       donne d'ailleurs un autre nom que les séances du dimanche : « Arabe »
+       et non « Alphabétisation ».
+       Il ne relève donc d'aucun des TROIS pôles publiés, et on n'en invente
+       pas un quatrième pour le loger : la mosquée en annonce trois.
+       Conséquence assumée : il n'apparaît que dans la semaine non filtrée.
+       TODO — à rattacher le jour où la mosquée dit à quoi il correspond. */
+    poles: [],
     intitule: 'Arabe',
     groupe: 'Femmes',
     public: 'Adultes',
