@@ -549,3 +549,68 @@
     gap: var(--sp-7);
   }
 }
+
+/* ============================================================
+   LES PLAGES DE DATES SUR LA FRISE
+
+   Demande de la mosquée : « les gens ne sont pas curieux des fois,
+   ils ne vont pas faire défiler toute la page et ils ne vont pas
+   voir la liste en bas ». La frise doit donc se suffire.
+
+   `__plage` et non `__dates` : cette dernière appartient déjà à la
+   ligne de date du REGISTRE, plus bas. La reprendre l'avait écrasée
+   et centrait toutes les dates du registre.
+
+   Le placement alterné n'est pas un effet de style. Les examens du
+   1er trimestre finissent le 19 décembre, jour où commencent les
+   vacances de Noël : sur une seule ligne, les deux plages se
+   recouvraient. Vacances en dessous, examens au-dessus.
+   ============================================================ */
+
+.lp-calendrier__plage {
+  position: absolute;
+  /* Centrée sur son bloc et LIBRE de déborder : une plage de dix-sept
+     jours occupe 5 % de l'axe, sa date écrite en fait le double. Le
+     débordement est voulu — la piste ne coupe pas. */
+  left: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  line-height: 1.2;
+  color: var(--fg-dim);
+  pointer-events: none;
+}
+
+.lp-calendrier__plage--bas { top: calc(100% + 6px); }
+.lp-calendrier__plage--haut { bottom: calc(100% + 6px); }
+
+/* Au survol du registre, la plage suit la mise en évidence de son bloc. */
+.is-actif > .lp-calendrier__plage { color: var(--accent-bright); }
+
+/* ---------- Les jalons ---------- */
+
+/* La date SUR LA MÊME LIGNE que le libellé, et non dessous. Empilée, elle
+   portait l'étiquette à 40px de haut : posée au bas de la piste, celle-ci
+   remontait alors de 56 à 96px et traversait l'axe, qui court à 64–66.
+   Sur une ligne elle tient en 20px et dégage l'axe — mesuré, pas estimé.
+   Le point médian sépare sans ponctuer : ce n'est pas une phrase. */
+.lp-calendrier__amer-date {
+  font-size: var(--fs-12);
+  font-weight: var(--fw-regular);
+  color: var(--fg-dim);
+}
+
+.lp-calendrier__amer-date::before {
+  content: ' · ';
+  color: var(--border-strong);
+}
+
+/* Un jalon sur deux passe AU-DESSUS du mât, où l'espace est libre.
+   « Rentrée Coran » et « Rentrée formules 2 et 3 » ne sont séparées que de
+   dix-neuf jours — six pour cent de l'axe — et se chevauchaient sur toute
+   leur largeur. Au-dessus plutôt qu'en dessous : sous l'axe, l'étiquette
+   sortait de la piste et retombait dans la légende. */
+.lp-calendrier__amer--decale .lp-calendrier__amer-lib {
+  bottom: 54px;
+}

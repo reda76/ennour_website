@@ -30,6 +30,9 @@ const fJour = new Intl.DateTimeFormat('fr-FR', { day: 'numeric' })
 const fJourMois = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' })
 const fComplet = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 const fMoisCourt = new Intl.DateTimeFormat('fr-FR', { month: 'short' })
+/* Format de la frise, et lui seul : « 17 oct. ». Le mois long y ferait des
+   étiquettes deux fois plus larges que les blocs qu'elles désignent. */
+const fFrise = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' })
 const fJourSemaine = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' })
 
 /* Intl rend les mois et les jours en minuscules : on remet la capitale
@@ -134,7 +137,13 @@ function construireModele() {
     // La fin est inclusive dans les données : on borne au lendemain
     // pour que le dernier jour de vacances occupe bien sa largeur.
     const l = e.f ? pct(new Date(e.f.getTime() + JOUR_MS)) - x : 0
-    return { key: e.key, type: e.type, libelle: e.libelle, x, l }
+    /* La plage, en format court, POSÉE SUR LA FRISE — c'est la demande de la
+       mosquée : « les gens ne vont pas faire défiler toute la page et ils ne
+       vont pas voir la liste en bas ». La frise doit se suffire.
+       Le tiret est un demi-cadratin encadré d'espaces insécables : sans eux
+       la plage se coupe en deux au milieu d'une étiquette étroite. */
+    const dates = e.f ? `${fFrise.format(e.d)}\u00A0–\u00A0${fFrise.format(e.f)}` : fFrise.format(e.d)
+    return { key: e.key, type: e.type, libelle: e.libelle, court: e.court ?? e.libelle, x, l, dates }
   })
 
   // Les deux bornes de l'année : les jalons s'ils existent, sinon
@@ -269,13 +278,22 @@ export default function Calendrier() {
                     style={{ left: `${m.bande.x}%`, width: `${m.bande.l}%` }}
                   />
 
+                  {/* Les plages sont posées SOUS l'axe pour les vacances et
+                      AU-DESSUS pour les examens. Ce n'est pas décoratif : les
+                      examens du 1er trimestre s'achèvent le jour où
+                      commencent les vacances de Noël, et leurs deux
+                      étiquettes se recouvriraient sur la même ligne. */}
                   {m.segments.filter((s) => s.type === 'vacances').map((s) => (
                     <div
                       key={s.key}
                       className={`lp-calendrier__eclipse${actif === s.key ? ' is-actif' : ''}`}
                       style={{ left: `${s.x}%`, width: `${s.l}%` }}
                       {...survol(s.key)}
-                    />
+                    >
+                      <span className="lp-calendrier__plage lp-calendrier__plage--bas lp-num">
+                        {s.dates}
+                      </span>
+                    </div>
                   ))}
 
                   {m.segments.filter((s) => s.type === 'examen').map((s) => (
@@ -284,20 +302,36 @@ export default function Calendrier() {
                       className={`lp-calendrier__eclat${actif === s.key ? ' is-actif' : ''}`}
                       style={{ left: `${s.x}%`, width: `${s.l}%` }}
                       {...survol(s.key)}
-                    />
+                    >
+                      <span className="lp-calendrier__plage lp-calendrier__plage--haut lp-num">
+                        {s.dates}
+                      </span>
+                    </div>
                   ))}
 
-                  {m.segments.filter((s) => s.type === 'jalon').map((s) => (
+                  {m.segments.filter((s) => s.type === 'jalon').map((s, i) => (
                     <div
                       key={s.key}
                       /* Passé la moitié de l'axe, l'étiquette se range à
-                         gauche de son mât pour ne pas sortir de la frise. */
-                      className={`lp-calendrier__amer${s.x > 50 ? ' lp-calendrier__amer--fin' : ''}${actif === s.key ? ' is-actif' : ''}`}
+                         gauche de son mât pour ne pas sortir de la frise.
+                         Un jalon sur deux monte au-dessus du mât : les deux
+                         rentrées sont à dix-neuf jours l'une de l'autre,
+                         soit six pour cent de l'axe, et leurs étiquettes se
+                         chevauchaient franchement. */
+                      className={
+                        'lp-calendrier__amer' +
+                        (s.x > 50 ? ' lp-calendrier__amer--fin' : '') +
+                        (i % 2 === 1 ? ' lp-calendrier__amer--decale' : '') +
+                        (actif === s.key ? ' is-actif' : '')
+                      }
                       style={{ left: `${s.x}%` }}
                       {...survol(s.key)}
                     >
                       <span className="lp-calendrier__amer-pt" />
-                      <span className="lp-calendrier__amer-lib">{s.libelle}</span>
+                      <span className="lp-calendrier__amer-lib">
+                        {s.court}
+                        <span className="lp-calendrier__amer-date lp-num">{s.dates}</span>
+                      </span>
                     </div>
                   ))}
 

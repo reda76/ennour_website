@@ -562,3 +562,86 @@
   height: 1px;
   background: var(--accent);
 }
+
+/* ============================================================
+   LE DÉGRESSIF
+   Il vit dans la bande « formules cumulables », parce qu'il ne
+   parle que de ça : ce que coûtent deux ou trois formules prises
+   ensemble. L'isoler en aurait fait une promotion ; ici c'est la
+   suite logique de la phrase au-dessus.
+   ============================================================ */
+
+.lp-tarifs__degressif {
+  display: grid;
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--border-hair);
+}
+
+/* Deux lignes, libellé à gauche et total à droite, alignées entre elles :
+   c'est une petite table de prix, elle doit se lire en diagonale. */
+.lp-tarifs__combinaisons {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+}
+
+.lp-tarifs__combi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border-hair);
+}
+
+.lp-tarifs__combi:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.lp-tarifs__combi dt {
+  font-family: var(--ff-body);
+  font-size: var(--fs-14);
+  color: var(--fg-muted);
+}
+
+.lp-tarifs__combi dd {
+  margin: 0;
+  text-align: right;
+}
+
+.lp-tarifs__combi-total {
+  font-family: var(--ff-display);
+  font-size: var(--fs-20);
+  font-weight: var(--fw-semibold);
+  color: var(--accent-bright);
+}
+
+/* Le prix plein barré : en encre pâle, jamais en rouge — ce n'est pas une
+   erreur, c'est une référence. Le mot « au lieu de » le précède, car une
+   rature seule ne s'entend pas dans une synthèse vocale. */
+.lp-tarifs__combi-plein {
+  font-size: var(--fs-13);
+  color: var(--fg-dim);
+}
+
+/* ---------- Le tarif remisé sur la carte ---------- */
+
+/* Posé sous le prix plein, en retrait : c'est un prix CONDITIONNEL. Au même
+   poids que le plein, il ferait croire à deux tarifs au choix. */
+.lp-tarifs__remise {
+  margin: 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-13);
+  line-height: var(--lh-body);
+  color: var(--fg-muted);
+}
+
+.lp-tarifs__remise-montant {
+  font-weight: var(--fw-semibold);
+  color: var(--accent-bright);
+}
+
+.lp-tarifs__remise-cond {
+  color: var(--fg-dim);
+}

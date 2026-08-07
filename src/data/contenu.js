@@ -17,15 +17,21 @@ export const ORG = {
   ville: 'Le Havre',
   // TODO — à confirmer : adresse postale exacte
   adresse: '__ADRESSE_A_CONFIRMER__, 76600 Le Havre',
-  // Relevé sur l'affiche « Inscriptions ouvertes — Cours adultes 2026-2027 ».
-  tel: '07 59 55 01 40',
-  telHref: 'tel:+33759550140',
+  /* Numéro CORRIGÉ par la mosquée le 07/08. Celui de l'affiche
+     (07 59 55 01 40) n'était pas le bon : c'est celui-ci qui aboutit au
+     pôle enseignement. L'affiche imprimée porte donc un numéro périmé. */
+  tel: '06 88 95 54 20',
+  telHref: 'tel:+33688955420',
+  // À qui l'on parle en composant ce numéro. Précisé par la mosquée.
+  telLibelle: 'AME — Pôle enseignement',
   // TODO — à confirmer : adresse e-mail officielle. L'affiche n'en porte pas.
   email: '__EMAIL_A_CONFIRMER__',
   anneeScolaire: '2026 – 2027',
-  // TODO — l'affiche porte un logo « AME » : nom exact de l'association à
-  // confirmer avant de l'écrire où que ce soit. On n'invente pas un sigle.
-  association: null,
+  /* La mosquée nomme « AME — Pôle enseignement » le service qui tient les
+     cours. Ce que le sigle AME développe reste inconnu : on l'écrit tel
+     quel, on ne l'invente pas. */
+  association: 'AME',
+  service: 'AME — Pôle enseignement',
 }
 
 /* ---------- Les trois pôles d'enseignement ----------
@@ -439,6 +445,52 @@ export const FORMULES = [
   },
 ]
 
+/* ---------- Le dégressif ----------
+   Relevé sur la note manuscrite « Dégressif cours adultes » et confirmé par
+   écrit par la mosquée le 07/08.
+
+   La règle tient en une phrase : SEULE la formule 1 déclenche la remise, et
+   elle n'est jamais elle-même remisée. Prise avec elle, la formule 2 passe
+   de 80 à 70 €, la formule 3 de 80 à 60 €. Sans elle, les formules 2 et 3
+   restent à leur tarif — 80 + 80 = 160 €, et non 130.
+
+   AUCUN total n'est écrit ici. Ils sont tous calculés par `totalFormules`
+   depuis FORMULES et `remises` : un tarif qui changerait laisserait sinon
+   derrière lui un total faux, et c'est le genre d'erreur qu'on ne voit
+   qu'une fois la facture éditée.                                          */
+export const DEGRESSIF = {
+  // La formule qui ouvre le droit à la remise.
+  declencheur: 'coran-intensif',
+  // Tarif remisé, par clé de formule. Absent = jamais remisé.
+  remises: { 'coran-alphabetisation': 70, sciences: 60 },
+  titre: 'Dégressif avec la formule 1',
+  texte:
+    'La formule 1 ouvre un tarif réduit sur les autres : prise avec elle, la formule 2 passe à 70 € et la formule 3 à 60 €.',
+  mentionSeules:
+    'Prises sans la formule 1, les formules 2 et 3 restent à leur tarif.',
+  // Gabarits — le composant y injecte des montants calculés, jamais écrits.
+  gabaritAvec: 'Les trois formules : {total} au lieu de {plein}',
+  gabaritSeules: 'Formules 2 et 3 ensemble : {total}',
+  auLieuDe: 'au lieu de',
+  avecFormule1: 'avec la formule 1',
+}
+
+/** Total d'un panier de formules, remise appliquée si la formule
+    déclencheuse en fait partie. Les clés inconnues et les formules sans
+    prix sont ignorées plutôt que de produire un NaN. */
+export function totalFormules(cles) {
+  const panier = new Set(cles)
+  const remisable = panier.has(DEGRESSIF.declencheur)
+  let total = 0
+  for (const cle of panier) {
+    const formule = FORMULES.find((f) => f.key === cle)
+    if (!formule || typeof formule.prix !== 'number') continue
+    const remise = remisable ? DEGRESSIF.remises[cle] : undefined
+    total += typeof remise === 'number' ? remise : formule.prix
+  }
+  return total
+}
+
 /* La monnaie est affichée par Intl : pas de « € » écrit à la main dans les
    composants, et pas de décimales pour des tarifs ronds. */
 export const DEVISE = { locale: 'fr-FR', monnaie: 'EUR' }
@@ -481,7 +533,14 @@ export const PLACES_LIMITEES = 'Places limitées'
    d'inscription et n'a pas vocation à porter le calendrier interne. Deux
    sources qui ne se recouvrent pas ne se contredisent pas.               */
 export const CALENDRIER = [
-  { key: 'rentree', libelle: 'Rentrée des cours', debut: '2026-09-14', fin: null, type: 'jalon', provisoire: true },
+  /* DEUX rentrées, confirmées par la mosquée le 07/08 — ce sont les seules
+     dates de ce calendrier qui ne soient plus provisoires. Les cours de
+     Coran ouvrent trois semaines avant les autres formules. */
+  /* `court` n'existe QUE pour la frise : « Rentrée des autres formules »
+     y ferait une étiquette de 180px pour un mât de 1px. Le registre, lui,
+     garde le libellé entier. */
+  { key: 'rentree-coran', libelle: 'Rentrée des cours de Coran', court: 'Rentrée Coran', debut: '2026-09-14', fin: null, type: 'jalon', provisoire: false },
+  { key: 'rentree-autres', libelle: 'Rentrée des autres formules', court: 'Rentrée formules 2 et 3', debut: '2026-10-03', fin: null, type: 'jalon', provisoire: false },
   { key: 'toussaint', libelle: 'Vacances de la Toussaint', debut: '2026-10-17', fin: '2026-11-02', type: 'vacances', provisoire: true },
   { key: 'examen-t1', libelle: 'Examens du 1er trimestre', debut: '2026-12-12', fin: '2026-12-19', type: 'examen', provisoire: true },
   { key: 'noel', libelle: 'Vacances de Noël', debut: '2026-12-19', fin: '2027-01-04', type: 'vacances', provisoire: true },
@@ -489,11 +548,16 @@ export const CALENDRIER = [
   { key: 'examen-t2', libelle: 'Examens du 2e trimestre', debut: '2027-03-13', fin: '2027-03-20', type: 'examen', provisoire: true },
   { key: 'printemps', libelle: 'Vacances de printemps', debut: '2027-04-17', fin: '2027-05-03', type: 'vacances', provisoire: true },
   { key: 'examen-t3', libelle: 'Examens du 3e trimestre', debut: '2027-06-05', fin: '2027-06-12', type: 'examen', provisoire: true },
-  { key: 'fin', libelle: 'Fin des cours', debut: '2027-06-26', fin: null, type: 'jalon', provisoire: true },
+  { key: 'fin', libelle: 'Fin des cours', court: 'Fin des cours', debut: '2027-06-26', fin: null, type: 'jalon', provisoire: true },
 ]
 
+/* La réserve ne vaut PLUS pour tout : les deux rentrées sont confirmées par
+   la mosquée, les huit autres entrées restent calées sur la zone B sans
+   avoir été vérifiées. Dire « les dates sont indicatives » sans distinguer
+   ferait douter des seules qui soient sûres — et ce sont précisément
+   celles sur lesquelles on s'inscrit. */
 export const MENTION_CALENDRIER =
-  'Calendrier aligné sur les vacances scolaires de la zone B. Les dates sont indicatives et confirmées à la rentrée.'
+  'Les deux dates de rentrée sont confirmées. Les vacances et les examens sont calés sur la zone B et restent à confirmer.'
 
 /* ---------- Inscription ----------
    Les quatre étapes décrivent ce que le site FAIT, pas une procédure
@@ -569,7 +633,7 @@ export const CALENDRIER_TEXTES = {
   /* Plus de « sessions d'examens » : le chapô annonce ce que la section
      montre, et les examens sont partis avec leurs dates non sourcées. */
   chapo:
-    "Le rythme de l’année en une seule lecture : périodes de cours et vacances scolaires.",
+    "Le rythme de l’année en une seule lecture : rentrées, périodes de cours, vacances et sessions d’examens.",
   /* « des repères » et non « de la frise » : la frise est aria-hidden et
      masquée sous 760px, la légende ne peut donc pas s'annoncer comme la
      sienne. Elle décrit les marques du registre, qui portent les mêmes formes. */

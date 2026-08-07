@@ -28,6 +28,12 @@ pnpm-debug.log*
 # Artefacts Windows/WSL
 *:Zone.Identifier
 
+# Messages vocaux du client : ce sont des enregistrements d'une personne,
+# transcrits puis inutiles. Ils n'ont rien à faire dans un dépôt public.
+*.ogg
+*.opus
+*.m4a
+
 # Notes manuscrites de l'équipe (photos de travail, pas du code).
 # Ciblé sur la RACINE : un `*.jpg` global écartait aussi les photos du
 # site, que la mosquée doit pouvoir déposer dans public/photos/.

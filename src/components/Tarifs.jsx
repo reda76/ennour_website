@@ -3,6 +3,8 @@ import {
   DEVISE,
   FORMULES,
   FORMULES_CUMULABLES,
+  DEGRESSIF,
+  totalFormules,
   MOYENS_REGLEMENT,
   ORG,
   PLACES_LIMITEES,
@@ -57,12 +59,65 @@ function formaterPrix(prix) {
 }
 
 /**
+ * Le dégressif : la règle, puis les deux totaux qui l'illustrent.
+ *
+ * Les montants sont CALCULÉS par totalFormules — jamais écrits. Un tarif
+ * modifié dans FORMULES se propage ici sans que personne ait à y penser ;
+ * écrits à la main, ils survivraient au changement et factureraient faux.
+ */
+function Degressif() {
+  const cles = FORMULES.map((f) => f.key)
+  const declencheur = DEGRESSIF?.declencheur
+  const complements = cles.filter((c) => c !== declencheur)
+
+  /* Rien à dire si la formule déclencheuse n'existe pas, ou si aucune remise
+     n'est déclarée : la section retombe alors sur le seul cumul. */
+  if (!declencheur || !cles.includes(declencheur)) return null
+  const remises = Object.keys(DEGRESSIF.remises ?? {}).filter((c) => cles.includes(c))
+  if (remises.length === 0) return null
+
+  const avec = formaterPrix(totalFormules(cles))
+  const plein = formaterPrix(FORMULES.reduce((n, f) => n + (f.prix ?? 0), 0))
+  const seules = formaterPrix(totalFormules(complements))
+
+  return (
+    <div className="lp-tarifs__degressif">
+      <p className="lp-p">{DEGRESSIF.texte}</p>
+      <dl className="lp-tarifs__combinaisons">
+        <div className="lp-tarifs__combi">
+          <dt>{DEGRESSIF.gabaritAvec.split(' : ')[0]}</dt>
+          <dd>
+            <span className="lp-num lp-tarifs__combi-total">{avec}</span>
+            {/* Le prix plein est barré ET annoncé par un mot : une rature
+                seule n'est pas lue par une synthèse vocale. */}
+            {plein !== avec ? (
+              <span className="lp-tarifs__combi-plein">
+                {' '}{DEGRESSIF.auLieuDe}{' '}
+                <s>{plein}</s>
+              </span>
+            ) : null}
+          </dd>
+        </div>
+        <div className="lp-tarifs__combi">
+          <dt>{DEGRESSIF.gabaritSeules.split(' : ')[0]}</dt>
+          <dd>
+            <span className="lp-num lp-tarifs__combi-total">{seules}</span>
+          </dd>
+        </div>
+      </dl>
+      <p className="lp-small">{DEGRESSIF.mentionSeules}</p>
+    </div>
+  )
+}
+
+/**
  * La bande du prix. Le chemin d'attente est conservé — il ne se déclenche
  * plus aujourd'hui, les trois montants étant publics — pour qu'un `prix`
  * remis à null n'ouvre pas un trou dans la grille.
  */
-function Prix({ prix, prixNote }) {
+function Prix({ prix, prixNote, remise }) {
   const montant = formaterPrix(prix)
+  const montantRemise = formaterPrix(remise)
 
   if (montant === null) {
     /* Aucun repli codé en dur : la phrase d'attente appartient à la formule
@@ -82,6 +137,15 @@ function Prix({ prix, prixNote }) {
             un tarif mensuel. */}
         <span className="lp-tarifs__periode">{TARIFS_AFFICHE.parAn}</span>
       </p>
+      {/* Le tarif dégressif est posé SOUS le plein, jamais à sa place : c'est
+          un prix conditionnel, il ne devient le vrai qu'avec la formule 1.
+          L'afficher seul laisserait croire à un tarif d'entrée. */}
+      {montantRemise !== null && montantRemise !== montant ? (
+        <p className="lp-tarifs__remise">
+          <span className="lp-num lp-tarifs__remise-montant">{montantRemise}</span>{' '}
+          <span className="lp-tarifs__remise-cond">{DEGRESSIF.avecFormule1}</span>
+        </p>
+      ) : null}
       {prixNote ? <p className="lp-caption">{prixNote}</p> : null}
     </>
   )
@@ -221,7 +285,7 @@ function CarteFormule({ formule, delai }) {
 
       {/* Le prix ferme la carte, juste avant l'appel à l'action. */}
       <div className="lp-tarifs__prix">
-        <Prix prix={prix} prixNote={prixNote} />
+        <Prix prix={prix} prixNote={prixNote} remise={DEGRESSIF.remises?.[formule.key]} />
       </div>
 
       <p className="lp-tarifs__liens">
@@ -283,6 +347,7 @@ export default function Tarifs() {
             <div className="lp-tarifs__cumul-corps">
               <h3 className="lp-h3">{FORMULES_CUMULABLES.titre}</h3>
               <p className="lp-p">{FORMULES_CUMULABLES.texte}</p>
+              <Degressif />
             </div>
           </ScrollReveal>
         ) : null}
