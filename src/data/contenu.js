@@ -311,58 +311,23 @@ export const CRENEAUX = [
     salle: 'Salle 5',
     formules: ['sciences'],
   },
-  /* Les trois séances suivantes figurent au classeur mais sur AUCUNE des
-     trois formules de l'affiche. Elles sont affichées — ce sont de vraies
-     séances adultes, et les taire priverait les femmes de la moitié de
-     l'offre qui les concerne — mais rattachées à aucune formule.
-     TODO — la mosquée doit dire si elles sont ouvertes aux inscriptions et
-     à quelles conditions. */
-  {
-    id: 'fiqh-coran-f',
-    poles: ['coran', 'sciences'],
-    intitule: 'Fiqh et Coran',
-    groupe: 'Femmes',
-    public: 'Adultes',
-    debut: '14:00',
-    fin: '16:00',
-    jours: ['Lundi'],
-    salle: 'Salle 2',
-    formules: [],
-  },
-  {
-    id: 'arabe-f',
-    /* AUCUN pôle, et c'est délibéré. Ce cours avait été rangé dans
-       « alphabétisation » par déduction — c'est de l'arabe, donc de
-       l'alphabétisation. La mosquée a corrigé : « pour l'alphabétisation, il
-       n'y en a pas en semaine, c'est une formule à part ». Le classeur lui
-       donne d'ailleurs un autre nom que les séances du dimanche : « Arabe »
-       et non « Alphabétisation ».
-       Il ne relève donc d'aucun des TROIS pôles publiés, et on n'en invente
-       pas un quatrième pour le loger : la mosquée en annonce trois.
-       Conséquence assumée : il n'apparaît que dans la semaine non filtrée.
-       TODO — à rattacher le jour où la mosquée dit à quoi il correspond. */
-    poles: [],
-    intitule: 'Arabe',
-    groupe: 'Femmes',
-    public: 'Adultes',
-    debut: '14:00',
-    fin: '16:00',
-    jours: ['Mercredi'],
-    salle: 'Salle 2',
-    formules: [],
-  },
-  {
-    id: 'coran-tafsir-f',
-    poles: ['coran'],
-    intitule: 'Coran et tafsîr',
-    groupe: 'Femmes',
-    public: 'Adultes',
-    debut: '17:00',
-    fin: '19:00',
-    jours: ['Dimanche'],
-    salle: 'Salle 2',
-    formules: [],
-  },
+  /* RETIRÉES le 07/08 sur instruction de la mosquée : « il y a un créneau
+     Coran pour femme, faut le retirer, c'est à part et non officiel ».
+     Elle en a joint la liste — lundi 14h-16h, mercredi 14h-16h, dimanche
+     17h — soit exactement les trois séances qui se tenaient en salle 2 :
+     « Fiqh et Coran », « Arabe » et « Coran et tafsîr ».
+
+     Elles figuraient au classeur des salles et étaient affichées avec la
+     mention « Nous consulter », faute de pouvoir les rattacher à une
+     formule de l'affiche. C'était le bon signal : ce qui ne relevait
+     d'aucune formule ne relevait pas non plus de l'offre officielle.
+
+     Ne PAS les réintroduire depuis le classeur : il les porte toujours,
+     mais le classeur décrit l'occupation des salles, pas l'offre publiée.
+
+     Le cours de Coran femmes du lundi, mardi et jeudi de 14h30 à 16h en
+     salle 5 n'est PAS concerné : il ne figure pas dans la liste transmise
+     (ni le mardi, ni le jeudi n'y sont), et il reste affiché. */
 ]
 
 export const JOURS_SEMAINE = [
