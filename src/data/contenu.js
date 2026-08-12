@@ -399,52 +399,63 @@ export function seancesDeFormule(cle) {
 }
 
 /* ---------- Le dégressif ----------
-   RECTIFIÉ le 08/08 : « ensuite, dégressif à partir de la troisième
-   formule ». Ce n'est plus une formule qui déclenche la remise mais leur
-   NOMBRE, et l'ancien barème (70 € et 60 € adossés à un Coran à 300 €)
-   n'a plus d'objet.
+   Chiffré par la mosquée le 08/08 : « 3 formules à 220 au lieu de 240,
+   rien à partir de deux formules ».
 
-   Le MONTANT n'a pas été communiqué. Il n'est donc pas écrit : `remises`
-   reste vide, et l'interface annonce la règle sans chiffrer. Reprendre
-   l'ancien barème aurait facturé faux ; en inventer un, pire encore.
+   La remise porte sur le TOTAL et non sur une formule en particulier —
+   d'où un FORFAIT par nombre de formules, et non un barème par clé comme
+   dans la version précédente. Prendre les trois coûte 220 € ; en prendre
+   deux coûte la somme des deux, sans remise.
 
-   Conséquence à tenir : tant que `remises` est vide, aucun total de trois
-   formules ne doit être affiché — la somme brute ne serait pas le prix. */
+   Le forfait est indexé sur le NOMBRE de formules. C'est exact tant que
+   les trois sont au même tarif, ce qui est le cas. Si un jour elles
+   divergent, il faudra indexer sur la combinaison et non sur le compte. */
 export const DEGRESSIF = {
-  // Le rang à partir duquel la remise s'applique.
+  // Le rang à partir duquel une remise existe.
   aPartirDe: 3,
-  // Vide tant que la mosquée n'a pas donné le barème.
-  remises: {},
+  // Prix forfaitaire, par nombre de formules prises ensemble.
+  forfaits: { 3: 220 },
+  // Libellés des combinaisons remisées. Aucun pour deux : sans remise, la
+  // ligne n'apprendrait rien que les cartes ne disent déjà.
+  libelles: { 3: 'Les trois formules' },
   titre: 'Dégressif à partir de la troisième formule',
-  texte:
-    'Un tarif dégressif s’applique à partir de la troisième formule.',
+  texte: 'Un tarif dégressif s’applique à partir de la troisième formule.',
+  auLieuDe: 'au lieu de',
   montantAConfirmer: 'Montant du dégressif à confirmer',
-  gabaritDeux: 'Deux formules',
-  gabaritTrois: 'Trois formules',
 }
 
-/** Total d'un panier de formules. Les remises éventuelles sont appliquées
-    par clé ; tant qu'aucune n'est déclarée, c'est la somme des tarifs.
-    Les clés inconnues et les formules sans prix sont ignorées plutôt que
-    de produire un NaN. */
+/** Total d'un panier de formules.
+    Un forfait déclaré pour ce nombre de formules l'emporte sur la somme :
+    c'est lui le prix. Sinon, on additionne. Les clés inconnues et les
+    formules sans prix sont ignorées plutôt que de produire un NaN. */
 export function totalFormules(cles) {
   const panier = new Set(cles)
+  const forfait = DEGRESSIF.forfaits?.[panier.size]
+  if (typeof forfait === 'number') return forfait
   let total = 0
   for (const cle of panier) {
     const formule = FORMULES.find((f) => f.key === cle)
-    if (!formule || typeof formule.prix !== 'number') continue
-    const remise = DEGRESSIF.remises?.[cle]
-    total += typeof remise === 'number' ? remise : formule.prix
+    if (typeof formule?.prix === 'number') total += formule.prix
   }
   return total
 }
 
-/** Le total est-il SÛR pour ce nombre de formules ? Faux dès que le
-    dégressif s'applique sans barème connu : on ne montre alors aucun prix
-    plutôt qu'une somme brute qui n'est pas celle qu'on paiera. */
+/** La somme brute des tarifs, sans forfait : c'est le prix barré. */
+export function totalPlein(cles) {
+  let total = 0
+  for (const cle of new Set(cles)) {
+    const formule = FORMULES.find((f) => f.key === cle)
+    if (typeof formule?.prix === 'number') total += formule.prix
+  }
+  return total
+}
+
+/** Le total est-il SÛR pour ce nombre de formules ? Faux si une remise
+    s'applique sans qu'un forfait soit connu : on n'affiche alors aucun
+    prix plutôt qu'une somme qui n'est pas celle qu'on paiera. */
 export function totalFiable(nombre) {
   if (nombre < (DEGRESSIF.aPartirDe ?? Infinity)) return true
-  return Object.keys(DEGRESSIF.remises ?? {}).length > 0
+  return typeof DEGRESSIF.forfaits?.[nombre] === 'number'
 }
 
 /* La monnaie est affichée par Intl : pas de « € » écrit à la main dans les

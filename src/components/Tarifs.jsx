@@ -6,6 +6,7 @@ import {
   DEGRESSIF,
   totalFormules,
   totalFiable,
+  totalPlein,
   seancesDeFormule,
   MOYENS_REGLEMENT,
   ORG,
@@ -63,31 +64,45 @@ function formaterPrix(prix) {
 /**
  * Le dégressif.
  *
- * La règle a changé le 08/08 : ce n'est plus une formule qui déclenche la
- * remise mais leur NOMBRE, à partir de la troisième. Le barème, lui, n'a
- * pas été communiqué.
+ * Une seule règle d'affichage, et c'est une règle d'honnêteté : on ne
+ * montre une combinaison QUE si elle est remisée.
  *
- * D'où la règle de rendu, qui est une règle d'honnêteté : on affiche un
- * total UNIQUEMENT s'il est sûr. En dessous du seuil, la somme des tarifs
- * est le prix. Au-delà, sans barème, la somme brute n'est PAS le prix —
- * on annonce alors la remise sans la chiffrer, plutôt qu'un montant que
- * personne ne paiera.
+ * — Sans remise, le total n'apprend rien que les trois cartes ne disent
+ *   déjà ; la mosquée a d'ailleurs demandé de retirer la ligne des deux
+ *   formules pour cette raison.
+ * — Avec une remise annoncée mais sans forfait connu, aucun montant n'est
+ *   affiché : la somme brute n'est pas le prix, et l'écrire facturerait
+ *   faux. C'est ce que garantit `totalFiable`.
  */
 function Degressif() {
   const cles = FORMULES.map((f) => f.key)
-  const seuil = DEGRESSIF?.aPartirDe
-  if (!seuil || cles.length < 2) return null
+  const forfaits = DEGRESSIF?.forfaits ?? {}
 
-  /* Une ligne par nombre de formules, de deux jusqu'au total disponible. */
-  const lignes = []
-  for (let n = 2; n <= cles.length; n += 1) {
-    const sur = totalFiable(n)
-    lignes.push({
-      n,
-      libelle: n === 2 ? DEGRESSIF.gabaritDeux : DEGRESSIF.gabaritTrois,
-      total: sur ? formaterPrix(totalFormules(cles.slice(0, n))) : null,
+  /* Les nombres de formules pour lesquels une remise existe — déclarée par
+     un forfait, ou annoncée par le seuil sans être encore chiffrée. */
+  const rangs = new Set(Object.keys(forfaits).map(Number))
+  const seuil = DEGRESSIF?.aPartirDe
+  if (typeof seuil === 'number' && seuil <= cles.length) rangs.add(seuil)
+
+  const lignes = [...rangs]
+    .filter((n) => n >= 2 && n <= cles.length)
+    .sort((a, b) => a - b)
+    .map((n) => {
+      const sous = cles.slice(0, n)
+      const sur = totalFiable(n)
+      const remise = sur ? totalFormules(sous) : null
+      const plein = totalPlein(sous)
+      return {
+        n,
+        libelle: DEGRESSIF.libelles?.[n] ?? null,
+        // Le prix barré n'est montré que s'il diffère réellement.
+        montant: sur ? formaterPrix(remise) : null,
+        plein: sur && plein !== remise ? formaterPrix(plein) : null,
+      }
     })
-  }
+    .filter((l) => l.libelle)
+
+  if (lignes.length === 0) return null
 
   return (
     <div className="lp-tarifs__degressif">
@@ -97,11 +112,19 @@ function Degressif() {
           <div className="lp-tarifs__combi" key={l.n}>
             <dt>{l.libelle}</dt>
             <dd>
-              {l.total ? (
-                <span className="lp-num lp-tarifs__combi-total">{l.total}</span>
+              {l.montant ? (
+                <>
+                  <span className="lp-num lp-tarifs__combi-total">{l.montant}</span>
+                  {/* Le prix plein est barré ET annoncé par un mot : une
+                      rature seule ne s'entend pas dans une synthèse vocale. */}
+                  {l.plein ? (
+                    <span className="lp-tarifs__combi-plein">
+                      {' '}{DEGRESSIF.auLieuDe}{' '}
+                      <s>{l.plein}</s>
+                    </span>
+                  ) : null}
+                </>
               ) : (
-                /* Aucun montant : le barème manque, et une somme brute
-                   affichée ici se lirait comme le prix à payer. */
                 <span className="lp-attente">{DEGRESSIF.montantAConfirmer}</span>
               )}
             </dd>
