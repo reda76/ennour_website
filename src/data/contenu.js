@@ -218,7 +218,7 @@ export const CRENEAUX = [
     fin: '21:30',
     jours: ['Lundi', 'Mercredi', 'Vendredi'],
     salle: 'Salle 5',
-    formules: ['coran-intensif'],
+    formules: ['coran'],
   },
   {
     id: 'coran-h-weekend',
@@ -230,7 +230,7 @@ export const CRENEAUX = [
     fin: '08:30',
     jours: ['Samedi', 'Dimanche'],
     salle: 'Salle 5',
-    formules: ['coran-intensif', 'coran-alphabetisation'],
+    formules: ['coran'],
   },
   {
     id: 'coran-f-semaine',
@@ -242,10 +242,10 @@ export const CRENEAUX = [
     fin: '16:00',
     jours: ['Lundi', 'Mardi', 'Jeudi'],
     salle: 'Salle 5',
-    /* TODO — à confirmer : ce créneau tient trois séances par semaine, comme
-       la formule 1 côté hommes, mais le classeur ne le rattache à aucune
-       formule et l'affiche ne le mentionne pas. On ne le suppose pas. */
-    formules: [],
+    /* Rattaché à la formule 1 depuis que celle-ci est « Coran » tout court :
+       une formule par pôle, et ce créneau est du Coran. La question restée
+       ouverte deux échanges durant se referme d'elle-même. */
+    formules: ['coran'],
   },
   {
     id: 'alpha-h',
@@ -257,7 +257,7 @@ export const CRENEAUX = [
     fin: '17:00',
     jours: ['Dimanche'],
     salle: 'Salle 3',
-    formules: ['coran-alphabetisation'],
+    formules: ['alphabetisation'],
   },
   {
     id: 'alpha-f',
@@ -269,7 +269,7 @@ export const CRENEAUX = [
     fin: '17:00',
     jours: ['Dimanche'],
     salle: 'Salle 4',
-    formules: ['coran-alphabetisation'],
+    formules: ['alphabetisation'],
   },
   {
     id: 'fiqh-n1',
@@ -338,122 +338,113 @@ export const MENTION_HORAIRES =
   "Les horaires et les salles peuvent être modifiés en cours d’année en fonction des besoins pédagogiques et des effectifs. Toute modification est communiquée aux inscrits."
 
 /* ---------- Formules & tarifs ----------
-   Transcrites de l'affiche 2026-2027. Les montants ne sont PLUS des `null` :
-   ils sont publics, affichés, et engagent la mosquée. Ne les modifier que
-   sur la foi d'une nouvelle affiche.
+   RECTIFIÉES par la mosquée le 08/08. La structure de l'affiche imprimée
+   est caduque : il n'y a plus de « Coran intensif » à 300 €, plus de
+   formule qui mélange Coran et alphabétisation, et les trois tarifs sont
+   désormais identiques.
 
-   `seances` reprend mot pour mot le calendrier de chaque formule tel que
-   l'affiche le présente. C'est volontairement redondant avec CRENEAUX :
-   la section Tarifs répond à « qu'est-ce que je paie », la section Planning
-   à « quand je viens ». Les deux lisent des sources distinctes mais
-   concordantes — si l'une change, vérifier l'autre.                        */
+   Une formule = UN pôle, et c'est ce qui rend le reste simple : la clé de
+   la formule EST celle du pôle, et les séances se lisent directement dans
+   CRENEAUX. Elles ne sont donc plus écrites ici.
+
+   C'est la correction d'un défaut réel : les séances recopiées à la main
+   avaient divergé du planning — l'affiche plaçait l'alphabétisation de 7h
+   à 8h30 quand le classeur la donne le dimanche de 16h à 17h, et il a
+   fallu que la mosquée signale l'erreur. Une seule source, désormais.
+
+   ATTENTION : l'affiche imprimée porte encore les anciens tarifs.        */
 export const FORMULES = [
   {
-    key: 'coran-intensif',
+    key: 'coran',
     numero: 1,
-    nom: 'Coran intensif',
-    /* Reformulation des `seances` : 3 en semaine + 2 le week-end = 5, de 20h
-       à 21h30 (le soir) et de 7h à 8h30 (tôt). Aucune donnée nouvelle. */
-    resume: 'Le rythme le plus soutenu : cinq séances par semaine, en soirée et tôt le week-end.',
-    rythme: '3 cours par semaine + week-end',
-    prix: 300,
+    nom: 'Coran',
+    rythme: 'En semaine ou le week-end',
+    prix: 80,
     prixNote: null,
+    resume: 'Lecture, tajwîd et mémorisation — en soirée, tôt le week-end ou en après-midi.',
     inclus: ['Lecture du Coran', 'Tajwîd', 'Mémorisation', 'Révision'],
-    seances: [
-      { libelle: 'En semaine', jours: ['Lundi', 'Mercredi', 'Vendredi'], debut: '20:00', fin: '21:30', auChoix: false },
-      { libelle: 'Le week-end', jours: ['Samedi', 'Dimanche'], debut: '07:00', fin: '08:30', auChoix: false },
-    ],
     poles: ['coran'],
   },
   {
-    key: 'coran-alphabetisation',
+    key: 'alphabetisation',
     numero: 2,
-    nom: 'Coran & alphabétisation',
-    resume: 'Partir des lettres pour arriver à la lecture, sur les seuls week-ends.',
-    rythme: 'Tous les week-ends',
+    nom: 'Alphabétisation',
+    rythme: 'Le dimanche',
     prix: 80,
     prixNote: null,
-    inclus: ['Alphabétisation arabe', 'Lecture du Coran', 'Tajwîd', 'Mémorisation'],
-    /* DEUX séances et non une. L'affiche ne portait que le créneau de 7h à
-       8h30, ce qui laissait croire que l'alphabétisation s'y tenait — l'erreur
-       signalée par la mosquée. Le classeur lui donne son propre horaire. */
-    seances: [
-      { libelle: 'Coran, le week-end', jours: ['Samedi', 'Dimanche'], debut: '07:00', fin: '08:30', auChoix: false },
-      { libelle: 'Alphabétisation', jours: ['Dimanche'], debut: '16:00', fin: '17:00', auChoix: false },
-    ],
-    poles: ['coran', 'alphabetisation'],
+    resume: 'Lire et écrire l’arabe, depuis les toutes premières lettres.',
+    inclus: ['Alphabétisation arabe'],
+    poles: ['alphabetisation'],
   },
   {
     key: 'sciences',
     numero: 3,
     nom: 'Sciences musulmanes',
     sousTitre: 'Sîra & Fiqh',
-    /* Plus aucun « au choix » : le classeur donne des jours fermes. Pour un
-       nouvel inscrit, la formule 3 vaut Sîra le samedi et Fiqh niveau 1 le
-       dimanche — le niveau 2 du samedi ne prend pas de nouvel élève. */
-    resume: 'Deux soirées de week-end : la vie du Prophète le samedi, la jurisprudence le dimanche.',
     rythme: 'Le week-end',
     prix: 80,
     prixNote: null,
+    resume: 'La jurisprudence et la vie du Prophète, le samedi et le dimanche soir.',
     inclus: ['Cours de Sîra', 'Cours de Fiqh'],
-    /* Le « Samedi OU Dimanche » de l'affiche n'était PAS un choix de jour :
-       le classeur montre deux niveaux de Fiqh à deux jours fixes, et une
-       Sîra le samedi seulement. `auChoix` disparaît donc partout.
-       Le niveau 2 est signalé fermé : l'afficher sans le dire enverrait des
-       débutants s'inscrire à un cours qui ne les accueillera pas. */
-    seances: [
-      { libelle: 'Cours de Sîra', detail: 'Biographie du Prophète', salutation: 'ﷺ', jours: ['Samedi'], debut: '19:00', fin: '21:00', auChoix: false },
-      { libelle: 'Fiqh — niveau 1', jours: ['Dimanche'], debut: '17:00', fin: '19:00', auChoix: false },
-      { libelle: 'Fiqh — niveau 2', jours: ['Samedi'], debut: '17:00', fin: '19:00', auChoix: false, note: 'anciensEleves' },
-    ],
     poles: ['sciences'],
   },
 ]
 
-/* ---------- Le dégressif ----------
-   Relevé sur la note manuscrite « Dégressif cours adultes » et confirmé par
-   écrit par la mosquée le 07/08.
-
-   La règle tient en une phrase : SEULE la formule 1 déclenche la remise, et
-   elle n'est jamais elle-même remisée. Prise avec elle, la formule 2 passe
-   de 80 à 70 €, la formule 3 de 80 à 60 €. Sans elle, les formules 2 et 3
-   restent à leur tarif — 80 + 80 = 160 €, et non 130.
-
-   AUCUN total n'est écrit ici. Ils sont tous calculés par `totalFormules`
-   depuis FORMULES et `remises` : un tarif qui changerait laisserait sinon
-   derrière lui un total faux, et c'est le genre d'erreur qu'on ne voit
-   qu'une fois la facture éditée.                                          */
-export const DEGRESSIF = {
-  // La formule qui ouvre le droit à la remise.
-  declencheur: 'coran-intensif',
-  // Tarif remisé, par clé de formule. Absent = jamais remisé.
-  remises: { 'coran-alphabetisation': 70, sciences: 60 },
-  titre: 'Dégressif avec la formule 1',
-  texte:
-    'La formule 1 ouvre un tarif réduit sur les autres : prise avec elle, la formule 2 passe à 70 € et la formule 3 à 60 €.',
-  mentionSeules:
-    'Prises sans la formule 1, les formules 2 et 3 restent à leur tarif.',
-  // Gabarits — le composant y injecte des montants calculés, jamais écrits.
-  gabaritAvec: 'Les trois formules : {total} au lieu de {plein}',
-  gabaritSeules: 'Formules 2 et 3 ensemble : {total}',
-  auLieuDe: 'au lieu de',
-  avecFormule1: 'avec la formule 1',
+/** Les séances d'une formule, LUES DEPUIS LE PLANNING et non recopiées.
+    C'est ce qui empêche les deux de diverger : la section Tarifs répond à
+    « qu'est-ce que je paie », le Planning à « quand je viens », mais les
+    horaires sont les mêmes et n'ont plus qu'une seule source. */
+export function seancesDeFormule(cle) {
+  return CRENEAUX.filter((c) => c.formules?.includes(cle))
 }
 
-/** Total d'un panier de formules, remise appliquée si la formule
-    déclencheuse en fait partie. Les clés inconnues et les formules sans
-    prix sont ignorées plutôt que de produire un NaN. */
+/* ---------- Le dégressif ----------
+   RECTIFIÉ le 08/08 : « ensuite, dégressif à partir de la troisième
+   formule ». Ce n'est plus une formule qui déclenche la remise mais leur
+   NOMBRE, et l'ancien barème (70 € et 60 € adossés à un Coran à 300 €)
+   n'a plus d'objet.
+
+   Le MONTANT n'a pas été communiqué. Il n'est donc pas écrit : `remises`
+   reste vide, et l'interface annonce la règle sans chiffrer. Reprendre
+   l'ancien barème aurait facturé faux ; en inventer un, pire encore.
+
+   Conséquence à tenir : tant que `remises` est vide, aucun total de trois
+   formules ne doit être affiché — la somme brute ne serait pas le prix. */
+export const DEGRESSIF = {
+  // Le rang à partir duquel la remise s'applique.
+  aPartirDe: 3,
+  // Vide tant que la mosquée n'a pas donné le barème.
+  remises: {},
+  titre: 'Dégressif à partir de la troisième formule',
+  texte:
+    'Un tarif dégressif s’applique à partir de la troisième formule.',
+  montantAConfirmer: 'Montant du dégressif à confirmer',
+  gabaritDeux: 'Deux formules',
+  gabaritTrois: 'Trois formules',
+}
+
+/** Total d'un panier de formules. Les remises éventuelles sont appliquées
+    par clé ; tant qu'aucune n'est déclarée, c'est la somme des tarifs.
+    Les clés inconnues et les formules sans prix sont ignorées plutôt que
+    de produire un NaN. */
 export function totalFormules(cles) {
   const panier = new Set(cles)
-  const remisable = panier.has(DEGRESSIF.declencheur)
   let total = 0
   for (const cle of panier) {
     const formule = FORMULES.find((f) => f.key === cle)
     if (!formule || typeof formule.prix !== 'number') continue
-    const remise = remisable ? DEGRESSIF.remises[cle] : undefined
+    const remise = DEGRESSIF.remises?.[cle]
     total += typeof remise === 'number' ? remise : formule.prix
   }
   return total
+}
+
+/** Le total est-il SÛR pour ce nombre de formules ? Faux dès que le
+    dégressif s'applique sans barème connu : on ne montre alors aucun prix
+    plutôt qu'une somme brute qui n'est pas celle qu'on paiera. */
+export function totalFiable(nombre) {
+  if (nombre < (DEGRESSIF.aPartirDe ?? Infinity)) return true
+  return Object.keys(DEGRESSIF.remises ?? {}).length > 0
 }
 
 /* La monnaie est affichée par Intl : pas de « € » écrit à la main dans les
@@ -838,7 +829,7 @@ export const TARIFS_MENTION = {
   titre: 'Ce que couvre chaque formule',
   // Les tarifs sont désormais publics : plus aucune formule n'est en attente.
   montants:
-    "Trois formules pour l’année 2026-2027, cumulables entre elles. Le règlement peut être fait en une fois ou échelonné.",
+    "Trois formules pour l’année 2026-2027, à 80 € chacune et cumulables entre elles. Le règlement peut être fait en une fois ou échelonné.",
   reglementTitre: 'Moyens de règlement',
   /* Le bloc « tarif famille » a été RETIRÉ : il annonçait une réduction
      « à l'étude » que personne n'avait confirmée. Une offre hypothétique
@@ -909,8 +900,9 @@ export const PIED_LIBELLES = {
    DEVISE, les horaires dans `seances`.                                    */
 export const TARIFS_AFFICHE = {
   formule: 'Formule',
-  /* Le tarif est ANNUEL. Afficher « 300 € » seul laisserait croire à un
-     tarif mensuel — l'affiche écrit « 300 € L'ANNÉE », on garde la période. */
+  /* Le tarif est ANNUEL. Afficher « 80 € » seul laisserait croire à un
+     tarif mensuel ou par séance. La mosquée dit « 80 € l'année » : on
+     garde la période, elle fait partie du prix. */
   parAn: 'l’année',
   programme: 'Au programme',
   seances: 'Les séances',
@@ -1085,13 +1077,12 @@ export const INSCRIPTION_TEXTES = {
    Trois écarts avec le reste du site ont dû être arbitrés. Ils sont
    signalés ici pour que la mosquée tranche :
 
-   1. NUMÉROTATION DES FORMULES. La FAQ écrit « Formule 1 : Sciences
-      islamiques » et « Formule 3 : intensive » ; l'affiche imprimée
-      dit l'inverse (1 = Coran intensif à 300 €, 3 = Sciences
-      musulmanes à 80 €). La 2 concorde. La réponse ci-dessous suit
-      l'AFFICHE — c'est le document public, tarifé, déjà distribué, et
-      c'est lui que les cartes de tarifs affichent. Une page qui se
-      contredit d'une section à l'autre serait pire que tout.
+   1. NUMÉROTATION DES FORMULES — TRANCHÉE le 08/08. L'affiche disait
+      1 = Coran intensif (300 €), la FAQ 1 = Sciences islamiques ; la
+      rectification de la mosquée donne une troisième réponse, qui fait
+      désormais foi : 1 = Coran, 2 = Alphabétisation, 3 = Sciences
+      musulmanes, à 80 € chacune. La réponse ci-dessous et les cartes de
+      tarifs disent la même chose. L'AFFICHE IMPRIMÉE est caduque.
    2. « Formulaire de contact » (question 7) : le site n'en a pas de
       distinct. La réponse renvoie au formulaire d'inscription, qui
       porte un champ de message libre, et au téléphone.
@@ -1116,7 +1107,7 @@ export const FAQ = {
         {
           id: 'formules-proposees',
           q: 'Quelles sont les formules proposées ?',
-          r: 'Trois formules, pour répondre aux besoins et aux objectifs de chacun : la formule 1, Coran intensif, destinée aux personnes souhaitant un apprentissage plus soutenu ; la formule 2, alphabétisation, lecture du Coran, tajwîd et mémorisation ; la formule 3, sciences musulmanes. Il est également possible de s’inscrire à plusieurs formules, sous réserve de la compatibilité des horaires.',
+          r: 'Trois formules, pour répondre aux besoins et aux objectifs de chacun : la formule 1, Coran — lecture, tajwîd et mémorisation ; la formule 2, alphabétisation ; la formule 3, sciences musulmanes. Chacune est à 80 € l’année. Il est possible de s’inscrire à plusieurs formules, sous réserve de la compatibilité des horaires, et un tarif dégressif s’applique à partir de la troisième.',
         },
         {
           id: 'plusieurs-formules',

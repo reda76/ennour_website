@@ -165,9 +165,9 @@ Tout se passe dans **`src/data/contenu.js`**.
 
 | Sujet | Où | Question |
 |---|---|---|
-| **Numérotation des formules** | `FORMULES[].numero` et `FAQ` | La FAQ écrit « Formule 1 : Sciences islamiques » et « Formule 3 : intensive » ; l’affiche imprimée dit l’inverse. Le site suit l’**affiche**, seul document public et tarifé. À trancher — si la FAQ fait foi, il faut renuméroter les cartes **et** reprendre l’affiche. |
+| **L’affiche imprimée est caduque** | — | Elle porte l’ancienne structure (Coran intensif à 300 €, une formule mêlant Coran et alphabétisation) **et** l’ancien numéro de téléphone. Le site suit la rectification du 08/08 : trois formules à 80 €, une par pôle. L’affiche est à refaire avant toute nouvelle distribution. |
 | **Séances retirées** | `CRENEAUX` | Les trois séances de la salle 2 — « Fiqh et Coran » le lundi, « Arabe » le mercredi, « Coran et tafsîr » le dimanche — ont été **retirées** le 07/08 : « c’est à part et non officiel ». Le classeur des salles les porte toujours ; il décrit l’occupation des salles, pas l’offre publiée. Ne pas les réintroduire depuis lui. |
-| **Coran femmes du lundi/mardi/jeudi** | `CRENEAUX` → `coran-f-semaine` | Trois séances par semaine, comme la formule 1 côté hommes, mais rattachées à aucune formule par le classeur. `formules: []`. |
+| **Barème du dégressif** | `DEGRESSIF.remises` | La règle est connue — « dégressif à partir de la troisième formule » — mais **pas le montant**. `remises` reste vide, et l’interface annonce la remise sans la chiffrer : au-delà de deux formules, aucun total n’est affiché, une somme brute n’étant pas le prix. |
 | **Formulaire de contact** | — | La FAQ y renvoie ; le site n’en a pas de distinct. La réponse pointe vers le formulaire d’inscription, qui porte un champ de message libre. |
 
 ### Ce qui est volontairement absent

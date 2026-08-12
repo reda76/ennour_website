@@ -625,23 +625,7 @@
   color: var(--fg-dim);
 }
 
-/* ---------- Le tarif remisé sur la carte ---------- */
-
-/* Posé sous le prix plein, en retrait : c'est un prix CONDITIONNEL. Au même
-   poids que le plein, il ferait croire à deux tarifs au choix. */
-.lp-tarifs__remise {
-  margin: 0;
-  font-family: var(--ff-body);
-  font-size: var(--fs-13);
-  line-height: var(--lh-body);
-  color: var(--fg-muted);
-}
-
-.lp-tarifs__remise-montant {
-  font-weight: var(--fw-semibold);
-  color: var(--accent-bright);
-}
-
-.lp-tarifs__remise-cond {
-  color: var(--fg-dim);
-}
+/* Le tarif remisé par carte a été RETIRÉ le 08/08 : le dégressif ne dépend
+   plus d'une formule déclencheuse mais du NOMBRE de formules prises. Il n'y
+   a donc plus de prix conditionnel à afficher sur une carte — la règle est
+   énoncée une seule fois, dans la bande du cumul. */

@@ -5,6 +5,8 @@ import {
   FORMULES_CUMULABLES,
   DEGRESSIF,
   totalFormules,
+  totalFiable,
+  seancesDeFormule,
   MOYENS_REGLEMENT,
   ORG,
   PLACES_LIMITEES,
@@ -59,53 +61,53 @@ function formaterPrix(prix) {
 }
 
 /**
- * Le dégressif : la règle, puis les deux totaux qui l'illustrent.
+ * Le dégressif.
  *
- * Les montants sont CALCULÉS par totalFormules — jamais écrits. Un tarif
- * modifié dans FORMULES se propage ici sans que personne ait à y penser ;
- * écrits à la main, ils survivraient au changement et factureraient faux.
+ * La règle a changé le 08/08 : ce n'est plus une formule qui déclenche la
+ * remise mais leur NOMBRE, à partir de la troisième. Le barème, lui, n'a
+ * pas été communiqué.
+ *
+ * D'où la règle de rendu, qui est une règle d'honnêteté : on affiche un
+ * total UNIQUEMENT s'il est sûr. En dessous du seuil, la somme des tarifs
+ * est le prix. Au-delà, sans barème, la somme brute n'est PAS le prix —
+ * on annonce alors la remise sans la chiffrer, plutôt qu'un montant que
+ * personne ne paiera.
  */
 function Degressif() {
   const cles = FORMULES.map((f) => f.key)
-  const declencheur = DEGRESSIF?.declencheur
-  const complements = cles.filter((c) => c !== declencheur)
+  const seuil = DEGRESSIF?.aPartirDe
+  if (!seuil || cles.length < 2) return null
 
-  /* Rien à dire si la formule déclencheuse n'existe pas, ou si aucune remise
-     n'est déclarée : la section retombe alors sur le seul cumul. */
-  if (!declencheur || !cles.includes(declencheur)) return null
-  const remises = Object.keys(DEGRESSIF.remises ?? {}).filter((c) => cles.includes(c))
-  if (remises.length === 0) return null
-
-  const avec = formaterPrix(totalFormules(cles))
-  const plein = formaterPrix(FORMULES.reduce((n, f) => n + (f.prix ?? 0), 0))
-  const seules = formaterPrix(totalFormules(complements))
+  /* Une ligne par nombre de formules, de deux jusqu'au total disponible. */
+  const lignes = []
+  for (let n = 2; n <= cles.length; n += 1) {
+    const sur = totalFiable(n)
+    lignes.push({
+      n,
+      libelle: n === 2 ? DEGRESSIF.gabaritDeux : DEGRESSIF.gabaritTrois,
+      total: sur ? formaterPrix(totalFormules(cles.slice(0, n))) : null,
+    })
+  }
 
   return (
     <div className="lp-tarifs__degressif">
       <p className="lp-p">{DEGRESSIF.texte}</p>
       <dl className="lp-tarifs__combinaisons">
-        <div className="lp-tarifs__combi">
-          <dt>{DEGRESSIF.gabaritAvec.split(' : ')[0]}</dt>
-          <dd>
-            <span className="lp-num lp-tarifs__combi-total">{avec}</span>
-            {/* Le prix plein est barré ET annoncé par un mot : une rature
-                seule n'est pas lue par une synthèse vocale. */}
-            {plein !== avec ? (
-              <span className="lp-tarifs__combi-plein">
-                {' '}{DEGRESSIF.auLieuDe}{' '}
-                <s>{plein}</s>
-              </span>
-            ) : null}
-          </dd>
-        </div>
-        <div className="lp-tarifs__combi">
-          <dt>{DEGRESSIF.gabaritSeules.split(' : ')[0]}</dt>
-          <dd>
-            <span className="lp-num lp-tarifs__combi-total">{seules}</span>
-          </dd>
-        </div>
+        {lignes.map((l) => (
+          <div className="lp-tarifs__combi" key={l.n}>
+            <dt>{l.libelle}</dt>
+            <dd>
+              {l.total ? (
+                <span className="lp-num lp-tarifs__combi-total">{l.total}</span>
+              ) : (
+                /* Aucun montant : le barème manque, et une somme brute
+                   affichée ici se lirait comme le prix à payer. */
+                <span className="lp-attente">{DEGRESSIF.montantAConfirmer}</span>
+              )}
+            </dd>
+          </div>
+        ))}
       </dl>
-      <p className="lp-small">{DEGRESSIF.mentionSeules}</p>
     </div>
   )
 }
@@ -115,9 +117,8 @@ function Degressif() {
  * plus aujourd'hui, les trois montants étant publics — pour qu'un `prix`
  * remis à null n'ouvre pas un trou dans la grille.
  */
-function Prix({ prix, prixNote, remise }) {
+function Prix({ prix, prixNote }) {
   const montant = formaterPrix(prix)
-  const montantRemise = formaterPrix(remise)
 
   if (montant === null) {
     /* Aucun repli codé en dur : la phrase d'attente appartient à la formule
@@ -137,15 +138,6 @@ function Prix({ prix, prixNote, remise }) {
             un tarif mensuel. */}
         <span className="lp-tarifs__periode">{TARIFS_AFFICHE.parAn}</span>
       </p>
-      {/* Le tarif dégressif est posé SOUS le plein, jamais à sa place : c'est
-          un prix conditionnel, il ne devient le vrai qu'avec la formule 1.
-          L'afficher seul laisserait croire à un tarif d'entrée. */}
-      {montantRemise !== null && montantRemise !== montant ? (
-        <p className="lp-tarifs__remise">
-          <span className="lp-num lp-tarifs__remise-montant">{montantRemise}</span>{' '}
-          <span className="lp-tarifs__remise-cond">{DEGRESSIF.avecFormule1}</span>
-        </p>
-      ) : null}
       {prixNote ? <p className="lp-caption">{prixNote}</p> : null}
     </>
   )
@@ -178,7 +170,11 @@ function Jours({ jours, auChoix }) {
    deux façons d'écrire l'heure sur une même page se liraient comme deux
    plannings différents. */
 function Seance({ seance }) {
-  const { libelle, detail, salutation, jours, debut, fin, auChoix } = seance
+  /* La séance est une entrée de CRENEAUX : son intitulé s'y appelle
+     `intitule`, et le groupe le complète — « Coran » seul ne distinguerait
+     pas les trois créneaux de la formule 1. */
+  const { intitule, groupe, detail, salutation, jours, debut, fin, auChoix } = seance
+  const libelle = groupe ? `${intitule} — ${groupe.toLocaleLowerCase('fr')}` : intitule
 
   return (
     <li className="lp-tarifs__seance">
@@ -226,7 +222,10 @@ function Seance({ seance }) {
    d'abord ce que l'on reçoit, puis ce que l'on paie — et non l'inverse. Le
    résumé d'une phrase sous le nom vient de la même source. */
 function CarteFormule({ formule, delai }) {
-  const { numero, nom, sousTitre, resume, rythme, prix, prixNote, inclus, seances } = formule
+  const { numero, nom, sousTitre, resume, rythme, prix, prixNote, inclus } = formule
+  /* Lues dans le planning : une formule et son planning ne peuvent plus
+     annoncer deux horaires différents. */
+  const seances = seancesDeFormule(formule.key)
   const titreId = `tarifs-${formule.key}`
   const auChoix = seances?.some((s) => s.auChoix)
 
@@ -273,7 +272,7 @@ function CarteFormule({ formule, delai }) {
             <h4 className="lp-eyebrow lp-eyebrow--sourd">{TARIFS_AFFICHE.seances}</h4>
             <ul className="lp-tarifs__seances">
               {seances.map((seance) => (
-                <Seance key={`${seance.libelle}-${seance.debut}`} seance={seance} />
+                <Seance key={seance.id} seance={seance} />
               ))}
             </ul>
             {auChoix ? (
@@ -285,7 +284,7 @@ function CarteFormule({ formule, delai }) {
 
       {/* Le prix ferme la carte, juste avant l'appel à l'action. */}
       <div className="lp-tarifs__prix">
-        <Prix prix={prix} prixNote={prixNote} remise={DEGRESSIF.remises?.[formule.key]} />
+        <Prix prix={prix} prixNote={prixNote} />
       </div>
 
       <p className="lp-tarifs__liens">
