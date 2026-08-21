@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import ScrollReveal from './ScrollReveal.jsx'
 import {
   ACTEURS_ETAPES,
+  CONTACT_LIBELLES,
   DEVISE,
   ETAPES_INSCRIPTION,
   FORMULES,
@@ -561,7 +562,7 @@ export default function Inscription() {
                            lui correspond : le lien tel: ci-dessus est le chemin
                            NORMAL. Ce repli ne sert plus que si ORG.tel redevient
                            un marqueur d'attente. */
-                        <span className="lp-attente">Numéro à confirmer</span>
+                        <span className="lp-attente">{CONTACT_LIBELLES.telAConfirmer}</span>
                       )}
                     </dd>
                   </div>
@@ -571,8 +572,11 @@ export default function Inscription() {
                       {emailConnu ? (
                         <a className="lp-lien" href={`mailto:${ORG.email}`}>{ORG.email}</a>
                       ) : (
-                        /* TODO — activer le mailto: dès que ORG.email est renseigné. */
-                        <span className="lp-attente">Adresse à confirmer</span>
+                        /* Le mailto: s'active tout seul dès que ORG.email est
+                           renseigné. Libellé pris dans contenu.js et non écrit
+                           ici : en dur, il disait « Adresse à confirmer », ce
+                           qui se lisait comme l'adresse POSTALE. */
+                        <span className="lp-attente">{CONTACT_LIBELLES.emailAConfirmer}</span>
                       )}
                     </dd>
                   </div>

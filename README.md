@@ -153,7 +153,7 @@ Tout se passe dans **`src/data/contenu.js`**.
 
 | # | Donnée | Où | État | Effet une fois renseigné |
 |---|---|---|---|---|
-| 1 | **Adresse postale** | `ORG.adresse` | `'__ADRESSE_A_CONFIRMER__, 76600 Le Havre'` | Remplacer le marqueur par la rue et le numéro. La partie connue s’affiche en attendant. |
+| ~~1~~ | ~~**Adresse postale**~~ | `ORG.adresse` | **Réglé le 21/08** — `'12 Rue Léon Peulevey, 76620 Le Havre'` | Ligne conservée pour la leçon qu’elle porte : le marqueur affichait `76600` comme « partie connue », et ce code postal était **faux**. Une donnée en attente ne doit pas être pré-remplie sans source. |
 | 2 | **E-mail** | `ORG.email` | `'__EMAIL_A_CONFIRMER__'` | Les liens `mailto:` s’activent dans le pied de page, la section Contact et l’encart Inscription. |
 | 3 | **Horaires du secrétariat** | `MENTION_SECRETARIAT` | libellé d’attente | La FAQ y renvoie (« pendant les horaires d’ouverture ») sans pouvoir les donner. |
 | 4 | **URL de la campagne HelloAsso** | `MOYENS_REGLEMENT` → `helloasso.url` | `null` | Le moyen est nommé mais pas cliquable. |

@@ -10,9 +10,13 @@ import {
   estAConfirmer,
 } from '../data/contenu.js'
 
-/* L'adresse mélange une partie inconnue et une partie connue
-   (« __ADRESSE_A_CONFIRMER__, 76600 Le Havre ») : on n'affiche jamais le
-   marqueur brut, mais on ne jette pas non plus ce qui est déjà su. */
+/* L'adresse est aujourd'hui complète, mais la découpe reste : elle sépare
+   une partie inconnue d'une partie connue (« __ADRESSE_A_CONFIRMER__, 76620
+   Le Havre ») sans jamais afficher le marqueur brut.
+   LEÇON, apprise à nos dépens : la « partie connue » d'une donnée en attente
+   peut être fausse. Le site a affiché 76600 pendant des semaines — le vrai
+   code postal est 76620, et personne ne l'avait jamais communiqué. Ne rien
+   pré-remplir ici sans source. */
 function decouperAdresse(adresse) {
   const morceaux = String(adresse ?? '')
     .split(',')
@@ -47,7 +51,6 @@ export default function Contact() {
               <dd className="lp-contact__valeur">
                 {adresse.incomplete ? (
                   <>
-                    {/* TODO — remplacer par l'adresse postale exacte dans ORG.adresse. */}
                     <span className="lp-attente">{CONTACT_LIBELLES.adresseAConfirmer}</span>
                     {adresse.connue && <span className="lp-contact__complement">{adresse.connue}</span>}
                   </>
@@ -116,6 +119,20 @@ export default function Contact() {
             <figcaption className="lp-contact__legende">
               <span className="lp-caption">{CONTACT_LIBELLES.planTitre}</span>
               <span className="lp-small">{MENTION_CARTE}</span>
+              {/* Un LIEN, jamais un cadre embarqué : rien n'est chargé chez un
+                  tiers tant que personne ne clique, et la page ne dépend
+                  d'aucun service extérieur pour s'afficher.
+                  `rel=noreferrer` pour ne pas transmettre la page d'origine. */}
+              {ORG.planHref && !estAConfirmer(ORG.adresse) ? (
+                <a
+                  className="lp-lien lp-contact__itineraire"
+                  href={ORG.planHref}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {CONTACT_LIBELLES.itineraire}
+                </a>
+              ) : null}
             </figcaption>
           </ScrollReveal>
         </div>

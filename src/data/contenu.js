@@ -15,8 +15,15 @@ export const ORG = {
   nomArabe: 'مسجد النور',
   baseline: 'Le Havre',
   ville: 'Le Havre',
-  // TODO — à confirmer : adresse postale exacte
-  adresse: '__ADRESSE_A_CONFIRMER__, 76600 Le Havre',
+  /* Confirmée par la mosquée le 21/08. Le code postal provisoire affiché
+     jusque-là — 76600 — était FAUX : c'est 76620. La « partie connue » d'une
+     donnée en attente peut donc être fausse elle aussi ; ne pas en pré-remplir
+     à l'avenir sans source. */
+  adresse: '12 Rue Léon Peulevey, 76620 Le Havre',
+  /* Lien d'itinéraire. OpenStreetMap plutôt qu'un service qui piste : c'est
+     un LIEN, jamais un cadre embarqué — rien n'est chargé tant que personne
+     ne clique, et la page ne dépend d'aucun tiers pour s'afficher. */
+  planHref: 'https://www.openstreetmap.org/search?query=12%20Rue%20L%C3%A9on%20Peulevey%2C%2076620%20Le%20Havre',
   /* Numéro CORRIGÉ par la mosquée le 07/08. Celui de l'affiche
      (07 59 55 01 40) n'était pas le bon : c'est celui-ci qui aboutit au
      pôle enseignement. L'affiche imprimée porte donc un numéro périmé. */
@@ -759,8 +766,11 @@ export const MENTION_ENVOI_INDISPONIBLE =
 export const MENTION_DEMANDE_PRETE =
   'Votre demande est complète. Comme l’envoi en ligne n’est pas encore ouvert, copiez le récapitulatif et transmettez-le au secrétariat : l’équipe pédagogique vous recontactera.'
 
+/* L'adresse est connue : la phrase d'attente n'a plus d'objet. Elle ne dit
+   pour autant rien de plus que ce qui est établi — pas de nom de quartier,
+   que personne n'a communiqué. */
 export const MENTION_CARTE =
-  'Le plan d’accès sera publié dès que l’adresse exacte sera arrêtée.'
+  'Le plan d’accès n’est pas encore intégré : le lien ouvre l’adresse dans votre application de cartes.'
 
 export const MENTION_SECRETARIAT = 'Horaires du secrétariat à confirmer'
 
@@ -907,8 +917,12 @@ export const CONTACT_LIBELLES = {
   secretariat: 'Secrétariat',
   adresseAConfirmer: 'Rue et numéro à confirmer',
   telAConfirmer: 'Numéro à confirmer',
-  emailAConfirmer: 'Adresse à confirmer',
+  /* « Adresse à confirmer » se lisait ici sous l'étiquette E-mail, deux
+     lignes sous l'adresse POSTALE : depuis que celle-ci est connue, la
+     pastille donnait l'impression contraire. On nomme la donnée manquante. */
+  emailAConfirmer: 'E-mail à confirmer',
   planTitre: 'Emplacement réservé au plan d’accès',
+  itineraire: 'Ouvrir dans un plan',
 }
 
 /* ---------- Pied de page — libellés des trois blocs ---------- */
