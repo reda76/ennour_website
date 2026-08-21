@@ -38,7 +38,14 @@ jobs:
       - name: Build
         run: npm run build -- --base=/${{ github.event.repository.name }}/
 
+      # `enablement: true` fait ACTIVER Pages par le workflow lui-même, via le
+      # GITHUB_TOKEN et la permission `pages: write` déclarée plus haut. Sans
+      # lui, l'action échoue sur un dépôt où Pages n'a jamais été activé — et
+      # l'activer à la main demande les droits admin, qu'un collaborateur en
+      # écriture n'a pas. C'est ce qui bloquait le dépôt du client.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
