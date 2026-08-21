@@ -23,6 +23,10 @@ export const ORG = {
   /* Lien d'itinéraire. OpenStreetMap plutôt qu'un service qui piste : c'est
      un LIEN, jamais un cadre embarqué — rien n'est chargé tant que personne
      ne clique, et la page ne dépend d'aucun tiers pour s'afficher. */
+  /* Vérifié le 21/08 auprès de Nominatim : cette recherche renvoie un seul
+     résultat, « Mosquée Mesjed Ennour, 12 Rue Léon Peulevey, 76620 ». Une
+     URL de recherche plutôt qu'un jeu de coordonnées : elle se relit, et une
+     erreur dedans se voit. Des coordonnées fausses, non. */
   planHref: 'https://www.openstreetmap.org/search?query=12%20Rue%20L%C3%A9on%20Peulevey%2C%2076620%20Le%20Havre',
   /* Numéro CORRIGÉ par la mosquée le 07/08. Celui de l'affiche
      (07 59 55 01 40) n'était pas le bon : c'est celui-ci qui aboutit au
@@ -770,7 +774,7 @@ export const MENTION_DEMANDE_PRETE =
    pour autant rien de plus que ce qui est établi — pas de nom de quartier,
    que personne n'a communiqué. */
 export const MENTION_CARTE =
-  'Le plan d’accès n’est pas encore intégré : le lien ouvre l’adresse dans votre application de cartes.'
+  'Le plan d’accès n’est pas encore intégré : le lien ouvre l’adresse sur OpenStreetMap.'
 
 export const MENTION_SECRETARIAT = 'Horaires du secrétariat à confirmer'
 
