@@ -1,0 +1,37 @@
+name: Vérification
+
+# UNE seule cible désormais : Netlify, qui construit le site du client à
+# chaque push et le sert à la RACINE du domaine.
+#
+# Ce workflow ne déploie rien. Il rejoue, avant Netlify, exactement la
+# commande de netlify.toml : si le lint ou le build casse, on le voit ici
+# plutôt qu'en découvrant un site figé sur son ancienne version.
+#
+# Le déploiement GitHub Pages a été retiré le 21/08 avec la fermeture de
+# Pages sur le dépôt de travail. Il portait un `--base=/nom-du-depot/` que
+# Netlify ne doit surtout pas recevoir : le remettre casserait les chemins
+# d'assets en production. Si Pages devait revenir un jour, ce serait dans un
+# job séparé, jamais dans celui-ci.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      # Build NU, sans --base : c'est mot pour mot la commande de netlify.toml.
+      - run: npm run build
