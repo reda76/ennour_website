@@ -216,7 +216,31 @@ export const CRENEAUX = [
     public: 'Adultes',
     debut: '20:00',
     fin: '21:30',
-    jours: ['Lundi', 'Mercredi', 'Vendredi'],
+    /* Le vendredi a QUITTÉ ce groupe le 08/08 : il a son propre horaire,
+       une heure plus tôt (voir `coran-h-vendredi`). */
+    jours: ['Lundi', 'Mercredi'],
+    salle: 'Salle 5',
+    formules: ['coran'],
+  },
+  {
+    /* Créé le 08/08 en remplacement de la séance du samedi matin :
+       « le samedi c'est supprimé, et à la place c'est le vendredi à
+       19h - 20h30 ».
+
+       Le vendredi ne pouvait pas garder DEUX séances de Coran hommes —
+       19h-20h30 et 20h-21h30 se recouvrent d'une demi-heure, dans la même
+       salle et pour le même groupe. Le vendredi porte donc désormais ce
+       seul horaire, et le lundi et le mercredi gardent celui du soir.
+       À CONFIRMER : si le vendredi conserve aussi sa séance de 20h à
+       21h30, c'est une salle ou un groupe distinct qu'il faut préciser. */
+    id: 'coran-h-vendredi',
+    poles: ['coran'],
+    intitule: 'Coran',
+    groupe: 'Hommes',
+    public: 'Adultes',
+    debut: '19:00',
+    fin: '20:30',
+    jours: ['Vendredi'],
     salle: 'Salle 5',
     formules: ['coran'],
   },
@@ -228,7 +252,10 @@ export const CRENEAUX = [
     public: 'Adultes',
     debut: '07:00',
     fin: '08:30',
-    jours: ['Samedi', 'Dimanche'],
+    /* Le samedi matin a été SUPPRIMÉ le 08/08 et reporté au vendredi soir
+       (voir `coran-h-vendredi`). Ne pas le réintroduire depuis le classeur
+       des salles, qui le porte encore. */
+    jours: ['Dimanche'],
     salle: 'Salle 5',
     formules: ['coran'],
   },
