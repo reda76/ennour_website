@@ -1,0 +1,35 @@
+# ============================================================
+# MOSQUÉE EN-NOUR — déploiement Netlify.
+#
+# Netlify sert le site à la RACINE du domaine, là où GitHub Pages
+# le servait sous /ennour_cours/. La commande de build est donc la
+# commande NUE : `npm run build` s'appuie sur `base: '/'` déclaré
+# dans vite.config.js. Ne jamais y ajouter le `--base=/nom-du-depot/`
+# qu'emploie le workflow GitHub — les URL des assets pointeraient
+# alors sur un sous-dossier qui n'existe pas ici.
+#
+# Le routage d'une seule page est assuré par public/_redirects, que
+# Vite recopie dans dist/ à chaque build.
+# ============================================================
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Même version que le workflow GitHub : un build qui passe ici doit
+  # passer là-bas, et réciproquement.
+  NODE_VERSION = "22"
+
+# Les fichiers versionnés (index.html, JS, CSS) portent une empreinte dans
+# leur nom : on peut donc les mettre en cache longtemps sans risque. Le
+# HTML, lui, ne doit jamais l'être — sinon un déploiement reste invisible.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

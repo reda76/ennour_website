@@ -1,9 +1,18 @@
-name: Déploiement GitHub Pages
+name: Vérification et déploiement
 
-# Le site est servi depuis un sous-chemin (reda76.github.io/lephare_website/),
-# pas depuis la racine du domaine. Vite doit donc bâtir avec --base : sinon
-# les URL des assets pointent sur /assets/… et la page reste blanche.
-# On ne touche pas à vite.config.js, qui garde base: '/' pour Netlify.
+# DEUX cibles, et elles ne se déploient pas de la même façon :
+#
+# — Netlify sert le site du client à la RACINE du domaine et construit
+#   lui-même à chaque push. Rien à faire ici pour lui, sinon vérifier que
+#   le dépôt est sain AVANT que Netlify ne s'en empare.
+# — GitHub Pages sert le dépôt de travail sous /nom-du-depot/, ce qui
+#   impose un `--base` que Netlify ne doit surtout pas recevoir.
+#
+# D'où deux tâches distinctes. La première tourne partout et reproduit
+# exactement ce que fait Netlify. La seconde ne tourne que là où Pages est
+# réellement activé : sur un dépôt où il ne l'est pas, `configure-pages`
+# échoue, et l'activer demande des droits d'administration qu'un
+# collaborateur en écriture n'a pas.
 
 on:
   push:
@@ -15,44 +24,50 @@ permissions:
   pages: write
   id-token: write
 
-# Un seul déploiement à la fois ; on ne coupe pas celui en cours.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  # Le garde-fou : il tourne sur TOUS les dépôts, y compris celui du client.
+  # Un lint ou un build cassé est vu ici avant d'atteindre Netlify.
+  verifier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - run: npm ci
-
       - run: npm run lint
+      # Build NU, sans --base : c'est la commande de netlify.toml.
+      - run: npm run build
 
-      - name: Build
-        run: npm run build -- --base=/${{ github.event.repository.name }}/
-
-      # `enablement: true` fait ACTIVER Pages par le workflow lui-même, via le
-      # GITHUB_TOKEN et la permission `pages: write` déclarée plus haut. Sans
-      # lui, l'action échoue sur un dépôt où Pages n'a jamais été activé — et
-      # l'activer à la main demande les droits admin, qu'un collaborateur en
-      # écriture n'a pas. C'est ce qui bloquait le dépôt du client.
-      - uses: actions/configure-pages@v5
+  # Déploiement GitHub Pages, réservé au dépôt de travail. Le site du client
+  # part sur Netlify ; son dépôt devient privé, où Pages demanderait de toute
+  # façon une offre payante.
+  pages:
+    if: github.repository_owner == 'reda76'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          enablement: true
-
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Pages sert sous un sous-chemin : sans --base, les URL des assets
+      # pointent sur la racine du domaine et la page reste blanche.
+      - run: npm run build -- --base=/${{ github.event.repository.name }}/
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
-    needs: build
+  publier:
+    needs: pages
+    if: github.repository_owner == 'reda76'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
