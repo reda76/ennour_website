@@ -5,7 +5,6 @@ import {
   LOGO_AME,
   INTRO_CONTACT,
   MENTION_CARTE,
-  MENTION_SECRETARIAT,
   ORG,
   estAConfirmer,
 } from '../data/contenu.js'
@@ -88,14 +87,9 @@ export default function Contact() {
               </dd>
             </div>
 
-            <div className="lp-contact__ligne">
-              <dt className="lp-caption">{CONTACT_LIBELLES.secretariat}</dt>
-              <dd className="lp-contact__valeur">
-                {/* Les horaires d'ouverture n'ont pas été communiqués :
-                    on les annonce comme attendus plutôt que de les inventer. */}
-                <span className="lp-attente">{MENTION_SECRETARIAT}</span>
-              </dd>
-            </div>
+            {/* La ligne « Secrétariat » a été retirée le 21/08 : la mosquée
+                n'a pas d'horaires fixes. Rien à afficher, donc rien à
+                promettre — pas même une pastille d'attente. */}
           </ScrollReveal>
 
           <ScrollReveal as="figure" className="lp-card lp-contact__plan" delay={120}>

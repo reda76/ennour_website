@@ -264,10 +264,15 @@
 
 .lp-planning__semaine {
   display: grid;
-  /* Sept colonnes fixes : un calendrier ne se réordonne pas.
-     160px est la largeur minimale où « 20:00 – 21:30 » et un
-     intitulé sur deux lignes tiennent sans se serrer. */
-  grid-template-columns: repeat(7, minmax(160px, 1fr));
+  /* Autant de colonnes que de jours tenus — le composant les compte et
+     les pose dans --jours-tenus. Le 7 de repli sert si la variable manque.
+     L'ordre reste celui de la semaine : un calendrier ne se réordonne pas.
+     160px est la largeur minimale où « 19:00 – 20:30 » et un intitulé sur
+     deux lignes tiennent sans se serrer ; le plafond à 320px évite qu'une
+     semaine à trois jours n'étire ses colonnes sur tout l'écran, ce qui
+     ferait flotter les cartes loin les unes des autres. */
+  grid-template-columns: repeat(var(--jours-tenus, 7), minmax(160px, 320px));
+  justify-content: start;
   align-items: start;
   /* Gouttière plus serrée que --gap-grille : sept colonnes à 24px
      mangeraient 144px de largeur utile. */

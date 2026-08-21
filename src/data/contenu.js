@@ -41,7 +41,10 @@ export const ORG = {
   /* La mosquée nomme « AME — Pôle enseignement » le service qui tient les
      cours. Ce que le sigle AME développe reste inconnu : on l'écrit tel
      quel, on ne l'invente pas. */
-  association: 'AME',
+  /* Le sigle seul. Renommé de `association` le 21/08 : la mosquée ne veut
+     pas voir ce mot sur le site, autant qu'il ne traîne pas non plus dans
+     les noms de champs qu'on relit tous les jours. */
+  sigle: 'AME',
   service: 'AME — Pôle enseignement',
 }
 
@@ -119,7 +122,7 @@ export const POLES = [
    ce qui est utile et doit rester possible — plantait sur cette ligne.   */
 const BASE = import.meta.env?.BASE_URL ?? '/'
 
-/* ---------- Le logo de l'association ----------
+/* ---------- Le logo AME ----------
    Fourni par le client en PNG sur fond BLANC OPAQUE (aucune transparence,
    vérifié). Il a été détouré : l'aplat blanc est résolu en canal alpha, puis
    « démultiplié » pour retrouver la couleur d'origine — sans quoi les bords
@@ -131,15 +134,19 @@ const BASE = import.meta.env?.BASE_URL ?? '/'
    — sur un aplat orange, les lettres oranges du logo disparaissent. Le poser
      sur du plâtre, du blanc ou de l'encre, jamais sur --accent.
 
-   TODO — le sigle AME n'a pas été développé par le client. Tant qu'on ne le
-   connaît pas, on n'invente pas : le texte alternatif dit « association AME »
-   et rien de plus.                                                          */
+   Le sigle AME a été développé par la mosquée le 21/08 — et sa réponse
+   s'est accompagnée d'une consigne : « on préfère pas que le terme
+   association apparaisse ». Le développement n'est donc PAS publié, ni ici
+   ni ailleurs, et le mot « association » ne figure dans aucune chaîne
+   affichée. Le texte alternatif se réduit au sigle, qui est aussi ce que
+   le logo montre.
+   NE PAS « compléter » cet alt en développant le sigle.                     */
 export const LOGO_AME = {
   src: `${BASE}logos/ame-640.webp`,
   repli: `${BASE}logos/ame-640.png`,
   largeur: 640,
   hauteur: 503,
-  alt: 'Logo de l’association AME',
+  alt: 'AME',
   // Largeur minimale d'affichage, mesurée : en deçà le sigle se referme.
   largeurMini: 110,
 }
@@ -204,8 +211,12 @@ export const PUBLICS = ['Adultes']
      ouvertes), niveau 2 le samedi (anciens élèves uniquement).
    — La SÎRA adultes est le SAMEDI seulement. Le créneau du dimanche
      après-midi que l'affiche laissait supposer est la Sîra des ados.
-   — Le CORAN FEMMES existe bien : lundi, mardi et jeudi de 14h30 à 16h. Il
-     était resté en attente d'arbitrage faute de source ; il est confirmé.
+   — Le CORAN FEMMES a été ANNULÉ le 21/08, en même temps que les séances
+     hommes du lundi et du mercredi : « les cours en semaine, y'en aura pas,
+     c'est annulé ». Le pôle Coran ne tient donc plus que deux séances, le
+     vendredi soir et le dimanche matin, et elles sont réservées aux hommes.
+     Le classeur des salles porte encore les créneaux supprimés : ne pas les
+     réintroduire depuis lui.
    — Toutes les SALLES sont désormais connues.
 
    Ce qui en est volontairement EXCLU :
@@ -220,30 +231,13 @@ export const PUBLICS = ['Adultes']
    des groupes. Le classeur, lui, les nomme explicitement. */
 export const CRENEAUX = [
   {
-    id: 'coran-h-semaine',
-    poles: ['coran'],
-    intitule: 'Coran',
-    groupe: 'Hommes',
-    public: 'Adultes',
-    debut: '20:00',
-    fin: '21:30',
-    /* Le vendredi a QUITTÉ ce groupe le 08/08 : il a son propre horaire,
-       une heure plus tôt (voir `coran-h-vendredi`). */
-    jours: ['Lundi', 'Mercredi'],
-    salle: 'Salle 5',
-    formules: ['coran'],
-  },
-  {
     /* Créé le 08/08 en remplacement de la séance du samedi matin :
        « le samedi c'est supprimé, et à la place c'est le vendredi à
        19h - 20h30 ».
 
-       Le vendredi ne pouvait pas garder DEUX séances de Coran hommes —
-       19h-20h30 et 20h-21h30 se recouvrent d'une demi-heure, dans la même
-       salle et pour le même groupe. Le vendredi porte donc désormais ce
-       seul horaire, et le lundi et le mercredi gardent celui du soir.
-       À CONFIRMER : si le vendredi conserve aussi sa séance de 20h à
-       21h30, c'est une salle ou un groupe distinct qu'il faut préciser. */
+       Le chevauchement relevé alors — 19h-20h30 contre 20h-21h30, même
+       salle et même groupe — est tranché depuis le 21/08 : les séances en
+       semaine sont annulées, celle-ci reste seule. */
     id: 'coran-h-vendredi',
     poles: ['coran'],
     intitule: 'Coran',
@@ -268,21 +262,6 @@ export const CRENEAUX = [
        des salles, qui le porte encore. */
     jours: ['Dimanche'],
     salle: 'Salle 5',
-    formules: ['coran'],
-  },
-  {
-    id: 'coran-f-semaine',
-    poles: ['coran'],
-    intitule: 'Coran',
-    groupe: 'Femmes',
-    public: 'Adultes',
-    debut: '14:30',
-    fin: '16:00',
-    jours: ['Lundi', 'Mardi', 'Jeudi'],
-    salle: 'Salle 5',
-    /* Rattaché à la formule 1 depuis que celle-ci est « Coran » tout court :
-       une formule par pôle, et ce créneau est du Coran. La question restée
-       ouverte deux échanges durant se referme d'elle-même. */
     formules: ['coran'],
   },
   {
@@ -364,8 +343,10 @@ export const CRENEAUX = [
      mais le classeur décrit l'occupation des salles, pas l'offre publiée.
 
      Le cours de Coran femmes du lundi, mardi et jeudi de 14h30 à 16h en
-     salle 5 n'est PAS concerné : il ne figure pas dans la liste transmise
-     (ni le mardi, ni le jeudi n'y sont), et il reste affiché. */
+     salle 5 avait survécu à ce tri : il ne figurait pas dans la liste
+     transmise. Il a été annulé séparément le 21/08, avec toutes les
+     séances de semaine. Le pôle Coran ne tient plus que le vendredi soir
+     et le dimanche matin. */
 ]
 
 export const JOURS_SEMAINE = [
@@ -546,23 +527,44 @@ export const CALENDRIER = [
      garde le libellé entier. */
   { key: 'rentree-coran', libelle: 'Rentrée des cours de Coran', court: 'Rentrée Coran', debut: '2026-09-14', fin: null, type: 'jalon', provisoire: false },
   { key: 'rentree-autres', libelle: 'Rentrée des autres formules', court: 'Rentrée formules 2 et 3', debut: '2026-10-03', fin: null, type: 'jalon', provisoire: false },
-  { key: 'toussaint', libelle: 'Vacances de la Toussaint', debut: '2026-10-17', fin: '2026-11-02', type: 'vacances', provisoire: true },
-  { key: 'examen-t1', libelle: 'Examens du 1er trimestre', debut: '2026-12-12', fin: '2026-12-19', type: 'examen', provisoire: true },
-  { key: 'noel', libelle: 'Vacances de Noël', debut: '2026-12-19', fin: '2027-01-04', type: 'vacances', provisoire: true },
-  { key: 'hiver', libelle: 'Vacances d’hiver', debut: '2027-02-20', fin: '2027-03-08', type: 'vacances', provisoire: true },
-  { key: 'examen-t2', libelle: 'Examens du 2e trimestre', debut: '2027-03-13', fin: '2027-03-20', type: 'examen', provisoire: true },
-  { key: 'printemps', libelle: 'Vacances de printemps', debut: '2027-04-17', fin: '2027-05-03', type: 'vacances', provisoire: true },
-  { key: 'examen-t3', libelle: 'Examens du 3e trimestre', debut: '2027-06-05', fin: '2027-06-12', type: 'examen', provisoire: true },
-  { key: 'fin', libelle: 'Fin des cours', court: 'Fin des cours', debut: '2027-06-26', fin: null, type: 'jalon', provisoire: true },
+
+  /* VACANCES — confirmées le 21/08. La mosquée ne fixe pas son propre
+     calendrier : « on se cale sur les vacances scolaires ». La règle vaut
+     donc source, et les dates ci-dessous ont été relevées sur le calendrier
+     officiel 2026-2027 pour la ZONE B — Le Havre relève de l'académie de
+     Normandie, qui en fait partie. Elles ne sont plus provisoires.
+     Si une année la zone change, c'est ici qu'on recale, pas au jugé. */
+  { key: 'toussaint', libelle: 'Vacances de la Toussaint', debut: '2026-10-17', fin: '2026-11-02', type: 'vacances', provisoire: false },
+  /* EXAMENS — la mosquée donne une RÈGLE, pas des dates : « dernière
+     semaine à chaque trimestre ». Trois trimestres d'octobre à juin, quatre
+     coupures scolaires : la répartition ci-dessous place chaque session sur
+     la dernière semaine de cours avant Noël, avant les vacances de
+     printemps et avant l'été. C'est la lecture la plus naturelle de la
+     règle, ce n'est pas une confirmation — d'où `provisoire` maintenu.
+     « Dernière semaine de décembre » au sens littéral tomberait pendant les
+     vacances de Noël : il s'agit de la dernière semaine de COURS. */
+  { key: 'examen-t1', libelle: 'Examens du 1er trimestre', debut: '2026-12-14', fin: '2026-12-18', type: 'examen', provisoire: true },
+  { key: 'noel', libelle: 'Vacances de Noël', debut: '2026-12-19', fin: '2027-01-04', type: 'vacances', provisoire: false },
+  { key: 'hiver', libelle: 'Vacances d’hiver', debut: '2027-02-20', fin: '2027-03-08', type: 'vacances', provisoire: false },
+  { key: 'examen-t2', libelle: 'Examens du 2e trimestre', debut: '2027-04-12', fin: '2027-04-16', type: 'examen', provisoire: true },
+  { key: 'printemps', libelle: 'Vacances de printemps', debut: '2027-04-17', fin: '2027-05-03', type: 'vacances', provisoire: false },
+  { key: 'examen-t3', libelle: 'Examens du 3e trimestre', debut: '2027-06-28', fin: '2027-07-02', type: 'examen', provisoire: true },
+  /* Les vacances d'été de la zone B s'ouvrent le 3 juillet 2027. Se caler
+     sur elles place la fin des cours la veille. Reste provisoire : la règle
+     porte sur les VACANCES, et rien ne dit que la mosquée enseigne jusqu'au
+     dernier jour scolaire. L'ancienne date, le 26 juin, était inventée. */
+  { key: 'fin', libelle: 'Fin des cours', court: 'Fin des cours', debut: '2027-07-02', fin: null, type: 'jalon', provisoire: true },
 ]
 
-/* La réserve ne vaut PLUS pour tout : les deux rentrées sont confirmées par
-   la mosquée, les huit autres entrées restent calées sur la zone B sans
-   avoir été vérifiées. Dire « les dates sont indicatives » sans distinguer
-   ferait douter des seules qui soient sûres — et ce sont précisément
-   celles sur lesquelles on s'inscrit. */
+/* La réserve ne porte plus que sur ce qui reste incertain. Depuis le 21/08,
+   les rentrées ET les vacances sont établies : les premières par la mosquée,
+   les secondes par la règle qu'elle a donnée (« on se cale sur les vacances
+   scolaires ») appliquée au calendrier officiel de la zone B. Ne restent
+   provisoires que les trois sessions d'examens et la fin des cours.
+   Distinguer importe : douter de tout ferait douter des dates de rentrée,
+   qui sont précisément celles sur lesquelles on s'inscrit. */
 export const MENTION_CALENDRIER =
-  'Les deux dates de rentrée sont confirmées. Les vacances et les examens sont calés sur la zone B et restent à confirmer.'
+  'Les rentrées sont confirmées et les vacances suivent le calendrier scolaire de la zone B. Les sessions d’examens restent à confirmer.'
 
 /* ---------- Inscription ----------
    Les quatre étapes décrivent ce que le site FAIT, pas une procédure
@@ -776,7 +778,12 @@ export const MENTION_DEMANDE_PRETE =
 export const MENTION_CARTE =
   'Le plan d’accès n’est pas encore intégré : le lien ouvre l’adresse sur OpenStreetMap.'
 
-export const MENTION_SECRETARIAT = 'Horaires du secrétariat à confirmer'
+/* SUPPRIMÉ le 21/08. La ligne « Secrétariat » attendait des horaires
+   d'ouverture ; la mosquée répond qu'elle n'en a pas : « on n'a pas
+   d'horaires fixes, donc ne le mets pas ». Une pastille d'attente ne se
+   justifie que si la donnée doit arriver. Ici elle n'arrivera jamais :
+   la ligne entière disparaît de la section Contact.
+   Ne pas la réintroduire « en attendant les horaires ». */
 
 /* ---------- Section « Les cours » ----------
    Libellés éditoriaux du bloc des trois pôles. Regroupés ici pour
@@ -816,12 +823,11 @@ export const PIED = {
   titre: 'La mosquée, en bref',
   intro:
     "Le secrétariat répond aux demandes d’inscription et aux questions sur les cours.",
-  /* TODO — à confirmer : forme juridique exacte. « Association loi 1901 »
-     était affirmé sans source, sur la ligne la plus officielle de la page,
-     alors même que ORG.association reste `null` faute de connaître le nom
-     derrière le sigle « AME » de l'affiche. Même règle que pour le sigle :
-     on n'affiche rien tant que ce n'est pas établi. Le colophon se rend
-     sans cette mention (voir Footer.jsx). */
+  /* Reste `null`, et ce n'est plus un TODO : la mosquée demande le 21/08
+     que le terme « association » n'apparaisse pas sur le site. Une mention
+     de forme juridique le ferait revenir par la fenêtre, sur la ligne la
+     plus officielle de la page. « Association loi 1901 » y avait d'ailleurs
+     été affirmé sans source. Le colophon se rend sans cette mention. */
   statut: null,
   // TODO — à confirmer : ligne téléphonique et adresse e-mail du secrétariat.
   contactSecours:
@@ -918,7 +924,6 @@ export const CONTACT_LIBELLES = {
   adresse: 'Adresse',
   telephone: 'Téléphone',
   email: 'E-mail',
-  secretariat: 'Secrétariat',
   adresseAConfirmer: 'Rue et numéro à confirmer',
   telAConfirmer: 'Numéro à confirmer',
   /* « Adresse à confirmer » se lisait ici sous l'étiquette E-mail, deux
@@ -1238,7 +1243,14 @@ export const FAQ = {
         {
           id: 'mixite',
           q: 'Les cours sont-ils ouverts aux hommes et aux femmes ?',
-          r: 'Oui. Les cours sont ouverts aux hommes et aux femmes, dans le respect de l’organisation mise en place par la mosquée.',
+          /* Réponse de la mosquée, conservée mot pour mot. Une phrase lui a
+             été AJOUTÉE le 21/08, sans rien retrancher : depuis l'annulation
+             des séances de semaine, le pôle Coran ne tient plus que deux
+             créneaux, tous deux hommes. Un « oui » seul enverrait une femme
+             s'inscrire à une formule qui n'a pas de séance pour elle. Le
+             renvoi au planning dit le vrai sans contredire la mosquée.
+             À REVOIR avec elle si un créneau Coran femmes rouvre. */
+          r: 'Oui. Les cours sont ouverts aux hommes et aux femmes, dans le respect de l’organisation mise en place par la mosquée. Le planning indique, séance par séance, le groupe concerné.',
         },
         {
           id: 'absence',
@@ -1267,7 +1279,10 @@ export const FAQ = {
           /* La source disait « le formulaire de contact disponible sur le
              site » : il n'en existe pas de distinct. On nomme ce qui existe
              — le formulaire d'inscription porte un champ de message libre. */
-          r: 'Par le formulaire d’inscription de ce site, qui comporte un champ de message libre, par téléphone, ou directement à la Mosquée En-Nour pendant les horaires d’ouverture.',
+          /* « pendant les horaires d'ouverture » retiré le 21/08 : la
+             mosquée n'a pas d'horaires fixes de secrétariat, la phrase
+             renvoyait donc à une information inexistante. */
+          r: 'Par le formulaire d’inscription de ce site, qui comporte un champ de message libre, par téléphone, ou directement sur place à la Mosquée En-Nour.',
         },
         {
           id: 'annonces',

@@ -421,9 +421,25 @@ export default function Planning() {
   // Séances « au choix », et le cas échéant celles sans jours arrêtés.
   const groupes = useMemo(() => construireGroupes(visibles), [visibles])
 
+  /* Les jours que la semaine porte RÉELLEMENT, filtres mis à part.
+     Depuis l'annulation des séances de semaine le 21/08, la mosquée
+     n'enseigne plus que le vendredi, le samedi et le dimanche : afficher
+     sept colonnes en laissait quatre vides sur plus de la moitié de la
+     largeur, et tassait toute l'offre dans le dernier tiers. Une semaine
+     qui paraît vide dit le contraire de ce qu'elle contient.
+
+     On part de CRENEAUX et non de `visibles` : un jour vidé PAR UN FILTRE
+     doit garder sa colonne et son « Aucun cours », sinon la grille se
+     réorganise sous le doigt et l'on ne voit plus ce que le filtre a fait.
+     Seul un jour où la mosquée n'enseigne jamais disparaît. */
+  const joursTenus = useMemo(() => {
+    const tenus = new Set(CRENEAUX.flatMap((c) => c.jours))
+    return JOURS_SEMAINE.filter((j) => tenus.has(j))
+  }, [])
+
   const semaine = useMemo(
     () =>
-      JOURS_SEMAINE.map((jour) => ({
+      joursTenus.map((jour) => ({
         jour,
         creneaux: fixes.filter((c) => c.jours.includes(jour)).sort(parHeure),
         // Ce que le jour porte « au choix » : annoncé dans l'en-tête de la
@@ -432,7 +448,7 @@ export default function Planning() {
           .filter((g) => g.auChoix && g.jours.includes(jour))
           .reduce((n, g) => n + g.creneaux.length, 0),
       })),
-    [fixes, groupes],
+    [fixes, groupes, joursTenus],
   )
 
   const nbSeances = visibles.reduce((n, c) => n + occurrences(c), 0)
@@ -591,7 +607,13 @@ export default function Planning() {
               aria-label={cadreDefile ? PLANNING_INTRO.titre : undefined}
               tabIndex={cadreDefile ? 0 : undefined}
             >
-              <div className="lp-planning__semaine">
+              {/* Le nombre de colonnes suit les jours réellement tenus.
+                  Une propriété personnalisée plutôt qu'une classe par
+                  compte : la CSS n'a pas à connaître le calendrier. */}
+              <div
+                className="lp-planning__semaine"
+                style={{ '--jours-tenus': joursTenus.length }}
+              >
                 {semaine.map(({ jour, creneaux, auChoix }) => (
                   <section
                     key={jour}
