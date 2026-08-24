@@ -40,3 +40,8 @@ pnpm-debug.log*
 /*.jpeg
 /*.jpg
 /Sans titre.png
+
+# Originaux des photos fournies par la mosquée : lourds, aux noms accentués,
+# et déjà retaillés dans public/photos/cours/. On les garde sous la main pour
+# pouvoir refaire les découpes, on ne les publie pas.
+sources-images/

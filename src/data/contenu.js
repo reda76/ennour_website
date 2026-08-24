@@ -23,11 +23,15 @@ export const ORG = {
   /* Lien d'itinéraire. OpenStreetMap plutôt qu'un service qui piste : c'est
      un LIEN, jamais un cadre embarqué — rien n'est chargé tant que personne
      ne clique, et la page ne dépend d'aucun tiers pour s'afficher. */
-  /* Vérifié le 21/08 auprès de Nominatim : cette recherche renvoie un seul
-     résultat, « Mosquée Mesjed Ennour, 12 Rue Léon Peulevey, 76620 ». Une
-     URL de recherche plutôt qu'un jeu de coordonnées : elle se relit, et une
-     erreur dedans se voit. Des coordonnées fausses, non. */
-  planHref: 'https://www.openstreetmap.org/search?query=12%20Rue%20L%C3%A9on%20Peulevey%2C%2076620%20Le%20Havre',
+  /* Google Maps depuis le 24/08, à la demande de la mosquée : c'est
+     l'application que ses fidèles ont sur leur téléphone, et le lien s'y
+     ouvre directement plutôt que dans un navigateur.
+     Les coordonnées viennent de Nominatim, qui ne renvoyait qu'un résultat
+     pour cette adresse : « Mosquée Mesjed Ennour, 12 Rue Léon Peulevey ».
+     Elles plutôt que l'adresse en toutes lettres, parce qu'un géocodeur
+     peut se tromper de rue ; un point, jamais. Elles sont VÉRIFIABLES : ce
+     sont celles du repère au centre de la vignette ci-dessous. */
+  planHref: 'https://www.google.com/maps/search/?api=1&query=49.5195894%2C0.1170548',
   /* Numéro CORRIGÉ par la mosquée le 07/08. Celui de l'affiche
      (07 59 55 01 40) n'était pas le bon : c'est celui-ci qui aboutit au
      pôle enseignement. L'affiche imprimée porte donc un numéro périmé. */
@@ -48,6 +52,79 @@ export const ORG = {
   service: 'AME — Pôle enseignement',
 }
 
+const BASE = import.meta.env?.BASE_URL ?? '/'
+
+/* ---------- Photos des cours ----------
+   Fournies par la mosquée le 24/08. Ce ne sont pas des vues du lieu mais les
+   SUPPORTS de chaque cours : un mushaf, une planche d'alphabet, les deux
+   ouvrages de fiqh étudiés, les deux mosquées de la Sîra. Elles disent donc
+   quelque chose que le texte ne disait pas, et c'est à ce titre qu'elles
+   entrent — pas pour décorer.
+
+   Les originaux (noms accentués, formats disparates) sont archivés hors du
+   dépôt dans `sources-images/`. Ce qui est publié a été recadré et converti
+   en WebP dans `public/photos/cours/`.
+
+   DEUX FORMATS, volontairement :
+   — les trois images de pôle sont en 3/2, TOUTES LES TROIS, pour que les
+     cartes restent alignées. Le 2/1 essayé d'abord rognait le titre et la
+     dernière rangée de la planche d'alphabet : un format photo plus haut
+     lui rend ses quatre rangées ;
+   — les deux couvertures de livre restent en PORTRAIT. Les rogner au 4/3
+     aurait tranché dans le titre : une couverture ne se recadre pas.
+
+   `photo()` ne fabrique que des chemins. Le `srcset` n'est écrit que s'il y
+   a réellement deux largeurs : deux sources identiques ne servent à rien et
+   trompent le navigateur. */
+function photo(nom, largeurs, [largeur, hauteur], alt) {
+  const url = (l) => `${BASE}photos/cours/${nom}-${l}.webp`
+  return {
+    src: url(largeurs[largeurs.length - 1]),
+    srcset: largeurs.length > 1 ? largeurs.map((l) => `${url(l)} ${l}w`).join(', ') : undefined,
+    largeur,
+    hauteur,
+    alt,
+  }
+}
+
+/* Le plan d'accès. Une image FIXE, fabriquée à partir des tuiles
+   OpenStreetMap et rangée dans public/ : la page n'appelle donc aucun
+   service extérieur pour s'afficher. Un cadre Google Maps embarqué aurait
+   chargé Google à chaque visite et déposé des cookies — soit une bannière
+   de consentement sur un site qui n'en a aujourd'hui aucun besoin.
+   Le CLIC, lui, ouvre bien Google Maps : c'est là qu'on veut l'itinéraire.
+   Refabriquer la vignette si l'adresse change — elle est figée, elle ne se
+   corrigera pas toute seule. */
+export const PLAN_ACCES = {
+  src: `${BASE}photos/plan-acces-720.webp`,
+  srcset: `${BASE}photos/plan-acces-480.webp 480w, ${BASE}photos/plan-acces-720.webp 720w`,
+  largeur: 720,
+  /* 3/1 depuis le 24/08 : hauteur réduite de moitié pour équilibrer les
+     deux colonnes de la section, qui n'en compte plus que deux lignes à
+     gauche depuis le retrait de l'e-mail et des horaires.
+     Le ZOOM est resté à 17 malgré le cadre plus bas. Essayé à 16, qui
+     montrait plus de quartier : « Rue Léon Peulevey » n'y était plus
+     nommée. Sur un plan d'accès, le nom de la rue passe avant l'étendue. */
+  hauteur: 240,
+  alt: 'Plan du quartier : la mosquée est signalée rue Léon Peulevey, près du carrefour de la Mare Rouge.',
+  /* OpenStreetMap impose de créditer ses contributeurs partout où ses
+     tuiles sont reprises. Ce n'est pas une politesse, c'est sa licence. */
+  credit: 'Fond de plan © OpenStreetMap',
+}
+
+export const PHOTOS_COURS = {
+  coran: photo('coran', [480], [480, 320],
+    'Un exemplaire du Coran, sa page ornée d’un médaillon doré.'),
+  alphabet: photo('alphabet', [480, 720], [720, 480],
+    'Une planche présentant les lettres de l’alphabet arabe.'),
+  sira: photo('sira', [480, 720], [720, 480],
+    'La Kaaba à La Mecque, et la mosquée du Prophète à Médine avec son dôme vert.'),
+  fiqhNiveau1: photo('fiqh-niveau-1', [240, 400], [400, 520],
+    'Couverture du Mukhtasar Al-Akhdarî, la prière selon le rite malikite.'),
+  fiqhNiveau2: photo('fiqh-niveau-2', [240, 400], [400, 476],
+    'Couverture du Matn al-‘Ashmâwiyya, fiqh malikite.'),
+}
+
 /* ---------- Les trois pôles d'enseignement ----------
    Le champ `description` a été RETIRÉ des trois pôles à la demande de la
    mosquée : les paragraphes décrivaient une organisation (groupes par
@@ -62,8 +139,10 @@ export const POLES = [
     titre: 'Apprentissage du Noble Coran',
     court: 'Coran',
     accroche: 'Lecture, tajwîd et mémorisation.',
-    /* Clé de l'illustration — voir src/components/illustrations/. */
+    /* Clé du DESSIN de repli — voir src/components/illustrations/. Il n'est
+       tracé que si `photo` manque : le dessin reste le filet de sécurité. */
     illustration: 'coran',
+    photo: PHOTOS_COURS.coran,
     points: [
       'Lecture du Coran',
       'Tajwîd',
@@ -76,6 +155,7 @@ export const POLES = [
     court: 'Alphabétisation',
     accroche: 'Lire et écrire l’arabe, depuis les toutes premières lettres.',
     illustration: 'alphabetisation',
+    photo: PHOTOS_COURS.alphabet,
     /* « Aucun prérequis » a été RETIRÉ : l'affiche liste « Alphabétisation
        arabe » sans énoncer la moindre condition d'entrée. Annoncer qu'il
        n'y en a pas, c'est édicter une règle d'admission à la place de la
@@ -99,6 +179,11 @@ export const POLES = [
     court: 'Sciences musulmanes',
     accroche: 'Jurisprudence (Fiqh) et biographie prophétique (Sîra).',
     illustration: 'sciences',
+    /* La Sîra plutôt qu'un des deux ouvrages de fiqh : c'est la seule des
+       trois images du pôle qui soit en paysage, et le pôle en compte trois.
+       Les deux couvertures sont posées sur leurs créneaux au planning, là
+       où l'on choisit entre le niveau 1 et le niveau 2. */
+    photo: PHOTOS_COURS.sira,
     /* « Le week-end, au choix » était FAUX : il n'y a aucun choix de jour.
        Le Fiqh a deux niveaux à deux jours fixes, la Sîra est le samedi. */
     points: [
@@ -120,7 +205,6 @@ export const POLES = [
    La lecture est défensive : `import.meta.env` n'existe QUE sous Vite. Un
    script Node qui importerait ce fichier pour en vérifier les données —
    ce qui est utile et doit rester possible — plantait sur cette ligne.   */
-const BASE = import.meta.env?.BASE_URL ?? '/'
 
 /* ---------- Le logo AME ----------
    Fourni par le client en PNG sur fond BLANC OPAQUE (aucune transparence,
@@ -290,6 +374,10 @@ export const CRENEAUX = [
   },
   {
     id: 'fiqh-n1',
+    /* Le support fourni par la mosquée le 24/08. Il distingue les deux
+       niveaux mieux qu'un numéro : on voit du premier coup d'œil sur quel
+       ouvrage on va travailler. */
+    ouvrage: PHOTOS_COURS.fiqhNiveau1,
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 1',
     public: 'Adultes',
@@ -303,6 +391,7 @@ export const CRENEAUX = [
   },
   {
     id: 'fiqh-n2',
+    ouvrage: PHOTOS_COURS.fiqhNiveau2,
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 2',
     public: 'Adultes',
@@ -596,7 +685,11 @@ export const ETAPES_INSCRIPTION = [
   {
     n: 4,
     titre: 'Règlement',
-    texte: "Le règlement se fait sur place, en une fois ou échelonné.",
+    /* « en ligne ou sur place » depuis le 24/08 : la campagne HelloAsso
+       existe, l'étape ne peut plus annoncer le seul règlement sur place.
+       L'ordre n'est pas neutre — en ligne d'abord, parce que c'est le seul
+       des deux qui se fait depuis cette page. */
+    texte: "Le règlement se fait en ligne ou sur place, en une fois ou échelonné.",
   },
 ]
 
@@ -613,7 +706,21 @@ export const ETAPES_INSCRIPTION = [
    TODO — l'URL de la campagne HelloAsso reste à fournir : tant qu'elle est
    nulle, aucun lien n'est posé, seul le moyen est nommé.                  */
 export const MOYENS_REGLEMENT = [
-  { key: 'helloasso', libelle: 'En ligne — HelloAsso', detail: 'Sans frais pour la mosquée.', url: null },
+  /* Campagne d'adhésion fournie le 24/08. Elle est portée par « Le Phare /
+     Al Manara », qui gère l'enseignement — et non par la mosquée elle-même :
+     l'identifiant de l'URL le dit, et cette différence a été confirmée.
+     Le nom de cette structure n'est PAS écrit sur le site : aucune source
+     publique ne donne sa dénomination exacte (absente du répertoire SIRENE),
+     et la mosquée a par ailleurs demandé que le mot « association »
+     n'apparaisse pas. Le visiteur le lira sur la page HelloAsso elle-même.
+     Si la mosquée veut une phrase d'explication ici, c'est à elle de la
+     formuler. */
+  {
+    key: 'helloasso',
+    libelle: 'En ligne — HelloAsso',
+    detail: 'Sans frais pour la mosquée.',
+    url: 'https://www.helloasso.com/associations/le-phare-al-manara/adhesions/cours',
+  },
   { key: 'especes', libelle: 'Sur place', detail: 'Au secrétariat de la mosquée.' },
   { key: 'echelonnement', libelle: 'En une fois ou échelonné', detail: 'Par prélèvements automatiques ou par chèques remis à l’inscription.' },
 ]
@@ -626,7 +733,10 @@ export const SECTIONS = [
   { id: 'tarifs', label: 'Formules & tarifs' },
   { id: 'calendrier', label: 'Calendrier' },
   { id: 'faq', label: 'Questions fréquentes' },
-  { id: 'inscription', label: 'Inscription' },
+  /* « Inscription » RETIRÉE le 24/08 : la section n'est plus rendue (voir
+     Vitrine.jsx). Cette liste alimente la barre, le plan du site du pied et
+     l'espion de défilement — y laisser une entrée sans cible produirait un
+     lien mort et un onglet actif impossible à atteindre. */
   { id: 'contact', label: 'Contact' },
 ]
 
@@ -775,8 +885,9 @@ export const MENTION_DEMANDE_PRETE =
 /* L'adresse est connue : la phrase d'attente n'a plus d'objet. Elle ne dit
    pour autant rien de plus que ce qui est établi — pas de nom de quartier,
    que personne n'a communiqué. */
-export const MENTION_CARTE =
-  'Le plan d’accès n’est pas encore intégré : le lien ouvre l’adresse sur OpenStreetMap.'
+/* La phrase d'attente n'a plus d'objet : le plan est là. Elle dit désormais
+   ce que le clic FAIT, puisque l'image seule ne l'annonce pas. */
+export const MENTION_CARTE = 'La mosquée est signalée au centre du plan.'
 
 /* SUPPRIMÉ le 21/08. La ligne « Secrétariat » attendait des horaires
    d'ouverture ; la mosquée répond qu'elle n'en a pas : « on n'a pas
@@ -807,22 +918,44 @@ export const COURS_INTRO = {
 /* ---------- Chrome : barre de navigation et pied de page ---------- */
 
 /* Le bouton d'action de la barre. */
-export const NAV_CTA = { cible: 'inscription', libelle: 'S’inscrire' }
+/* ---------- Où mène « S'inscrire » ----------
+   DÉPLACÉ HORS DU SITE le 24/08. L'inscription se fait désormais sur la
+   campagne HelloAsso, qui recueille l'identité, le niveau et le règlement
+   en une seule fois. La section « Inscription » de ce site faisait double
+   emploi avec elle — et son formulaire n'envoyait rien à personne.
+
+   Une seule constante porte l'adresse, et elle la reprend de
+   MOYENS_REGLEMENT : deux endroits où écrire la même URL, c'est un endroit
+   de trop, et c'est celui qu'on oublie de mettre à jour.
+
+   `externe: true` n'est pas décoratif — il commande l'ouverture dans un
+   nouvel onglet, le `rel` et la mention lue par les lecteurs d'écran. */
+export const INSCRIPTION_EN_LIGNE = {
+  href: MOYENS_REGLEMENT.find((m) => m.key === 'helloasso')?.url ?? null,
+  libelle: 'S’inscrire',
+  /* Annoncé aux lecteurs d'écran, jamais affiché : un lien qui change de
+     site sans prévenir désoriente, et l'icône seule ne se lit pas. */
+  mentionNouvelOnglet: 'nouvelle fenêtre',
+}
+
+export const NAV_CTA = {
+  href: INSCRIPTION_EN_LIGNE.href,
+  libelle: INSCRIPTION_EN_LIGNE.libelle,
+  externe: true,
+}
 
 /* Deux entrées de SECTIONS ne sont pas reprises dans les liens de la barre :
    le logo mène déjà à l'accueil et le bouton mène déjà à l'inscription.
    Les répéter allongerait la barre sans rien apprendre au lecteur.
    Le menu mobile et le plan du site du pied de page, eux, listent TOUT. */
-export const NAV_EXCLUS = ['accueil', 'inscription']
+/* « inscription » n'y figure plus : elle a quitté SECTIONS. */
+export const NAV_EXCLUS = ['accueil']
 
 export const PIED = {
-  /* Retitré à l'intégration : la section « Contact » qui précède
-     immédiatement le pied porte déjà « Contact / Nous joindre ». Deux
-     en-têtes identiques bout à bout se lisaient comme une répétition.
-     Le pied récapitule, il n'ouvre pas un second contact. */
-  titre: 'La mosquée, en bref',
-  intro:
-    "Le secrétariat répond aux demandes d’inscription et aux questions sur les cours.",
+  /* `titre` et `intro` SUPPRIMÉS le 24/08. Le bloc « La mosquée, en bref »
+     répétait la section Contact qui le précède immédiatement : même
+     surtitre, même promesse de réponse du secrétariat. Un pied de page
+     récapitule des coordonnées, il n'ouvre pas un second contact. */
   /* Reste `null`, et ce n'est plus un TODO : la mosquée demande le 21/08
      que le terme « association » n'apparaisse pas sur le site. Une mention
      de forme juridique le ferait revenir par la fenêtre, sur la ligne la
@@ -832,7 +965,12 @@ export const PIED = {
   // TODO — à confirmer : ligne téléphonique et adresse e-mail du secrétariat.
   contactSecours:
     "Le secrétariat n’a pas encore de ligne dédiée. En attendant, les demandes passent par le formulaire d’inscription en ligne.",
-  // TODO — à rédiger puis publier : page de mentions légales (url encore nulle).
+  /* TODO — à rédiger puis publier. Tant que `url` est nulle, le colophon
+     n'affiche RIEN : la pastille « à publier » a été retirée le 24/08 sur
+     demande — elle signalait un chantier interne à des visiteurs que ça ne
+     regarde pas. Renseigner l'URL fait réapparaître le lien tout seul.
+     À faire AVANT de brancher l'envoi du formulaire d'inscription : dès
+     qu'il transmettra des données personnelles, la page devient exigible. */
   mentionsLegales: { libelle: 'Mentions légales', url: null },
 }
 
@@ -867,7 +1005,8 @@ export const HERO = {
      L'affiche n'attribue aucune séance à un groupe : la phrase reste donc
      générale, sans jamais promettre un horaire précis. */
   chapo: 'Les groupes sont séparés hommes et femmes.',
-  ctaPrimaire: { libelle: 'S’inscrire', href: '#inscription' },
+  /* Pointe hors du site depuis le 24/08 — voir INSCRIPTION_EN_LIGNE. */
+  ctaPrimaire: { libelle: 'S’inscrire', href: null, externe: true },
   ctaSecondaire: { libelle: 'Voir le planning', href: '#planning' },
   descente: { libelle: 'Les cours', href: '#cours' },
   reperes: {
@@ -930,8 +1069,8 @@ export const CONTACT_LIBELLES = {
      lignes sous l'adresse POSTALE : depuis que celle-ci est connue, la
      pastille donnait l'impression contraire. On nomme la donnée manquante. */
   emailAConfirmer: 'E-mail à confirmer',
-  planTitre: 'Emplacement réservé au plan d’accès',
-  itineraire: 'Ouvrir dans un plan',
+  planTitre: 'Plan d’accès',
+  itineraire: 'Ouvrir dans Google Maps',
 }
 
 /* ---------- Pied de page — libellés des trois blocs ---------- */
@@ -944,9 +1083,11 @@ export const PIED_LIBELLES = {
   horaires: 'Horaires',
   adresseAConfirmer: 'Adresse à confirmer',
   telAConfirmer: 'Téléphone à confirmer',
-  emailAConfirmer: 'E-mail à confirmer',
+  /* `emailAConfirmer` du pied de page SUPPRIMÉ le 24/08 : la ligne e-mail
+     ne s'affiche plus tant que l'adresse manque, il n'y a donc plus rien à
+     libeller. Celui de CONTACT_LIBELLES reste — il sert encore à la section
+     Inscription, conservée mais non rendue. */
   annee: 'Année scolaire',
-  mentionsAPublier: 'à publier',
 }
 
 /* ---------- Section « Formules & tarifs » — libellés issus de l'affiche ----------
@@ -988,6 +1129,10 @@ export const ETATS_SEANCE = {
 }
 
 export const PLANNING_UI = {
+  /* « Support » et non « ouvrage étudié » : la mosquée a transmis ces
+     couvertures comme les images de ces deux cours, elle n'a pas écrit
+     qu'ils suivent ces livres page à page. Le mot dit ce qui est établi. */
+  ouvrage: 'Support du cours',
   annee: 'Année scolaire',
   toutAfficher: 'Tout afficher',
   aucunResultat: 'Aucun créneau ne correspond à cette sélection.',
@@ -1090,11 +1235,21 @@ export const INSCRIPTION_FORMULES = {
    cliquable et, deux lignes plus bas, qu'il n'y en avait pas.
    Une phrase par manque, choisie selon ce qui manque réellement. L'ancienne
    valeur reste en place et redeviendra exacte si la ligne disparaît. */
+/* RÉÉCRITES le 24/08. Les trois phrases renvoyaient au « formulaire
+   d'inscription en ligne » de ce site — qui n'est plus rendu. Une phrase de
+   secours qui désigne un chemin fermé est pire que pas de phrase du tout :
+   elle envoie quelqu'un contre une porte.
+   Chacune renvoie désormais vers le canal qui EXISTE dans son cas. */
 export const PIED_SECOURS = {
-  tel: 'Le secrétariat n’a pas encore de ligne dédiée. En attendant, les demandes passent par le formulaire d’inscription en ligne.',
-  email: 'Le secrétariat n’a pas encore d’adresse e-mail publique. En attendant, les demandes écrites passent par le formulaire d’inscription en ligne.',
+  /* Le téléphone manque : reste la campagne d'inscription, qui recueille
+     les coordonnées de qui la remplit. */
+  tel: 'Le secrétariat n’a pas encore de ligne dédiée. En attendant, les demandes passent par la campagne d’inscription en ligne.',
+  /* La variante « e-mail seul manquant » a été SUPPRIMÉE le 24/08 : elle
+     annonçait aux visiteurs une lacune que la mosquée préfère taire, et le
+     téléphone suffit à la joindre. Le bloc entier ne se rend plus que si le
+     NUMÉRO manque. */
   /* Les deux manquent : on ne cumule pas deux phrases, on en dit une. */
-  lesDeux: 'Le secrétariat n’a pas encore de coordonnées directes. En attendant, les demandes passent par le formulaire d’inscription en ligne.',
+  lesDeux: 'Le secrétariat n’a pas encore de coordonnées directes. En attendant, les demandes passent par la campagne d’inscription en ligne.',
 }
 
 /* ============================================================

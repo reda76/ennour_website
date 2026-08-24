@@ -1,0 +1,7 @@
+# Rien à cacher : le site est une vitrine publique, entièrement indexable.
+# La ligne Sitemap est la seule vraiment utile — elle évite aux moteurs de
+# deviner l'emplacement du plan du site.
+User-agent: *
+Allow: /
+
+Sitemap: https://mesjedennour.fr/sitemap.xml

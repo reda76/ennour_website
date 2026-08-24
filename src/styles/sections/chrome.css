@@ -403,44 +403,6 @@
   z-index: 1;
 }
 
-.lp-pied__haut {
-  display: grid;
-  gap: var(--sp-7);
-  align-items: start;
-}
-
-.lp-pied__intro {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-}
-/* Le filet respire un peu plus que le reste : il ouvre le bloc. */
-.lp-pied__intro .lp-filet { margin-block: var(--sp-1) var(--sp-2); }
-
-.lp-pied__identite {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--sp-2);
-  color: var(--fg);
-}
-/* Le logo de l'association. 168px : le relevé au rendu donne « AME »
-   illisible sous ~110px, on prend de la marge. `height: auto` est
-   indispensable — les attributs width/height de la balise <img>, posés pour
-   réserver la place, s'appliqueraient sinon comme hauteur de présentation et
-   l'image sortirait à 503px de haut. */
-.lp-pied__logo-ame {
-  display: block;
-  width: 168px;
-  max-width: 100%;
-  height: auto;
-  margin-bottom: var(--sp-2);
-}
-
-.lp-pied__nom { margin-top: var(--sp-2); }
-.lp-pied__annee { color: var(--fg-dim); }
-
-.lp-pied__separation { margin-block: var(--sp-8); }
 
 .lp-pied__grille {
   display: grid;
@@ -562,8 +524,17 @@
 /* Le pied de page passe en deux colonnes quand la place le permet :
    le titre à gauche, la marque à droite. */
 @media (min-width: 860px) {
-  .lp-pied__haut {
-    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-    gap: var(--sp-6);
-  }
+}
+
+/* Le logo de la mosquée dans la barre, à la place du sigle dessiné qu'il
+   remplace depuis le 24/08. Il reprend la hauteur pilotée par --logo-h, ce
+   qui lui fait suivre la condensation de la barre comme le dessin le
+   faisait. `width: auto` et non une largeur fixe : le fichier n'est pas
+   carré, la fixer l'écraserait. */
+.lp-nav__logo {
+  display: block;
+  height: var(--logo-h);
+  width: auto;
+  flex: none;
+  transition: height var(--dur-base) var(--ease-out);
 }

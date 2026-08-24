@@ -593,7 +593,24 @@ export default function Inscription() {
                   <ul className="lp-inscription__reglement">
                     {MOYENS_REGLEMENT.map((moyen) => (
                       <li key={moyen.key}>
-                        <span className="lp-inscription__moyen">{moyen.libelle}</span>
+                        {/* Le libellé devient un LIEN quand le moyen en porte
+                            un — c'est le cas de HelloAsso depuis le 24/08.
+                            `target=_blank` parce que le visiteur est peut-être
+                            en train de remplir le formulaire juste à côté :
+                            l'envoyer payer ne doit pas lui faire perdre ce
+                            qu'il a saisi. `rel=noreferrer` par principe. */}
+                        {moyen.url ? (
+                          <a
+                            className="lp-lien lp-inscription__moyen"
+                            href={moyen.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {moyen.libelle}
+                          </a>
+                        ) : (
+                          <span className="lp-inscription__moyen">{moyen.libelle}</span>
+                        )}
                         {/* Un moyen peut n'avoir rien de plus à dire que son
                             libellé : on ne pose pas un <span> vide. */}
                         {moyen.detail ? <span className="lp-small">{moyen.detail}</span> : null}

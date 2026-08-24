@@ -1,4 +1,5 @@
-import { FAQ, ORG, NAV_CTA, estAConfirmer } from '../data/contenu.js'
+import { FAQ, ORG, estAConfirmer } from '../data/contenu.js'
+import LienInscription from './LienInscription.jsx'
 import ScrollReveal from './ScrollReveal.jsx'
 
 /* ============================================================
@@ -117,9 +118,7 @@ export default function Faq() {
               {ORG.tel}
             </a>
           ) : (
-            <a className="lp-lien" href={`#${NAV_CTA.cible}`}>
-              {NAV_CTA.libelle}
-            </a>
+            <LienInscription className="lp-lien" />
           )}
         </ScrollReveal>
       </div>

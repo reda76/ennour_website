@@ -1,15 +1,14 @@
 import {
-  LOGO_AME,
   ORG,
   SECTIONS,
   PIED,
   PIED_LIBELLES,
   MENTION_HORAIRES,
-  NAV_CTA,
   PIED_SECOURS,
   estAConfirmer,
   partieConnue,
 } from '../data/contenu.js'
+import LienInscription from './LienInscription.jsx'
 
 /* Le pied de page. Il porte l'id « contact » : la dernière entrée de
    SECTIONS ne renvoie pas vers une section de plus, elle renvoie ici.
@@ -24,9 +23,16 @@ import {
    site — une valeur pouvait donc s'afficher en clair ici et en attente
    ailleurs, sur la même page. */
 
+/* `attente` absent = la ligne DISPARAÎT tant que la donnée manque, au lieu
+   d'afficher une pastille. Décision du 24/08, appliquée à l'e-mail : la
+   mosquée ne veut pas exposer à ses visiteurs ce qui lui manque encore.
+   Le choix reste par ligne — l'adresse et le téléphone gardent leur
+   pastille, parce que leur absence, elle, empêcherait de venir. */
 function Coordonnee({ etiquette, valeur, href, attente }) {
   const manque = estAConfirmer(valeur)
   const connu = manque ? partieConnue(valeur) : valeur
+
+  if (manque && !attente && !connu) return null
 
   return (
     <div className="lp-pied__coord">
@@ -41,8 +47,9 @@ function Coordonnee({ etiquette, valeur, href, attente }) {
         )}
         {!manque && !href && <span>{valeur}</span>}
         {manque && connu && <span className="lp-pied__partiel">{connu}</span>}
-        {/* Jamais de trou : ce qui manque est annoncé, pas masqué. */}
-        {manque && <span className="lp-attente">{attente}</span>}
+        {/* Ce qui manque est annoncé — sauf si aucun libellé d'attente n'est
+            fourni, auquel cas la ligne n'est pas rendue du tout. */}
+        {manque && attente && <span className="lp-attente">{attente}</span>}
       </dd>
     </div>
   )
@@ -62,45 +69,15 @@ export default function Footer() {
       <div className="lp-arcade lp-arcade--haut lp-arcade--fondu" aria-hidden="true" />
 
       <div className="lp-wrap lp-pied__corps">
-        <div className="lp-pied__haut">
-          <div className="lp-pied__intro">
-            {/* Surtitre repris de l'organisation, pas « Contact » : la
-                section précédente porte déjà ce surtitre-là. */}
-            <p className="lp-eyebrow">{ORG.nom}</p>
-            <hr className="lp-filet" />
-            <h2 className="lp-h2">{PIED.titre}</h2>
-            <p className="lp-lead">{PIED.intro}</p>
-          </div>
-
-          <div className="lp-pied__identite">
-            {/* Le logo de l'ASSOCIATION, pas la marque du site. C'est le pied
-                de page qui porte « qui édite ce site » ; la barre de
-                navigation garde le petit sigle en arche, qui reste lisible à
-                32px là où « AME » se refermerait.
-                Image et non SVG : le fichier fourni est une photo détourée.
-                Les dimensions sont posées pour réserver la place et éviter le
-                saut de mise en page au chargement. */}
-            <img
-              className="lp-pied__logo-ame"
-              src={LOGO_AME.src}
-              width={LOGO_AME.largeur}
-              height={LOGO_AME.hauteur}
-              alt={LOGO_AME.alt}
-              loading="lazy"
-              decoding="async"
-            />
-            <p className="lp-h3 lp-pied__nom">{ORG.nom}</p>
-            <p className="lp-small">{ORG.baseline}</p>
-            {/* Même traitement que dans les autres sections : libellé en
-                .lp-caption, valeur en .lp-num. L'année n'est un « chiffre
-                remarquable » qu'une seule fois sur la page, dans le hero. */}
-            <p className="lp-caption lp-pied__annee">
-              {PIED_LIBELLES.annee} <span className="lp-num">{ORG.anneeScolaire}</span>
-            </p>
-          </div>
-        </div>
-
-        <hr className="lp-rule lp-pied__separation" />
+        {/* TOUT LE HAUT DU PIED a été retiré le 24/08, en deux temps :
+            d'abord « La mosquée, en bref », qui répétait la section Contact
+            juste au-dessus ; puis le bloc d'identité — nom, ville, année
+            scolaire — pour la même raison. Rien ne s'y perdait : le nom est
+            dans la barre, dans le premier écran et dans le colophon ; l'année
+            scolaire est annoncée quatre fois ailleurs, dont le planning et le
+            calendrier, où elle sert vraiment à situer.
+            Le filet de séparation est parti avec : il ne séparait plus rien.
+            Le pied commence donc directement par ses trois colonnes. */}
 
         <div className="lp-pied__grille">
           <section className="lp-pied__bloc">
@@ -121,23 +98,30 @@ export default function Footer() {
                 etiquette={PIED_LIBELLES.email}
                 valeur={ORG.email}
                 href={emailConfirme ? `mailto:${ORG.email}` : undefined}
-                attente={PIED_LIBELLES.emailAConfirmer}
+                /* Pas de libellé d'attente : la ligne s'efface tant que
+                   l'adresse manque, et revient d'elle-même avec elle. */
               />
             </dl>
             {/* Un vide n'est pas un cul-de-sac : on dit par où passer en attendant.
                 Mais on ne dit QUE ce qui manque : depuis que l'affiche a donné
                 le numéro, annoncer l'absence de ligne téléphonique juste sous
                 un téléphone cliquable était un démenti à trois lignes d'écart. */}
-            {(!telConfirme || !emailConfirme) && (
+            {/* Ne s'affiche plus QUE si le téléphone manque. Tant qu'un
+                numéro fonctionne, il y a un moyen de joindre la mosquée et
+                rien à excuser : la phrase, elle, annonçait à tout visiteur
+                que l'e-mail faisait défaut — ce que la mosquée ne veut pas
+                exposer (même décision que la ligne e-mail, le 24/08). */}
+            {!telConfirme && (
               <p className="lp-small lp-pied__secours">
-                {!telConfirme && !emailConfirme
-                  ? PIED_SECOURS.lesDeux
-                  : telConfirme
-                    ? PIED_SECOURS.email
-                    : PIED_SECOURS.tel}{' '}
-                <a className="lp-lien" href={`#${NAV_CTA.cible}`}>
-                  {NAV_CTA.libelle}
-                </a>
+                {/* Le lien vers l'ancienne section « Inscription » a été
+                    retiré avec elle. Quand le TÉLÉPHONE manque, la phrase
+                    renvoie à la campagne d'inscription et le lien la suit ;
+                    quand seul l'e-mail manque — le cas d'aujourd'hui — elle
+                    renvoie au téléphone, qui est juste au-dessus : y poser
+                    un second lien serait un doublon. */}
+                {emailConfirme ? PIED_SECOURS.tel : PIED_SECOURS.lesDeux}
+                {' '}
+                <LienInscription className="lp-lien" />
               </p>
             )}
           </section>
@@ -171,18 +155,19 @@ export default function Footer() {
             <span className="lp-num">© {annee}</span> {ORG.nom}
             {PIED.statut ? ` — ${PIED.statut}` : ''}
           </p>
-          <p className="lp-caption lp-pied__legal">
-            {mentions?.url ? (
+          {/* Tant que la page n'existe pas, le colophon ne dit RIEN à son
+              sujet — ni lien mort, ni pastille d'attente. Annoncer au
+              visiteur qu'il manque une page ne lui sert à rien ; c'est une
+              information d'équipe, elle vit dans le README.
+              Le lien réapparaît de lui-même dès que `PIED.mentionsLegales.url`
+              est renseigné : ne pas écrire l'URL en dur ailleurs. */}
+          {mentions?.url ? (
+            <p className="lp-caption lp-pied__legal">
               <a className="lp-lien" href={mentions.url}>
                 {mentions.libelle}
               </a>
-            ) : (
-              /* La page n'existe pas encore : on ne pose pas un lien mort. */
-              <span className="lp-attente">
-                {mentions.libelle} — {PIED_LIBELLES.mentionsAPublier}
-              </span>
-            )}
-          </p>
+            </p>
+          ) : null}
         </div>
       </div>
     </footer>

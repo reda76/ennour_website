@@ -480,6 +480,16 @@
   color: var(--fg);
 }
 
+/* Un moyen de règlement peut porter un lien — HelloAsso depuis le 24/08.
+   `color: var(--fg)` ci-dessus écrasait celle de .lp-lien, et le lien
+   sortait en encre : souligné, donc lisible comme lien, mais seul de son
+   espèce sur un site où TOUS les liens sont orange. On rend la couleur des
+   liens en gardant la graisse du libellé. Sélecteur `a.` pour ne toucher
+   qu'un moyen cliquable. */
+a.lp-inscription__moyen {
+  color: var(--accent-bright);
+}
+
 /* ============================================================
    5. CONTACT
    ============================================================ */
@@ -534,50 +544,60 @@
   overflow: hidden;
   margin: 0;
   display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: var(--sp-5);
-  min-height: 320px;
+  align-content: start;
+  /* Ni `min-height`, ni centrage vertical, ni rembourrage en tête : la
+     carte épouse désormais la hauteur de son plan au lieu de ménager un
+     vide autour d'un logo. */
+  padding: 0;
+  gap: 0;
   text-align: center;
 }
 
-.lp-contact__releve {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-motif);
-  pointer-events: none;
-  background:
-    /* la ligne d'horizon traverse le relèvement à hauteur du feu */
-    linear-gradient(var(--border-hair), var(--border-hair)) center / 100% 1px no-repeat,
-    /* les cercles de portée */
-    repeating-radial-gradient(circle at 50% 50%,
-      transparent 0 43px, var(--border-hair) 43px 44px),
-    radial-gradient(circle at 50% 50%,
-      rgba(228, 96, 36, 0.10) 0%, rgba(228, 96, 36, 0) 62%); /* --orange-1, halo court */
+/* La légende retrouve le rembourrage que la carte vient de perdre — c'est
+   elle, et non l'image, qui doit respirer dans ses marges. */
+.lp-contact__plan .lp-contact__legende {
+  padding: var(--sp-4) var(--sp-4) var(--sp-5);
+  justify-self: center;
 }
 
-.lp-contact__plan > *:not(.lp-contact__releve) {
-  position: relative;
-  z-index: var(--z-base);
-}
+/* ============================================================
+   LE PLAN D'ACCÈS
+   Le décor de l'emplacement réservé — cercles de portée, ligne d'horizon,
+   logo AME centré — a été retiré le 24/08 : il tenait la place d'un plan
+   qui existe maintenant. Un vrai plan n'a pas besoin qu'on l'annonce.
+   ============================================================ */
 
-.lp-contact__amer {
-  display: grid;
-  justify-items: center;
-  gap: var(--sp-3);
-}
-
-/* Le logo de l'association au centre de l'amer. Même précaution de
-   `height: auto` que dans le pied de page. 150px : lisible, sans dominer
-   la légende du plan d'accès qu'il accompagne. */
-.lp-contact__logo-ame {
+/* La vignette occupe toute la largeur de la carte, bord à bord : un plan
+   encadré de blanc se lit comme une illustration, un plan à fond perdu se
+   lit comme un plan. */
+.lp-contact__vignette {
   display: block;
-  width: 150px;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  overflow: hidden;
 }
 
-.lp-contact__ville { letter-spacing: var(--tr-wide); }
+/* 3/1, et non le 3/2 des photos de cours : ici le format ne cherche pas un
+   rythme d'images mais l'équilibre des deux colonnes de la section. La
+   vignette est d'ailleurs EXPORTÉE à ce format — `cover` ne rogne rien, il
+   ne sert que de garde-fou.
+   `height: auto` est indispensable : sans lui, les attributs width/height
+   de la balise reprendraient la main sur la hauteur. */
+.lp-contact__plan-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+}
+
+/* Le crédit OpenStreetMap : obligatoire par licence, mais il n'est pas
+   l'information — d'où le ton le plus sourd de la palette et un cran d'air
+   qui le détache du lien d'itinéraire. */
+.lp-contact__credit {
+  margin-top: var(--sp-2);
+  color: var(--fg-3);
+}
 
 .lp-contact__legende {
   display: grid;

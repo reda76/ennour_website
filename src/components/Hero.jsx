@@ -1,4 +1,5 @@
 import { ORG, POLES, CRENEAUX, HERO, estAConfirmer } from '../data/contenu.js'
+import LienInscription from './LienInscription.jsx'
 
 /* ============================================================
    MOSQUÉE EN-NOUR — Premier écran (#accueil).
@@ -166,9 +167,9 @@ export default function Hero() {
           </p>
 
           <div className="lp-hero__actions lp-hero__entree" style={{ '--entree-retard': '320ms' }}>
-            <a className="lp-btn lp-btn--primaire" href={HERO.ctaPrimaire.href}>
+            <LienInscription className="lp-btn lp-btn--primaire">
               {HERO.ctaPrimaire.libelle}
-            </a>
+            </LienInscription>
             <a className="lp-btn lp-btn--secondaire" href={HERO.ctaSecondaire.href}>
               {HERO.ctaSecondaire.libelle}
             </a>

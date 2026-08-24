@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Logo from './Logo.jsx'
-import { ORG, SECTIONS, NAV_CTA, NAV_EXCLUS } from '../data/contenu.js'
+import { ORG, SECTIONS, NAV_EXCLUS, LOGO_AME } from '../data/contenu.js'
+import LienInscription from './LienInscription.jsx'
 import { useScrollY } from '../hooks/useScrollY.js'
 import { useScrollProgress } from '../hooks/useScrollProgress.js'
 import { useReducedMotion } from '../hooks/useReducedMotion.js'
@@ -165,7 +165,22 @@ export default function Nav() {
           href={`#${ancreContenu}`}
           onClick={(e) => allerVers(e, ancreContenu)}
         >
-          <Logo titre="" />
+          {/* Le logo de la mosquée depuis le 24/08, à la place du sigle
+              dessiné. Décoratif — alt vide : le nom est écrit juste à côté,
+              et un lecteur d'écran annoncerait sinon deux fois la même
+              chose sur un seul lien.
+              MESURÉ avant de le poser : à 36px de haut, « AME » reste lisible
+              et la silhouette se tient. En dessous d'environ 24px il se
+              refermerait — c'est la limite à ne pas franchir si la barre
+              venait à se condenser davantage. */}
+          <img
+            className="lp-nav__logo"
+            src={LOGO_AME.src}
+            width={LOGO_AME.largeur}
+            height={LOGO_AME.hauteur}
+            alt=""
+            decoding="async"
+          />
           <span className="lp-nav__marque-texte">
             <span className="lp-h3 lp-nav__nom">{ORG.nom}</span>
             <span className="lp-nav__baseline">{ORG.baseline}</span>
@@ -190,13 +205,9 @@ export default function Nav() {
         </nav>
 
         <div className="lp-nav__actions">
-          <a
-            className="lp-btn lp-btn--primaire lp-nav__cta"
-            href={`#${NAV_CTA.cible}`}
-            onClick={(e) => allerVers(e, NAV_CTA.cible)}
-          >
-            {NAV_CTA.libelle}
-          </a>
+          {/* Plus de `allerVers` : ce lien ne défile plus vers une section
+              de cette page, il ouvre la campagne d'inscription. */}
+          <LienInscription className="lp-btn lp-btn--primaire lp-nav__cta" />
 
           <button
             ref={refBurger}
@@ -252,16 +263,11 @@ export default function Nav() {
               ))}
             </ul>
 
-            <a
-              className="lp-btn lp-btn--primaire lp-nav__panneau-cta"
-              href={`#${NAV_CTA.cible}`}
-              onClick={(e) => allerVers(e, NAV_CTA.cible)}
-            >
-              {NAV_CTA.libelle}
-            </a>
+            <LienInscription className="lp-btn lp-btn--primaire lp-nav__panneau-cta" />
 
-            {/* L'année scolaire n'est pas reprise ici : elle est déjà annoncée
-                par le surtitre de la section Inscription, à un lien d'ici. */}
+            {/* L'année scolaire n'est pas reprise ici : le premier écran
+                l'annonce déjà, et la section Inscription qui la portait
+                aussi n'est plus rendue. */}
             <p className="lp-small lp-nav__panneau-pied">{ORG.baseline}</p>
           </nav>
         </div>

@@ -2,7 +2,7 @@ import { useId } from 'react'
 import ScrollReveal from './ScrollReveal.jsx'
 import {
   CONTACT_LIBELLES,
-  LOGO_AME,
+  PLAN_ACCES,
   INTRO_CONTACT,
   MENTION_CARTE,
   ORG,
@@ -75,17 +75,20 @@ export default function Contact() {
               </dd>
             </div>
 
-            <div className="lp-contact__ligne">
-              <dt className="lp-caption">{CONTACT_LIBELLES.email}</dt>
-              <dd className="lp-contact__valeur">
-                {emailConnu ? (
+            {/* La ligne E-MAIL n'apparaît que si l'adresse existe. Décision
+                du 24/08 : la mosquée ne veut pas exposer ce qui lui manque à
+                ses visiteurs. Une pastille « à confirmer » est un signal
+                d'équipe, et l'équipe a déjà le README pour ça.
+                La ligne revient d'elle-même dès que ORG.email est renseigné —
+                avec son mailto:, sans rien retoucher ici. */}
+            {emailConnu && (
+              <div className="lp-contact__ligne">
+                <dt className="lp-caption">{CONTACT_LIBELLES.email}</dt>
+                <dd className="lp-contact__valeur">
                   <a className="lp-lien" href={`mailto:${ORG.email}`}>{ORG.email}</a>
-                ) : (
-                  /* TODO — activer le mailto: dès que ORG.email est renseigné. */
-                  <span className="lp-attente">{CONTACT_LIBELLES.emailAConfirmer}</span>
-                )}
-              </dd>
-            </div>
+                </dd>
+              </div>
+            )}
 
             {/* La ligne « Secrétariat » a été retirée le 21/08 : la mosquée
                 n'a pas d'horaires fixes. Rien à afficher, donc rien à
@@ -93,30 +96,42 @@ export default function Contact() {
           </ScrollReveal>
 
           <ScrollReveal as="figure" className="lp-card lp-contact__plan" delay={120}>
-            <div className="lp-contact__releve" aria-hidden="true" />
-            <div className="lp-contact__amer">
-              {/* Décoratif : le nom de l'association est déjà écrit dans le
-                  pied de page, et la ville juste en dessous. Un alt vide plutôt
-                  qu'un doublon vocal — le logo ne fait ici qu'habiller un
-                  emplacement réservé au futur plan d'accès. */}
+            {/* Le relevé décoratif et le logo qui meublaient l'emplacement
+                réservé ont disparu le 24/08 : il y a un vrai plan à montrer.
+                L'image entière est cliquable — sur un plan, c'est l'endroit
+                que le doigt vise en premier. Le lien de la légende reste,
+                pour qui navigue au clavier ou lit les liens un par un. */}
+            <a
+              className="lp-contact__vignette"
+              href={ORG.planHref}
+              target="_blank"
+              rel="noreferrer"
+              /* Le nom accessible est porté par le lien de la légende, juste
+                 en dessous, qui mène au même endroit : deux liens voisins
+                 annonçant la même chose alourdissent la navigation. */
+              tabIndex={-1}
+              aria-hidden="true"
+            >
               <img
-                className="lp-contact__logo-ame"
-                src={LOGO_AME.src}
-                width={LOGO_AME.largeur}
-                height={LOGO_AME.hauteur}
-                alt=""
+                className="lp-contact__plan-image"
+                src={PLAN_ACCES.src}
+                srcSet={PLAN_ACCES.srcset}
+                sizes="(min-width: 900px) 460px, 90vw"
+                width={PLAN_ACCES.largeur}
+                height={PLAN_ACCES.hauteur}
+                alt={PLAN_ACCES.alt}
                 loading="lazy"
                 decoding="async"
               />
-              <p className="lp-h4 lp-contact__ville">{ORG.ville}</p>
-            </div>
+            </a>
             <figcaption className="lp-contact__legende">
               <span className="lp-caption">{CONTACT_LIBELLES.planTitre}</span>
               <span className="lp-small">{MENTION_CARTE}</span>
-              {/* Un LIEN, jamais un cadre embarqué : rien n'est chargé chez un
-                  tiers tant que personne ne clique, et la page ne dépend
-                  d'aucun service extérieur pour s'afficher.
-                  `rel=noreferrer` pour ne pas transmettre la page d'origine. */}
+              {/* Une IMAGE fixe et un LIEN, jamais un cadre embarqué : rien
+                  n'est chargé chez Google tant que personne ne clique, la page
+                  ne dépend d'aucun service extérieur pour s'afficher, et
+                  aucun cookie tiers n'est déposé — donc aucune bannière de
+                  consentement à ajouter. */}
               {ORG.planHref && !estAConfirmer(ORG.adresse) ? (
                 <a
                   className="lp-lien lp-contact__itineraire"
@@ -127,6 +142,7 @@ export default function Contact() {
                   {CONTACT_LIBELLES.itineraire}
                 </a>
               ) : null}
+              <span className="lp-caption lp-contact__credit">{PLAN_ACCES.credit}</span>
             </figcaption>
           </ScrollReveal>
         </div>

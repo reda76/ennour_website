@@ -308,3 +308,31 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* ============================================================
+   PLAQUE PHOTO
+   Depuis le 24/08 la plaque peut porter une photo plutôt qu'un dessin.
+   Le rembourrage disparaît : un dessin au trait a besoin d'air autour de
+   lui, une photo se tient jusqu'au bord — l'encadrer d'un liseré clair la
+   ferait flotter dans sa carte.
+   ============================================================ */
+.lp-cours__plaque--photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Format imposé, largeur libre : c'est lui qui aligne les trois cartes,
+   quelle que soit la largeur de colonne. `aspect-ratio` plutôt qu'une
+   hauteur en pixels — la plaque suit alors la grille au lieu de figer une
+   valeur juste à 1440px et fausse partout ailleurs.
+   Les trois fichiers sont déjà exportés en 3/2 : `cover` ne rogne donc
+   rien, il ne sert que de garde-fou si une image venait à être remplacée
+   par une autre au format différent. */
+.lp-cours__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  object-position: center;
+}

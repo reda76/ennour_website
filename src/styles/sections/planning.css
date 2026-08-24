@@ -687,3 +687,27 @@
     padding: var(--sp-4);
   }
 }
+
+/* ============================================================
+   SUPPORT DU COURS
+   Deux créneaux de fiqh portent la couverture de leur ouvrage. Elle reste
+   en PORTRAIT : une couverture rognée au format d'une vignette paysage
+   perdrait son titre, c'est-à-dire tout ce qu'elle apporte.
+   ============================================================ */
+.lp-planning__ouvrage {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 0;
+}
+
+/* 56px de large : assez pour reconnaître une couverture déjà vue, trop peu
+   pour rivaliser avec l'heure et l'intitulé, qui restent ce qu'on vient
+   chercher dans une case de planning. */
+.lp-planning__couverture {
+  width: 56px;
+  height: auto;
+  flex: none;
+  border-radius: var(--r-0);
+  border: 1px solid var(--border-hair);
+}

@@ -263,6 +263,26 @@ function Creneau({ creneau }) {
         <p className="lp-planning__groupe-nom">{creneau.groupe}</p>
       )}
 
+      {creneau.ouvrage && (
+        <figure className="lp-planning__ouvrage">
+          <img
+            className="lp-planning__couverture"
+            src={creneau.ouvrage.src}
+            srcSet={creneau.ouvrage.srcset}
+            sizes="56px"
+            width={creneau.ouvrage.largeur}
+            height={creneau.ouvrage.hauteur}
+            alt={creneau.ouvrage.alt}
+            loading="lazy"
+            decoding="async"
+          />
+          {/* La légende dit ce que l'image EST ; ce qu'elle MONTRE est dans
+              son alt, où il sert à qui ne la voit pas. Écrire le titre du
+              livre ici le doublerait pour tout le monde sauf eux. */}
+          <figcaption className="lp-caption">{PLANNING_UI.ouvrage}</figcaption>
+        </figure>
+      )}
+
       {creneau.detail && (
         <p className="lp-planning__detail">
           {creneau.detail}

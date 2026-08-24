@@ -2,7 +2,17 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!-- Icônes tirées du logo de la mosquée (24/08). Elles sont posées sur
+         un carré PLÂTRE et non sur du transparent : les traits du logo sont
+         vert foncé, ils s'évanouiraient sur un onglet en thème sombre.
+         MESURÉ : à 32px le sigle reste reconnaissable, à 16px les lettres
+         « AME » se referment — c'est la limite du fichier fourni, pas un
+         défaut d'export. Le `favicon.svg` dessiné à la main est conservé en
+         premier recours : il est le seul à tenir à 16px, et les navigateurs
+         qui savent lire le SVG le préfèrent. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#e46024" />
     <!-- La description dit l'offre RÉELLEMENT publiée, celle de l'affiche
@@ -13,6 +23,50 @@
          remettre qu'avec son accord, et en même temps que des créneaux. -->
     <meta name="description" content="Mosquée En-Nour, Le Havre — inscriptions ouvertes pour les cours adultes 2026-2027 : Coran, alphabétisation arabe et sciences musulmanes, en trois formules cumulables. Planning de la semaine et inscription en ligne." />
     <title>Mosquée En-Nour — Cours d’arabe, de Coran et de sciences musulmanes · Le Havre</title>
+
+    <!-- ========== PARTAGE ET RÉFÉRENCEMENT ==========
+         Ajouté le 23/08, une fois le domaine posé : ces balises exigent des
+         URL ABSOLUES, elles étaient donc impossibles à écrire avant.
+
+         Sans elles, un lien envoyé sur WhatsApp s'affichait en adresse nue,
+         sans vignette ni titre — et c'est par WhatsApp que la mosquée
+         partagera son site.
+
+         ATTENTION : le domaine est écrit en dur ici, quatre fois. Vite ne
+         réécrit pas les URL d'un fichier HTML statique. Si le site changeait
+         un jour de domaine, c'est ICI qu'il faut repasser, plus le
+         `sitemap.xml` et le `robots.txt`.
+
+         L'image est en JPEG et non en WebP : plusieurs robots d'aperçu,
+         WhatsApp le premier, ne savent toujours pas lire le WebP et
+         n'afficheraient aucune vignette. 1200×630 est le format attendu par
+         Facebook, WhatsApp, LinkedIn et Twitter.                          -->
+    <link rel="canonical" href="https://mesjedennour.fr/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mosquée En-Nour" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:url" content="https://mesjedennour.fr/" />
+    <meta property="og:title" content="Mosquée En-Nour — Cours pour adultes, Le Havre" />
+    <meta
+      property="og:description"
+      content="Inscriptions ouvertes pour l’année 2026-2027 : Coran, alphabétisation arabe et sciences musulmanes, en trois formules cumulables."
+    />
+    <meta property="og:image" content="https://mesjedennour.fr/apercu-partage.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <!-- Décrit ce que l'image MONTRE, pour qui ne la voit pas : le texte du
+         bandeau est déjà dans le titre, on ne le répète pas. -->
+    <meta
+      property="og:image:alt"
+      content="La façade orange de la mosquée, son bandeau au-dessus des arcades."
+    />
+
+    <!-- `summary_large_image` affiche la vignette en pleine largeur plutôt
+         qu'en timbre-poste. Les deux autres balises Twitter sont reprises
+         d'Open Graph par la plupart des clients : inutile de les doubler. -->
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

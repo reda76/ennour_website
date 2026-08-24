@@ -17,6 +17,7 @@ import {
   TARIFS_TEXTES,
 } from '../data/contenu.js'
 import ScrollReveal from './ScrollReveal.jsx'
+import LienInscription from './LienInscription.jsx'
 
 /* ============================================================
    MOSQUÉE EN-NOUR — Section « Formules & tarifs ».
@@ -311,10 +312,9 @@ function CarteFormule({ formule, delai }) {
       </div>
 
       <p className="lp-tarifs__liens">
-        <a className="lp-lien" href="#inscription">
+        <LienInscription className="lp-lien" suffixeCache={nom}>
           {TARIFS_TEXTES.sInscrire}
-          <span className="lp-visually-hidden"> — {nom}</span>
-        </a>
+        </LienInscription>
       </p>
     </ScrollReveal>
   )
@@ -399,9 +399,9 @@ export default function Tarifs() {
               et la seule mention de places — posée là parce que c'est au
               moment d'agir qu'elle informe, pas quand elle alarme. */}
           <div className="lp-card lp-tarifs__action">
-            <a className="lp-btn lp-btn--primaire lp-tarifs__cta" href="#inscription">
+            <LienInscription className="lp-btn lp-btn--primaire lp-tarifs__cta">
               {TARIFS_TEXTES.ctaInscription}
-            </a>
+            </LienInscription>
             {PLACES_LIMITEES ? (
               <p className="lp-small lp-tarifs__places">{PLACES_LIMITEES}</p>
             ) : null}

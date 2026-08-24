@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  UNE seule URL, et c'est normal : le site est une page unique dont les huit
+  sections sont des ancres. Une ancre n'est pas une page, elle n'a rien à
+  faire ici — la déclarer ferait remonter huit fois la même adresse.
+
+  `lastmod` est saisi à la main. Le tenir à jour n'est pas obligatoire, mais
+  une date fausse est pire qu'une date absente : si personne ne la met à
+  jour, autant retirer la ligne.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://mesjedennour.fr/</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+</urlset>

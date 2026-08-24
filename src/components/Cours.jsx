@@ -121,11 +121,34 @@ export default function Cours() {
                         détache le dessin du corps de texte et fixe la hauteur,
                         pour que les trois illustrations s'alignent d'une
                         colonne à l'autre. Le trait suit la couleur héritée. */}
-                    {Illustration && (
+                    {/* La PHOTO passe avant le dessin depuis le 24/08 : la
+                        mosquée a fourni le support de chaque cours, qui dit
+                        davantage qu'un pictogramme. Le dessin reste le repli
+                        si une photo venait à manquer — on ne rend jamais une
+                        carte amputée de sa plaque. */}
+                    {pole.photo ? (
+                      <div className="lp-cours__plaque lp-cours__plaque--photo">
+                        <img
+                          className="lp-cours__photo"
+                          src={pole.photo.src}
+                          srcSet={pole.photo.srcset}
+                          /* La plaque ne dépasse pas ~320px, et jamais plus
+                             d'un tiers de la largeur au-delà de trois
+                             colonnes. Sans cette indication le navigateur
+                             suppose 100vw et télécharge la plus grande. */
+                          sizes="(min-width: 900px) 320px, 90vw"
+                          width={pole.photo.largeur}
+                          height={pole.photo.hauteur}
+                          alt={pole.photo.alt}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                    ) : Illustration ? (
                       <div className="lp-cours__plaque">
                         <Illustration className="lp-cours__illu" />
                       </div>
-                    )}
+                    ) : null}
 
                     <h3 id={`cours-pole-${pole.key}`} className="lp-h3">
                       {pole.titre}
