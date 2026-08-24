@@ -1,8 +1,7 @@
 # Mosquée En-Nour — site vitrine
 
 Site vitrine de la **Mosquée En-Nour** (Le Havre) : cours d’arabe, apprentissage du
-Noble Coran et sciences musulmanes (Fiqh, Sîra). Une seule page, sept sections,
-contenu piloté par un unique fichier de données.
+Noble Coran et sciences musulmanes (Fiqh, Sîra). Contenu piloté par un unique fichier de données.
 
 ---
 
