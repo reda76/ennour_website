@@ -126,19 +126,20 @@
     row-gap: var(--sp-4);
   }
 
-  /* Les SIX blocs de la carte occupent les six lignes de la grille :
-     tête, résumé, programme, séances, prix, lien. Toutes les cartes se
-     partagent les mêmes lignes — c'est ce qui aligne les trois montants
-     malgré des listes de contenu de longueurs différentes.
+  /* Les SEPT blocs de la carte occupent les sept lignes de la grille :
+     tête, résumé, programme, séances, supports, prix, lien. Toutes les
+     cartes se partagent les mêmes lignes — c'est ce qui aligne les trois
+     montants malgré des listes de contenu de longueurs différentes.
+     Passé de six à sept le 24/08 avec l'ajout des supports.
      Ajouter ou retirer un bloc oblige à reprendre les deux nombres. */
   @supports (grid-template-rows: subgrid) {
     .lp-tarifs__grille {
-      grid-template-rows: repeat(6, auto);
+      grid-template-rows: repeat(7, auto);
     }
 
     .lp-tarifs__carte {
       display: grid;
-      grid-row: span 6;
+      grid-row: span 7;
       grid-template-rows: subgrid;
       row-gap: var(--sp-4);
     }
@@ -629,3 +630,63 @@
    plus d'une formule déclencheuse mais du NOMBRE de formules prises. Il n'y
    a donc plus de prix conditionnel à afficher sur une carte — la règle est
    énoncée une seule fois, dans la bande du cumul. */
+
+
+/* ============================================================
+   LES SUPPORTS DU COURS
+   Ajoutés le 24/08 : la mosquée voulait voir l'ouvrage de chaque formule
+   au moment où l'on regarde son prix.
+   ============================================================ */
+
+.lp-tarifs__supports {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  /* Aligné en bas de sa ligne de grille : les trois cartes n'ont pas le même
+     nombre de supports, et c'est le bord INFÉRIEUR qui doit coïncider,
+     puisque la bande de prix commence juste dessous. */
+  align-self: end;
+}
+
+.lp-tarifs__supports-titre { color: var(--fg-3); }
+
+.lp-tarifs__supports-liste {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* HAUTEURS ÉGALES, sans figer aucune taille.
+
+   Le problème : deux couvertures de formats différents — 0,77 et 0,84.
+   À largeur égale elles sortaient à des hauteurs différentes, et le
+   décrochement se voyait plus que les livres. À hauteur fixée en pixels
+   elles s'alignaient, mais la rangée passait à la ligne dès que la carte
+   se resserrait, autour de 1440px.
+
+   La solution tient en une ligne : chaque image CROÎT proportionnellement
+   à son propre format. Une image large prend plus de place qu'une étroite,
+   exactement dans le rapport qu'il faut — et il se trouve qu'à ce
+   partage-là, toutes les hauteurs sont égales, quelle que soit la largeur
+   disponible. C'est de l'arithmétique, pas un réglage : largeur = espace ×
+   ratio ÷ somme des ratios, donc hauteur = espace ÷ somme des ratios, la
+   même pour tous.
+
+   `--ratio` est posé par le composant depuis les dimensions du fichier.
+   `min-width: 0` : sans lui, un élément flex refuse de descendre sous la
+   largeur intrinsèque de son contenu et la rangée déborde. */
+.lp-tarifs__supports-liste > li {
+  flex: var(--ratio, 1) 1 0;
+  min-width: 0;
+}
+
+.lp-tarifs__support {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-0);
+  border: 1px solid var(--border-hair);
+}

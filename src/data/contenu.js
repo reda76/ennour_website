@@ -167,11 +167,13 @@ export const POLES = [
     /* « Le dimanche » et non « le week-end » : le classeur ne place rien le
        samedi, et il n'y a pas d'alphabétisation en semaine — la mosquée l'a
        confirmé. C'est une formule à part entière, pas un complément. */
-    points: [
-      'Alphabétisation arabe',
-      'Le dimanche',
-      'Groupes hommes et femmes',
-    ],
+    /* RÉDUIT à une seule entrée le 25/08. « Le dimanche » et « Groupes
+       hommes et femmes » disaient QUAND et POUR QUI, pas ce qu'on apprend —
+       c'est le rôle du planning, qui l'affiche séance par séance. Le jour
+       était de surcroît contesté par la mosquée le 24/08 (« je crois que
+       c'est le samedi »), et une carte n'a pas à porter une information
+       en litige quand elle peut ne rien en dire. */
+    points: ['Alphabétisation arabe'],
   },
   {
     key: 'sciences',
@@ -313,6 +315,14 @@ export const PUBLICS = ['Adultes']
 
    `groupe` remplace l'ancien `genre`, retiré quand l'affiche ne disait rien
    des groupes. Le classeur, lui, les nomme explicitement. */
+/* `support` — l'image du cours, posée sur CHAQUE créneau depuis le 25/08.
+   Elle n'était d'abord que sur les deux niveaux de fiqh, et les autres cases
+   du planning restaient vides à côté d'elles. Le champ s'appelait
+   « ouvrage » ; il a été renommé quand le Coran (un mushaf), l'alphabétisation
+   (une planche) et la Sîra (une photo) l'ont rejoint — tous ne sont pas des
+   livres.
+   Deux créneaux d'un même pôle partagent la même image : c'est voulu, elle
+   dit la MATIÈRE, pas la séance. */
 export const CRENEAUX = [
   {
     /* Créé le 08/08 en remplacement de la séance du samedi matin :
@@ -323,6 +333,7 @@ export const CRENEAUX = [
        salle et même groupe — est tranché depuis le 21/08 : les séances en
        semaine sont annulées, celle-ci reste seule. */
     id: 'coran-h-vendredi',
+    support: PHOTOS_COURS.coran,
     poles: ['coran'],
     intitule: 'Coran',
     groupe: 'Hommes',
@@ -335,6 +346,7 @@ export const CRENEAUX = [
   },
   {
     id: 'coran-h-weekend',
+    support: PHOTOS_COURS.coran,
     poles: ['coran'],
     intitule: 'Coran',
     groupe: 'Hommes',
@@ -350,6 +362,7 @@ export const CRENEAUX = [
   },
   {
     id: 'alpha-h',
+    support: PHOTOS_COURS.alphabet,
     poles: ['alphabetisation'],
     intitule: 'Alphabétisation',
     groupe: 'Hommes',
@@ -362,6 +375,7 @@ export const CRENEAUX = [
   },
   {
     id: 'alpha-f',
+    support: PHOTOS_COURS.alphabet,
     poles: ['alphabetisation'],
     intitule: 'Alphabétisation',
     groupe: 'Femmes',
@@ -374,10 +388,7 @@ export const CRENEAUX = [
   },
   {
     id: 'fiqh-n1',
-    /* Le support fourni par la mosquée le 24/08. Il distingue les deux
-       niveaux mieux qu'un numéro : on voit du premier coup d'œil sur quel
-       ouvrage on va travailler. */
-    ouvrage: PHOTOS_COURS.fiqhNiveau1,
+    support: PHOTOS_COURS.fiqhNiveau1,
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 1',
     public: 'Adultes',
@@ -391,7 +402,7 @@ export const CRENEAUX = [
   },
   {
     id: 'fiqh-n2',
-    ouvrage: PHOTOS_COURS.fiqhNiveau2,
+    support: PHOTOS_COURS.fiqhNiveau2,
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 2',
     public: 'Adultes',
@@ -406,6 +417,7 @@ export const CRENEAUX = [
   },
   {
     id: 'sira',
+    support: PHOTOS_COURS.sira,
     poles: ['sciences'],
     intitule: 'Sîra',
     detail: 'Biographie du Prophète',
@@ -466,11 +478,21 @@ export const FORMULES = [
     key: 'coran',
     numero: 1,
     nom: 'Coran',
-    rythme: 'En semaine ou le week-end',
+    /* CORRIGÉS le 24/08. Ces deux lignes étaient restées à l'ancienne offre :
+       « En semaine ou le week-end » et « en après-midi » décrivaient les
+       séances du lundi, du mercredi et celles des femmes, toutes annulées
+       le 21/08. La carte se contredisait elle-même — son propre planning,
+       deux blocs plus bas, n'annonce que le vendredi et le dimanche. */
+    rythme: 'Le vendredi et le dimanche',
     prix: 80,
     prixNote: null,
-    resume: 'Lecture, tajwîd et mémorisation — en soirée, tôt le week-end ou en après-midi.',
+    resume: 'Lecture, tajwîd et mémorisation — en soirée le vendredi, tôt le dimanche matin.',
     inclus: ['Lecture du Coran', 'Tajwîd', 'Mémorisation', 'Révision'],
+    /* Les supports montrés dans la carte, à la demande de la mosquée le
+       24/08 : « dans la formule, là où il y a le prix, que le livre il
+       apparaisse ». Ce sont les mêmes images que dans la section « Les
+       cours » — le rappel est voulu : on choisit sa formule ici, pas là. */
+    supports: [PHOTOS_COURS.coran],
     poles: ['coran'],
   },
   {
@@ -482,6 +504,7 @@ export const FORMULES = [
     prixNote: null,
     resume: 'Lire et écrire l’arabe, depuis les toutes premières lettres.',
     inclus: ['Alphabétisation arabe'],
+    supports: [PHOTOS_COURS.alphabet],
     poles: ['alphabetisation'],
   },
   {
@@ -494,6 +517,15 @@ export const FORMULES = [
     prixNote: null,
     resume: 'La jurisprudence et la vie du Prophète, le samedi et le dimanche soir.',
     inclus: ['Cours de Sîra', 'Cours de Fiqh'],
+    /* LES DEUX OUVRAGES, demandés le 25/08 : « il faut mettre les livres
+       dans la card correspondante ». La photo de la Sîra les avait
+       remplacés un temps parce que les deux couvertures n'avaient pas la
+       même hauteur — réglé autrement depuis, en imposant la HAUTEUR des
+       images plutôt que leur largeur (voir tarifs.css). Elles font donc la
+       même hauteur, et c'est leur largeur qui diffère.
+       La Sîra n'a pas d'ouvrage transmis ; « Cours de Sîra » reste annoncé
+       au programme juste au-dessus. */
+    supports: [PHOTOS_COURS.fiqhNiveau1, PHOTOS_COURS.fiqhNiveau2],
     poles: ['sciences'],
   },
 ]
@@ -1049,6 +1081,10 @@ export const TARIFS_MENTION = {
 /* ---------- Section « Formules & tarifs » — libellés d'interface ---------- */
 export const TARIFS_TEXTES = {
   voirPole: 'Voir le pôle',
+  /* Même mot qu'au planning : « support » et non « ouvrage étudié ». La
+     mosquée a transmis ces images comme celles de ces cours, elle n'a pas
+     écrit qu'ils suivent ces livres page à page. */
+  supports: 'Supports du cours',
   sInscrire: 'S’inscrire',
   ctaInscription: 'Démarrer une inscription',
   annee: 'Année scolaire',
@@ -1129,10 +1165,11 @@ export const ETATS_SEANCE = {
 }
 
 export const PLANNING_UI = {
-  /* « Support » et non « ouvrage étudié » : la mosquée a transmis ces
-     couvertures comme les images de ces deux cours, elle n'a pas écrit
-     qu'ils suivent ces livres page à page. Le mot dit ce qui est établi. */
-  ouvrage: 'Support du cours',
+  /* « Support » et non « ouvrage étudié » : la mosquée a transmis ces images
+     comme celles de ces cours, elle n'a pas écrit qu'ils les suivent page à
+     page. Le mot dit ce qui est établi, et il vaut aussi bien pour un livre
+     que pour une planche ou une photo. */
+  support: 'Support du cours',
   annee: 'Année scolaire',
   toutAfficher: 'Tout afficher',
   aucunResultat: 'Aucun créneau ne correspond à cette sélection.',

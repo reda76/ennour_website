@@ -263,23 +263,30 @@ function Creneau({ creneau }) {
         <p className="lp-planning__groupe-nom">{creneau.groupe}</p>
       )}
 
-      {creneau.ouvrage && (
-        <figure className="lp-planning__ouvrage">
-          <img
-            className="lp-planning__couverture"
-            src={creneau.ouvrage.src}
-            srcSet={creneau.ouvrage.srcset}
-            sizes="56px"
-            width={creneau.ouvrage.largeur}
-            height={creneau.ouvrage.hauteur}
-            alt={creneau.ouvrage.alt}
-            loading="lazy"
-            decoding="async"
-          />
-          {/* La légende dit ce que l'image EST ; ce qu'elle MONTRE est dans
-              son alt, où il sert à qui ne la voit pas. Écrire le titre du
-              livre ici le doublerait pour tout le monde sauf eux. */}
-          <figcaption className="lp-caption">{PLANNING_UI.ouvrage}</figcaption>
+      {creneau.support && (
+        <figure className="lp-planning__support">
+          {/* Même disposition que dans les cartes de formule — légende, puis
+              image — pour que les deux sections se répondent. */}
+          <figcaption className="lp-caption">{PLANNING_UI.support}</figcaption>
+          {/* Le CADRE, et non l'image, porte le format 3/2 : c'est lui qui
+              donne à toutes les cases un bloc de même hauteur, alors que les
+              supports vont du paysage (le mushaf, la planche) au portrait
+              (les deux couvertures). L'image s'y loge sans être ni rognée ni
+              étirée — `max-width` et `max-height` la contiennent, ses
+              proportions font le reste. */}
+          <span className="lp-planning__support-cadre">
+            <img
+              className="lp-planning__support-image"
+              src={creneau.support.src}
+              srcSet={creneau.support.srcset}
+              sizes="(min-width: 1100px) 285px, 80vw"
+              width={creneau.support.largeur}
+              height={creneau.support.hauteur}
+              alt={creneau.support.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
         </figure>
       )}
 

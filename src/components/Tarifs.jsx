@@ -235,8 +235,11 @@ function Seance({ seance }) {
   )
 }
 
-/* La carte compte SIX blocs, dans cet ordre exact : tête → résumé →
-   programme → séances → prix → lien. La grille les aligne d'une colonne à
+/* La carte compte SEPT blocs, dans cet ordre exact : tête → résumé →
+   programme → séances → supports → prix → lien. Le bloc « supports » a été
+   ajouté le 24/08 : « dans la formule, là où il y a le prix, que le livre il
+   apparaisse ». Il est posé JUSTE AVANT le prix et non après, pour ne pas
+   défaire l'ordre ci-dessous — le montant reste le dernier mot. La grille les aligne d'une colonne à
    l'autre (subgrid, voir tarifs.css) ; en ajouter ou en retirer un oblige à
    reprendre `grid-template-rows` dans le partial, sinon les trois bandes de
    prix se désalignent.
@@ -246,7 +249,7 @@ function Seance({ seance }) {
    d'abord ce que l'on reçoit, puis ce que l'on paie — et non l'inverse. Le
    résumé d'une phrase sous le nom vient de la même source. */
 function CarteFormule({ formule, delai }) {
-  const { numero, nom, sousTitre, resume, rythme, prix, prixNote, inclus } = formule
+  const { numero, nom, sousTitre, resume, rythme, prix, prixNote, inclus, supports } = formule
   /* Lues dans le planning : une formule et son planning ne peuvent plus
      annoncer deux horaires différents. */
   const seances = seancesDeFormule(formule.key)
@@ -304,6 +307,39 @@ function CarteFormule({ formule, delai }) {
             ) : null}
           </>
         ) : null}
+      </div>
+
+      {/* Les supports du cours. Chacun prend une part égale de la largeur
+          et garde son rapport d'origine — aucune image n'est étirée ni
+          rognée, quel que soit son format.
+          Le bloc est rendu même vide — c'est une ligne de la grille partagée
+          par les trois cartes, et la sauter décalerait les prix. */}
+      <div className="lp-tarifs__supports">
+        {supports?.length > 0 && (
+          <>
+            <p className="lp-caption lp-tarifs__supports-titre">{TARIFS_TEXTES.supports}</p>
+            <ul className="lp-tarifs__supports-liste">
+              {supports.map((image) => (
+                /* `--ratio` porte le format de CETTE image. La CSS s'en sert
+                   comme facteur de croissance : voir tarifs.css, c'est ce
+                   qui garantit des hauteurs égales sans figer aucune taille. */
+                <li key={image.src} style={{ '--ratio': image.largeur / image.hauteur }}>
+                  <img
+                    className="lp-tarifs__support"
+                    src={image.src}
+                    srcSet={image.srcset}
+                    sizes="(min-width: 900px) 340px, 80vw"
+                    width={image.largeur}
+                    height={image.hauteur}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
       {/* Le prix ferme la carte, juste avant l'appel à l'action. */}

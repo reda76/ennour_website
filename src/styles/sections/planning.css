@@ -690,24 +690,54 @@
 
 /* ============================================================
    SUPPORT DU COURS
-   Deux créneaux de fiqh portent la couverture de leur ouvrage. Elle reste
-   en PORTRAIT : une couverture rognée au format d'une vignette paysage
-   perdrait son titre, c'est-à-dire tout ce qu'elle apporte.
+   Chaque créneau porte l'image de sa matière : un mushaf, une planche
+   d'alphabet, deux couvertures de fiqh, une photo pour la Sîra.
    ============================================================ */
-.lp-planning__ouvrage {
+.lp-planning__support {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--sp-2);
-  margin: var(--sp-2) 0 0;
+  margin: var(--sp-3) 0 0;
 }
 
-/* 56px de large : assez pour reconnaître une couverture déjà vue, trop peu
-   pour rivaliser avec l'heure et l'intitulé, qui restent ce qu'on vient
-   chercher dans une case de planning. */
-.lp-planning__couverture {
-  width: 56px;
+/* LE CADRE porte le format, pas l'image. Les supports vont du paysage au
+   portrait ; en dimensionnant l'image elle-même, les cases de fiqh
+   devenaient deux fois plus hautes que les autres et les colonnes
+   basculaient. Le cadre leur donne à toutes le MÊME bloc, au même format
+   3/2 que le bloc « Supports du cours » des cartes de formule — c'est ce
+   qui fait que les deux sections se répondent.
+   Il ne porte ni fond ni liseré : il n'est qu'une réservation de place. */
+/* `position: relative` + image en absolu, et non un simple conteneur flex :
+   en flux normal, `max-height: 100%` sur l'image se résout contre une
+   hauteur que l'image elle-même détermine — la règle est circulaire, le
+   navigateur l'ignore, et les couvertures en portrait débordaient du cadre.
+   Sortie du flux, l'image se mesure contre une hauteur devenue certaine. */
+.lp-planning__support-cadre {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+}
+
+/* L'image se loge dans le cadre : contenue par `max-*`, jamais forcée par
+   une largeur ou une hauteur imposée. Un paysage le remplit d'un bord à
+   l'autre, un portrait touche le haut et le bas et se cale à gauche, sous
+   la légende. Aucune n'est rognée, aucune n'est déformée. */
+.lp-planning__support-image {
+  position: absolute;
+  /* Calée à GAUCHE et centrée verticalement : son bord gauche s'aligne sur
+     la légende et sur tout le texte de la case. `margin: auto 0` fait le
+     centrage vertical, les trois ancrages donnent la hauteur de référence. */
+  top: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto 0;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
-  flex: none;
   border-radius: var(--r-0);
   border: 1px solid var(--border-hair);
 }

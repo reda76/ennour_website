@@ -636,8 +636,16 @@ a.lp-inscription__moyen {
    centrage de la légende ; seul un cran d'air le détache, parce que c'est
    la seule action du bloc et qu'elle ne doit pas se lire comme la prose
    qui la précède. */
+/* La zone cliquable est portée à 24px de haut au minimum (WCAG 2.5.8) :
+   mesurée à 22px, elle passait tout juste sous le seuil. L'exception prévue
+   pour les liens « en ligne dans une phrase » ne s'applique pas ici — ce
+   lien est seul sur sa ligne et constitue l'unique action de la carte.
+   Le rembourrage vertical agrandit la cible sans déplacer le texte, que le
+   retrait négatif de la marge compense. */
 .lp-contact__itineraire {
-  margin-top: var(--sp-2);
+  display: inline-block;
+  padding-block: var(--sp-2);
+  margin-top: 0;
   font-family: var(--ff-body);
   font-size: var(--fs-14);
   font-weight: var(--fw-semibold);
