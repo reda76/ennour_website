@@ -153,7 +153,7 @@ Tout se passe dans **`src/data/contenu.js`**.
 | # | Donnée | Où | État | Effet une fois renseigné |
 |---|---|---|---|---|
 | ~~1~~ | ~~**Adresse postale**~~ | `ORG.adresse` | **Réglé le 21/08** — `'12 Rue Léon Peulevey, 76620 Le Havre'` | Ligne conservée pour la leçon qu’elle porte : le marqueur affichait `76600` comme « partie connue », et ce code postal était **faux**. Une donnée en attente ne doit pas être pré-remplie sans source. |
-| 2 | **E-mail** | `ORG.email` | `'__EMAIL_A_CONFIRMER__'` | Les liens `mailto:` s’activent dans le pied de page, la section Contact et l’encart Inscription. |
+| ~~2~~ | ~~**E-mail**~~ | `ORG.email` | **Réglé le 26/08** — `'enseignement@mesjedennour.fr'` | Les lignes e-mail de la section Contact et du pied de page, masquées tant que l’adresse manquait, sont revenues d’elles-mêmes avec leur `mailto:`. |
 | ~~3~~ | ~~**Horaires du secrétariat**~~ | — | **Clos le 21/08** — il n’y en a pas | « On n’a pas d’horaires fixes, donc ne le mets pas. » La ligne « Secrétariat » a été retirée de la section Contact, `MENTION_SECRETARIAT` supprimé, et la FAQ ne renvoie plus à des « horaires d’ouverture » inexistants. Ne pas réintroduire une pastille d’attente : la donnée n’arrivera jamais. |
 | 4 | **URL de la campagne HelloAsso** | `MOYENS_REGLEMENT` → `helloasso.url` | `null` | Le moyen est nommé mais pas cliquable. |
 | ~~5~~ | ~~**Sigle AME**~~ | `ORG.sigle` | **Clos le 21/08** — connu, mais non publié | La mosquée a donné le développement du sigle **et** demandé que le terme « association » n’apparaisse pas sur le site. Le sigle reste donc seul, l’alt du logo se réduit à « AME », et aucune chaîne affichée ne contient ce mot. Ne pas « compléter » l’alt. |

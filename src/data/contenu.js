@@ -39,8 +39,12 @@ export const ORG = {
   telHref: 'tel:+33688955420',
   // À qui l'on parle en composant ce numéro. Précisé par la mosquée.
   telLibelle: 'AME — Pôle enseignement',
-  // TODO — à confirmer : adresse e-mail officielle. L'affiche n'en porte pas.
-  email: '__EMAIL_A_CONFIRMER__',
+  /* Fournie par la mosquée le 26/08. Elle rallume d'elle-même la ligne
+     e-mail de la section Contact et celle du pied de page, avec leur
+     `mailto:` — les deux étaient masquées tant que l'adresse manquait, sur
+     demande de la mosquée qui ne voulait pas exposer ce qui lui faisait
+     défaut. Rien d'autre à retoucher. */
+  email: 'enseignement@mesjedennour.fr',
   anneeScolaire: '2026 – 2027',
   /* La mosquée nomme « AME — Pôle enseignement » le service qui tient les
      cours. Ce que le sigle AME développe reste inconnu : on l'écrit tel
