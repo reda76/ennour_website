@@ -263,32 +263,12 @@ function Creneau({ creneau }) {
         <p className="lp-planning__groupe-nom">{creneau.groupe}</p>
       )}
 
-      {creneau.support && (
-        <figure className="lp-planning__support">
-          {/* Même disposition que dans les cartes de formule — légende, puis
-              image — pour que les deux sections se répondent. */}
-          <figcaption className="lp-caption">{PLANNING_UI.support}</figcaption>
-          {/* Le CADRE, et non l'image, porte le format 3/2 : c'est lui qui
-              donne à toutes les cases un bloc de même hauteur, alors que les
-              supports vont du paysage (le mushaf, la planche) au portrait
-              (les deux couvertures). L'image s'y loge sans être ni rognée ni
-              étirée — `max-width` et `max-height` la contiennent, ses
-              proportions font le reste. */}
-          <span className="lp-planning__support-cadre">
-            <img
-              className="lp-planning__support-image"
-              src={creneau.support.src}
-              srcSet={creneau.support.srcset}
-              sizes="(min-width: 1100px) 285px, 80vw"
-              width={creneau.support.largeur}
-              height={creneau.support.hauteur}
-              alt={creneau.support.alt}
-              loading="lazy"
-              decoding="async"
-            />
-          </span>
-        </figure>
-      )}
+      {/* Les SUPPORTS ont été retirés des cases le 26/08 : « ça fait trop ».
+          Sept images dans une grille horaire tiraient l'œil vers elles alors
+          qu'on y vient chercher une heure et une salle. Elles restent dans
+          les cartes de formule, où l'on choisit ce qu'on va suivre.
+          POUR LES REMETTRE : rendre `creneau.support` ici, remettre le champ
+          sur les créneaux (contenu.js) et le bloc de styles (planning.css). */}
 
       {creneau.detail && (
         <p className="lp-planning__detail">

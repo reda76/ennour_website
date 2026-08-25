@@ -119,6 +119,18 @@ export const PHOTOS_COURS = {
     'Une planche présentant les lettres de l’alphabet arabe.'),
   sira: photo('sira', [480, 720], [720, 480],
     'La Kaaba à La Mecque, et la mosquée du Prophète à Médine avec son dôme vert.'),
+  /* Les deux tomes du livre de lecture, fournis le 26/08 pour la formule
+     d'alphabétisation. Ils remplacent la planche d'alphabet dans la carte de
+     FORMULE seulement : la carte de pôle, dans « Les cours », garde la
+     planche — elle y illustre la matière, pas le support.
+     Photographiés différemment (0,813 contre 0,788), ils ont été ramenés au
+     même format en rognant au centre : ce sont des aplats de papier à titre
+     centré, il n'y a rien à perdre sur les bords, et côte à côte l'écart se
+     serait vu. */
+  lecture1: photo('lecture-1', [240, 400], [400, 500],
+    'Couverture du livre de lecture, tome 1.'),
+  lecture2: photo('lecture-2', [240, 400], [400, 500],
+    'Couverture du livre de lecture, tome 2.'),
   fiqhNiveau1: photo('fiqh-niveau-1', [240, 400], [400, 520],
     'Couverture du Mukhtasar Al-Akhdarî, la prière selon le rite malikite.'),
   fiqhNiveau2: photo('fiqh-niveau-2', [240, 400], [400, 476],
@@ -315,14 +327,11 @@ export const PUBLICS = ['Adultes']
 
    `groupe` remplace l'ancien `genre`, retiré quand l'affiche ne disait rien
    des groupes. Le classeur, lui, les nomme explicitement. */
-/* `support` — l'image du cours, posée sur CHAQUE créneau depuis le 25/08.
-   Elle n'était d'abord que sur les deux niveaux de fiqh, et les autres cases
-   du planning restaient vides à côté d'elles. Le champ s'appelait
-   « ouvrage » ; il a été renommé quand le Coran (un mushaf), l'alphabétisation
-   (une planche) et la Sîra (une photo) l'ont rejoint — tous ne sont pas des
-   livres.
-   Deux créneaux d'un même pôle partagent la même image : c'est voulu, elle
-   dit la MATIÈRE, pas la séance. */
+/* Les créneaux ont porté un champ `support` — l'image de leur matière —
+   du 24 au 26/08. Retiré : sept images dans une grille horaire tiraient
+   l'œil vers elles alors qu'on y vient chercher une heure et une salle.
+   Les images vivent dans PHOTOS_COURS et servent aux cartes de pôle et de
+   formule ; les remettre ici ne demande qu'une ligne par créneau. */
 export const CRENEAUX = [
   {
     /* Créé le 08/08 en remplacement de la séance du samedi matin :
@@ -333,7 +342,6 @@ export const CRENEAUX = [
        salle et même groupe — est tranché depuis le 21/08 : les séances en
        semaine sont annulées, celle-ci reste seule. */
     id: 'coran-h-vendredi',
-    support: PHOTOS_COURS.coran,
     poles: ['coran'],
     intitule: 'Coran',
     groupe: 'Hommes',
@@ -346,7 +354,6 @@ export const CRENEAUX = [
   },
   {
     id: 'coran-h-weekend',
-    support: PHOTOS_COURS.coran,
     poles: ['coran'],
     intitule: 'Coran',
     groupe: 'Hommes',
@@ -362,7 +369,6 @@ export const CRENEAUX = [
   },
   {
     id: 'alpha-h',
-    support: PHOTOS_COURS.alphabet,
     poles: ['alphabetisation'],
     intitule: 'Alphabétisation',
     groupe: 'Hommes',
@@ -375,7 +381,6 @@ export const CRENEAUX = [
   },
   {
     id: 'alpha-f',
-    support: PHOTOS_COURS.alphabet,
     poles: ['alphabetisation'],
     intitule: 'Alphabétisation',
     groupe: 'Femmes',
@@ -388,7 +393,6 @@ export const CRENEAUX = [
   },
   {
     id: 'fiqh-n1',
-    support: PHOTOS_COURS.fiqhNiveau1,
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 1',
     public: 'Adultes',
@@ -402,7 +406,6 @@ export const CRENEAUX = [
   },
   {
     id: 'fiqh-n2',
-    support: PHOTOS_COURS.fiqhNiveau2,
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 2',
     public: 'Adultes',
@@ -417,7 +420,6 @@ export const CRENEAUX = [
   },
   {
     id: 'sira',
-    support: PHOTOS_COURS.sira,
     poles: ['sciences'],
     intitule: 'Sîra',
     detail: 'Biographie du Prophète',
@@ -504,7 +506,10 @@ export const FORMULES = [
     prixNote: null,
     resume: 'Lire et écrire l’arabe, depuis les toutes premières lettres.',
     inclus: ['Alphabétisation arabe'],
-    supports: [PHOTOS_COURS.alphabet],
+    /* Les deux tomes du livre de lecture depuis le 26/08, à la place de la
+       planche d'alphabet : la carte de formule montre ce sur quoi on
+       travaille, pas une illustration de la matière. */
+    supports: [PHOTOS_COURS.lecture1, PHOTOS_COURS.lecture2],
     poles: ['alphabetisation'],
   },
   {
@@ -751,7 +756,11 @@ export const MOYENS_REGLEMENT = [
     key: 'helloasso',
     libelle: 'En ligne — HelloAsso',
     detail: 'Sans frais pour la mosquée.',
-    url: 'https://www.helloasso.com/associations/le-phare-al-manara/adhesions/cours',
+    /* URL remplacée le 26/08 — l'ancienne pointait sur « le-phare-al-manara ».
+       Une seule ligne à changer : NAV_CTA et INSCRIPTION_EN_LIGNE la
+       reprennent d'ici, et les six boutons « S'inscrire » de la page en
+       découlent. Ne pas la recopier ailleurs. */
+    url: 'https://www.helloasso.com/associations/association-le-phare-76/adhesions/cours',
   },
   { key: 'especes', libelle: 'Sur place', detail: 'Au secrétariat de la mosquée.' },
   { key: 'echelonnement', libelle: 'En une fois ou échelonné', detail: 'Par prélèvements automatiques ou par chèques remis à l’inscription.' },
@@ -1165,11 +1174,6 @@ export const ETATS_SEANCE = {
 }
 
 export const PLANNING_UI = {
-  /* « Support » et non « ouvrage étudié » : la mosquée a transmis ces images
-     comme celles de ces cours, elle n'a pas écrit qu'ils les suivent page à
-     page. Le mot dit ce qui est établi, et il vaut aussi bien pour un livre
-     que pour une planche ou une photo. */
-  support: 'Support du cours',
   annee: 'Année scolaire',
   toutAfficher: 'Tout afficher',
   aucunResultat: 'Aucun créneau ne correspond à cette sélection.',

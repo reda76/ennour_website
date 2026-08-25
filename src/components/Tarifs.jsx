@@ -309,35 +309,42 @@ function CarteFormule({ formule, delai }) {
         ) : null}
       </div>
 
-      {/* Les supports du cours. Chacun prend une part égale de la largeur
-          et garde son rapport d'origine — aucune image n'est étirée ni
-          rognée, quel que soit son format.
-          Le bloc est rendu même vide — c'est une ligne de la grille partagée
-          par les trois cartes, et la sauter décalerait les prix. */}
+      {/* Les supports du cours.
+
+          Le CADRE porte un format 3/2 fixe, calé sur la largeur utile de la
+          carte : les trois blocs ont donc exactement la même hauteur, et le
+          HAUT des images s'aligne d'une colonne à l'autre — pas seulement
+          leur bas. C'est ce qu'on ne pouvait pas obtenir en laissant chaque
+          rangée se dimensionner seule : une image en 3/2 est plus haute que
+          deux portraits qui se partagent la même largeur.
+
+          La rangée est autorisée à MORDRE dans le rembourrage de la carte
+          (marge négative) : à cette hauteur, deux couvertures dépassent la
+          largeur utile d'une quarantaine de pixels. Elles restent à
+          l'intérieur de la carte, le rembourrage est assez large. */}
       <div className="lp-tarifs__supports">
         {supports?.length > 0 && (
           <>
             <p className="lp-caption lp-tarifs__supports-titre">{TARIFS_TEXTES.supports}</p>
-            <ul className="lp-tarifs__supports-liste">
-              {supports.map((image) => (
-                /* `--ratio` porte le format de CETTE image. La CSS s'en sert
-                   comme facteur de croissance : voir tarifs.css, c'est ce
-                   qui garantit des hauteurs égales sans figer aucune taille. */
-                <li key={image.src} style={{ '--ratio': image.largeur / image.hauteur }}>
-                  <img
-                    className="lp-tarifs__support"
-                    src={image.src}
-                    srcSet={image.srcset}
-                    sizes="(min-width: 900px) 340px, 80vw"
-                    width={image.largeur}
-                    height={image.hauteur}
-                    alt={image.alt}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </li>
-              ))}
-            </ul>
+            <div className="lp-tarifs__supports-cadre">
+              <ul className="lp-tarifs__supports-liste">
+                {supports.map((image) => (
+                  <li key={image.src}>
+                    <img
+                      className="lp-tarifs__support"
+                      src={image.src}
+                      srcSet={image.srcset}
+                      sizes="(min-width: 900px) 340px, 80vw"
+                      width={image.largeur}
+                      height={image.hauteur}
+                      alt={image.alt}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
           </>
         )}
       </div>

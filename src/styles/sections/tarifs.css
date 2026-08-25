@@ -143,6 +143,15 @@
       grid-template-rows: subgrid;
       row-gap: var(--sp-4);
     }
+
+    /* Le bloc des supports se cale en BAS de sa ligne, pour que la bande de
+       prix commence juste dessous dans les trois cartes.
+       Uniquement ici : sous ce point d'arrêt, la carte est une colonne flex
+       où `align-self` commande l'axe HORIZONTAL — le bloc s'y rétractait à
+       la largeur de son contenu, et les images tombaient à 90px. */
+    .lp-tarifs__supports {
+      align-self: end;
+    }
   }
 }
 
@@ -642,51 +651,57 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
-  /* Aligné en bas de sa ligne de grille : les trois cartes n'ont pas le même
-     nombre de supports, et c'est le bord INFÉRIEUR qui doit coïncider,
-     puisque la bande de prix commence juste dessous. */
-  align-self: end;
 }
 
 .lp-tarifs__supports-titre { color: var(--fg-3); }
 
+/* LE CADRE porte le format, et c'est lui qui aligne les HAUTS d'images
+   d'une carte à l'autre. Sans lui, chaque rangée se dimensionnait seule :
+   une image en 3/2 occupant toute la largeur est plus haute que deux
+   portraits qui se partagent cette même largeur — les bas s'alignaient
+   (la bande de prix suit), les hauts non. */
+.lp-tarifs__supports-cadre {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+}
+
+/* La rangée déborde volontairement du cadre, symétriquement, et vient
+   mordre dans le rembourrage de la carte : à hauteur imposée, deux
+   couvertures réclament une quarantaine de pixels de plus que la largeur
+   utile. Le rembourrage de carte en fait le double, elles restent donc
+   bien à l'intérieur.
+   Position absolue : c'est ce qui donne aux images une hauteur de
+   référence certaine — `height: 100%` en flux normal se résoudrait contre
+   une hauteur que les images déterminent elles-mêmes. */
 .lp-tarifs__supports-liste {
+  position: absolute;
+  inset: 0;
+  /* `inset: 0` seul ne suffit pas ici : la rangée retombait sur la hauteur
+     naturelle de son contenu au lieu de s'étirer au cadre. La hauteur
+     explicite lève l'ambiguïté, et c'est elle qui donne aux images leur
+     `height: 100%` de référence. */
+  height: 100%;
+  margin-inline: calc(var(--sp-6) * -1);
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
+  justify-content: center;
   gap: var(--sp-3);
-  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* HAUTEURS ÉGALES, sans figer aucune taille.
-
-   Le problème : deux couvertures de formats différents — 0,77 et 0,84.
-   À largeur égale elles sortaient à des hauteurs différentes, et le
-   décrochement se voyait plus que les livres. À hauteur fixée en pixels
-   elles s'alignaient, mais la rangée passait à la ligne dès que la carte
-   se resserrait, autour de 1440px.
-
-   La solution tient en une ligne : chaque image CROÎT proportionnellement
-   à son propre format. Une image large prend plus de place qu'une étroite,
-   exactement dans le rapport qu'il faut — et il se trouve qu'à ce
-   partage-là, toutes les hauteurs sont égales, quelle que soit la largeur
-   disponible. C'est de l'arithmétique, pas un réglage : largeur = espace ×
-   ratio ÷ somme des ratios, donc hauteur = espace ÷ somme des ratios, la
-   même pour tous.
-
-   `--ratio` est posé par le composant depuis les dimensions du fichier.
-   `min-width: 0` : sans lui, un élément flex refuse de descendre sous la
-   largeur intrinsèque de son contenu et la rangée déborde. */
 .lp-tarifs__supports-liste > li {
-  flex: var(--ratio, 1) 1 0;
+  flex: none;
   min-width: 0;
 }
 
+/* Hauteur commune imposée par le cadre, largeur libre : aucune image n'est
+   ni rognée ni étirée, quel que soit son format. */
 .lp-tarifs__support {
   display: block;
-  width: 100%;
-  height: auto;
+  height: 100%;
+  width: auto;
   border-radius: var(--r-0);
   border: 1px solid var(--border-hair);
 }
