@@ -668,14 +668,14 @@ export const PLACES_LIMITEES = 'Places limitées'
    d'inscription et n'a pas vocation à porter le calendrier interne. Deux
    sources qui ne se recouvrent pas ne se contredisent pas.               */
 export const CALENDRIER = [
-  /* DEUX rentrées, confirmées par la mosquée le 07/08 — ce sont les seules
-     dates de ce calendrier qui ne soient plus provisoires. Les cours de
-     Coran ouvrent trois semaines avant les autres formules. */
-  /* `court` n'existe QUE pour la frise : « Rentrée des autres formules »
-     y ferait une étiquette de 180px pour un mât de 1px. Le registre, lui,
-     garde le libellé entier. */
-  { key: 'rentree-coran', libelle: 'Rentrée des cours de Coran', court: 'Rentrée Coran', debut: '2026-09-14', fin: null, type: 'jalon', provisoire: false },
-  { key: 'rentree-autres', libelle: 'Rentrée des autres formules', court: 'Rentrée formules 2 et 3', debut: '2026-10-03', fin: null, type: 'jalon', provisoire: false },
+  /* UNE SEULE RENTRÉE depuis le 26/08. Il y en avait deux, confirmées le
+     07/08 : le Coran ouvrait trois semaines avant les autres, le 14
+     septembre. La mosquée l'a décalé — « la rentrée Coran, on a décalé à
+     octobre comme tout le monde » — et les deux jalons n'en font plus
+     qu'un.
+     Ne pas réintroduire la date du 14 septembre : elle est périmée, pas
+     oubliée. */
+  { key: 'rentree', libelle: 'Rentrée des cours', court: 'Rentrée', debut: '2026-10-03', fin: null, type: 'jalon', provisoire: false },
 
   /* VACANCES — confirmées le 21/08. La mosquée ne fixe pas son propre
      calendrier : « on se cale sur les vacances scolaires ». La règle vaut
@@ -706,14 +706,14 @@ export const CALENDRIER = [
 ]
 
 /* La réserve ne porte plus que sur ce qui reste incertain. Depuis le 21/08,
-   les rentrées ET les vacances sont établies : les premières par la mosquée,
+   la rentrée ET les vacances sont établies : la première par la mosquée,
    les secondes par la règle qu'elle a donnée (« on se cale sur les vacances
    scolaires ») appliquée au calendrier officiel de la zone B. Ne restent
    provisoires que les trois sessions d'examens et la fin des cours.
-   Distinguer importe : douter de tout ferait douter des dates de rentrée,
-   qui sont précisément celles sur lesquelles on s'inscrit. */
+   Distinguer importe : douter de tout ferait douter de la date de rentrée,
+   qui est précisément celle sur laquelle on s'inscrit. */
 export const MENTION_CALENDRIER =
-  'Les rentrées sont confirmées et les vacances suivent le calendrier scolaire de la zone B. Les sessions d’examens restent à confirmer.'
+  'La rentrée est confirmée et les vacances suivent le calendrier scolaire de la zone B. Les sessions d’examens restent à confirmer.'
 
 /* ---------- Inscription ----------
    Les quatre étapes décrivent ce que le site FAIT, pas une procédure
@@ -814,7 +814,7 @@ export const CALENDRIER_TEXTES = {
   /* Plus de « sessions d'examens » : le chapô annonce ce que la section
      montre, et les examens sont partis avec leurs dates non sourcées. */
   chapo:
-    "Le rythme de l’année en une seule lecture : rentrées, périodes de cours, vacances et sessions d’examens.",
+    "Le rythme de l’année en une seule lecture : rentrée, périodes de cours, vacances et sessions d’examens.",
   /* « des repères » et non « de la frise » : la frise est aria-hidden et
      masquée sous 760px, la légende ne peut donc pas s'annoncer comme la
      sienne. Elle décrit les marques du registre, qui portent les mêmes formes. */
