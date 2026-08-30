@@ -99,6 +99,9 @@
 .lp-calendrier__piste {
   position: relative;
   height: 96px;
+  /* Les dates de plages descendent sous la piste : sans cette marge elles
+     iraient buter dans la légende. */
+  margin-bottom: var(--sp-5);
 }
 
 /* L'axe nu : il déborde de part et d'autre de l'année de cours pour dire
@@ -584,7 +587,12 @@
   pointer-events: none;
 }
 
-.lp-calendrier__plage--bas { top: calc(100% + 6px); }
+/* 28px et non 6 : la date d'une plage et l'étiquette d'un jalon vivaient
+   toutes deux au bas de la piste et se chevauchaient de 9px dès que les
+   deux tombaient à quinze jours d'écart — ce que le décalage de la rentrée
+   à octobre a produit, la Toussaint suivant de deux semaines. Chacune a
+   maintenant sa ligne. La marge sous la piste rend la place prise. */
+.lp-calendrier__plage--bas { top: calc(100% + 28px); }
 .lp-calendrier__plage--haut { bottom: calc(100% + 6px); }
 
 /* Au survol du registre, la plage suit la mise en évidence de son bloc. */
