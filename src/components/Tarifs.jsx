@@ -10,6 +10,7 @@ import {
   seancesDeFormule,
   MOYENS_REGLEMENT,
   ORG,
+  PLANNING_INTRO,
   PLACES_LIMITEES,
   SECTIONS,
   TARIFS_AFFICHE,
@@ -220,16 +221,25 @@ function Seance({ seance }) {
         </p>
       ) : null}
 
+      {/* Jour et horaire, ou l'attente des deux. Le Coran femmes n'a ni
+          l'un ni l'autre depuis sa réouverture : `Jours` ne rend rien sur
+          une liste vide, et la pastille prend la place de l'heure. */}
       <p className="lp-tarifs__quand">
-        <span className="lp-tarifs__jours">
-          <Jours jours={jours} auChoix={auChoix} />
-        </span>
-        <span className="lp-tarifs__heure lp-num">
-          <time dateTime={debut}>{debut}</time>
-          <span aria-hidden="true"> – </span>
-          <span className="lp-visually-hidden">à</span>
-          <time dateTime={fin}>{fin}</time>
-        </span>
+        {debut && fin ? (
+          <>
+            <span className="lp-tarifs__jours">
+              <Jours jours={jours} auChoix={auChoix} />
+            </span>
+            <span className="lp-tarifs__heure lp-num">
+              <time dateTime={debut}>{debut}</time>
+              <span aria-hidden="true"> – </span>
+              <span className="lp-visually-hidden">à</span>
+              <time dateTime={fin}>{fin}</time>
+            </span>
+          </>
+        ) : (
+          <span className="lp-attente">{PLANNING_INTRO.attenteJours}</span>
+        )}
       </p>
     </li>
   )

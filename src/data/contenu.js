@@ -372,6 +372,25 @@ export const CRENEAUX = [
     formules: ['coran'],
   },
   {
+    /* RÉOUVERT le 26/08. Le Coran femmes avait été annulé le 21/08 avec les
+       séances de semaine ; la mosquée le remet, mais « pour l'instant pas le
+       jour et l'horaire ».
+       `jours: []` et `debut/fin: null` ne sont donc PAS des oublis : ils
+       disent qu'aucun des deux n'est arrêté, et le planning sait déjà les
+       traiter — la séance forme un bloc à part, rangé en fin de semaine,
+       plutôt que d'occuper une colonne au hasard.
+       Ne pas y mettre d'horaire « provisoire » : quelqu'un viendrait. */
+    id: 'coran-f',
+    poles: ['coran'],
+    intitule: 'Coran',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: null,
+    fin: null,
+    jours: [],
+    formules: ['coran'],
+  },
+  {
     id: 'alpha-h',
     poles: ['alphabetisation'],
     intitule: 'Alphabétisation',
@@ -842,11 +861,15 @@ export const PLANNING_INTRO = {
   // Repli quand `salle` vaut null : court sur la carte, développé sous la grille.
   salleCourt: 'Salle à l’inscription',
   salleNote: 'Les salles non précisées sont communiquées à l’inscription.',
-  // Repli quand `jours` est vide.
+  /* Repli quand `jours` est vide. RÉÉCRIT le 26/08 : le texte affirmait que
+     « l'horaire de ce cours est arrêté », ce qui était vrai du cas d'alors et
+     faux du seul cas actuel — le Coran femmes n'a ni jour ni horaire. */
   attenteTitre: 'En attente de programmation',
   attenteTexte:
-    'L’horaire de ce cours est arrêté ; les jours de la semaine restent à fixer par l’équipe pédagogique.',
-  attenteJours: 'Jours à confirmer',
+    'Le jour et l’horaire de ce cours restent à fixer par l’équipe pédagogique. Ils seront annoncés ici dès qu’ils le seront.',
+  attenteJours: 'Jour et horaire à venir',
+  // Tient la place de l'heure sur la carte, au planning comme aux tarifs.
+  attenteHoraire: 'Horaire à venir',
 }
 
 /* ============================================================
@@ -956,7 +979,10 @@ export const COURS_INTRO = {
   groupe: 'groupe ouvert',
   groupes: 'groupes ouverts',
   groupesAConfirmer: 'Groupes à confirmer',
-  joursAConfirmer: 'Jours à confirmer',
+  /* Même formulation qu'au planning et aux tarifs — la mosquée a demandé
+     « horaire et jour à venir ». Trois endroits disent la même chose du même
+     créneau ; qu'ils le disent avec les mêmes mots. */
+  joursAConfirmer: 'Jour et horaire à venir',
   lienCreneaux: 'Voir les créneaux',
 }
 

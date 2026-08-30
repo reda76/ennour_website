@@ -94,13 +94,19 @@ const enMinutes = (heure) => {
   return h * 60 + (m || 0)
 }
 
-const parHeure = (a, b) => enMinutes(a.debut) - enMinutes(b.debut)
+/* Une séance dont l'horaire n'est pas arrêté n'a pas de rang dans la
+   journée : elle ferme la marche. Sans ce garde-fou, `enMinutes(null)`
+   renvoie NaN et la comparaison désordonne toute la pile. */
+const parHeure = (a, b) => (a.debut ? enMinutes(a.debut) : Infinity) - (b.debut ? enMinutes(b.debut) : Infinity)
 
 /* Amplitude de la journée déduite des données, pas décrétée :
    arrondie à l'heure pleine au-dessous et au-dessus. */
 const AMPLITUDE = (() => {
-  const debuts = CRENEAUX.map((c) => enMinutes(c.debut))
-  const fins = CRENEAUX.map((c) => enMinutes(c.fin))
+  /* Seuls les créneaux HORAIRÉS entrent dans le calcul : un null y ferait
+     entrer un NaN, et l'amplitude de la journée — donc toutes les barres —
+     deviendrait invalide. */
+  const debuts = CRENEAUX.filter((c) => c.debut).map((c) => enMinutes(c.debut))
+  const fins = CRENEAUX.filter((c) => c.fin).map((c) => enMinutes(c.fin))
   const min = Math.floor(Math.min(...debuts) / 60) * 60
   const max = Math.ceil(Math.max(...fins) / 60) * 60
   return { min, max, etendue: Math.max(max - min, 1) }
@@ -241,17 +247,28 @@ function Creneau({ creneau }) {
         <p className="lp-planning__pole">{aNommer.join(' · ')}</p>
       )}
 
-      <p className="lp-planning__heure lp-num">
-        <time dateTime={creneau.debut}>{creneau.debut}</time>
-        <span aria-hidden="true"> – </span>
-        {/* Le tiret est décoratif ; c'est ce mot-ci que le lecteur d'écran
-            entend entre les deux heures. Il vient de PLANNING_UI, comme
-            celui de la clé de lecture au-dessus de la grille. */}
-        <span className="lp-visually-hidden">{PLANNING_UI.cleEntre}</span>
-        <time dateTime={creneau.fin}>{creneau.fin}</time>
-      </p>
+      {/* L'horaire, s'il est arrêté. Sinon une pastille d'attente à sa
+          place — et pas de barre de journée : elle situe la séance dans la
+          journée, elle n'a rien à situer tant qu'aucune heure n'est fixée. */}
+      {creneau.debut && creneau.fin ? (
+        <>
+          <p className="lp-planning__heure lp-num">
+            <time dateTime={creneau.debut}>{creneau.debut}</time>
+            <span aria-hidden="true"> – </span>
+            {/* Le tiret est décoratif ; c'est ce mot-ci que le lecteur d'écran
+                entend entre les deux heures. Il vient de PLANNING_UI, comme
+                celui de la clé de lecture au-dessus de la grille. */}
+            <span className="lp-visually-hidden">{PLANNING_UI.cleEntre}</span>
+            <time dateTime={creneau.fin}>{creneau.fin}</time>
+          </p>
 
-      <BarreJour debut={creneau.debut} fin={creneau.fin} />
+          <BarreJour debut={creneau.debut} fin={creneau.fin} />
+        </>
+      ) : (
+        <p className="lp-planning__heure">
+          <span className="lp-attente">{PLANNING_INTRO.attenteHoraire}</span>
+        </p>
+      )}
 
       <h4 className="lp-planning__intitule">{creneau.intitule}</h4>
 
