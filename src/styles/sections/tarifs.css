@@ -703,5 +703,7 @@
   height: 100%;
   width: auto;
   border-radius: var(--r-0);
-  border: 1px solid var(--border-hair);
+  /* Liseré d'image et non filet interne : un support au sujet clair se
+     confond sinon avec la carte. Voir --border-image dans tokens.css. */
+  border: 1px solid var(--border-image);
 }

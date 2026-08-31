@@ -87,6 +87,16 @@
      Toutes dérivées de --encre-1 et --orange-1 en rgba : une bordure est
      de l'encre diluée ou de la lumière, jamais une couleur à part. */
   --border-hair:     rgba(36, 28, 22, 0.08);    /* séparateur interne */
+  /* Liseré d'IMAGE, ajouté le 31/08. Le filet interne à 8 % suffit à séparer
+     deux zones de la page ; il ne suffit pas à détacher une image dont le
+     sujet est clair. Le cahier de lecture est du papier crème — rgb(225,
+     219, 213) mesuré — sur une carte à rgb(240, 235, 230) : 1,16:1, il
+     disparaissait purement et simplement, et la mosquée a cru à un
+     chargement raté.
+     55 % d'encre donne 3,61:1 contre le fond de carte et 3,12:1 contre le
+     papier : au-dessus du seuil de 3:1 des éléments graphiques, des deux
+     côtés du trait. */
+  --border-image:    rgba(36, 28, 22, 0.55);
   --border:          rgba(36, 28, 22, 0.14);    /* défaut : contour de carte */
   --border-strong:   rgba(36, 28, 22, 0.26);    /* survol, élément actif */
   --border-accent:   rgba(228, 96, 36, 0.42);   /* accentué */
