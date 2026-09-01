@@ -385,9 +385,17 @@ export const CRENEAUX = [
     intitule: 'Coran',
     groupe: 'Femmes',
     public: 'Adultes',
-    debut: null,
-    fin: null,
-    jours: [],
+    /* PROGRAMMÉ le 01/09 : « mardi et jeudi de 14h à 15h30 ». Le créneau
+       était en attente depuis le 26/08, sans jour ni horaire ; il quitte
+       donc le bloc « En attente de programmation » et rejoint la semaine.
+       C'est aussi le retour de deux jours de SEMAINE au planning, qui
+       n'affichait plus que vendredi, samedi et dimanche depuis le 21/08 :
+       les colonnes suivent les jours réellement tenus, elles se rouvrent
+       d'elles-mêmes.
+       La salle n'est pas précisée — elle s'annonce « à l'inscription ». */
+    debut: '14:00',
+    fin: '15:30',
+    jours: ['Mardi', 'Jeudi'],
     formules: ['coran'],
   },
   {
@@ -508,10 +516,13 @@ export const FORMULES = [
        séances du lundi, du mercredi et celles des femmes, toutes annulées
        le 21/08. La carte se contredisait elle-même — son propre planning,
        deux blocs plus bas, n'annonce que le vendredi et le dimanche. */
-    rythme: 'Le vendredi et le dimanche',
+    /* Quatre jours depuis le 01/09 : les séances femmes du mardi et du
+       jeudi s'ajoutent à celles des hommes. « Le vendredi et le dimanche »
+       ne décrivait plus que la moitié de la formule. */
+    rythme: 'En semaine et le week-end',
     prix: 80,
     prixNote: null,
-    resume: 'Lecture, tajwîd et mémorisation — en soirée le vendredi, tôt le dimanche matin.',
+    resume: 'Lecture, tajwîd et mémorisation — le mardi et le jeudi en après-midi, le vendredi en soirée, tôt le dimanche matin.',
     inclus: ['Lecture du Coran', 'Tajwîd', 'Mémorisation', 'Révision'],
     /* Les supports montrés dans la carte, à la demande de la mosquée le
        24/08 : « dans la formule, là où il y a le prix, que le livre il
