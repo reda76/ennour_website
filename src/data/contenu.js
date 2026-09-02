@@ -426,6 +426,11 @@ export const CRENEAUX = [
     formules: ['alphabetisation'],
   },
   {
+    /* PAS de `groupe`, et c'est VOULU : « sauf le Fiqh où là ne pas préciser
+       car c'est homme et femme » (02/09). Les deux niveaux accueillent tout
+       le monde. Ne pas « compléter » ce champ en croyant réparer un oubli :
+       depuis cette date, une séance sans groupe est une séance ouverte à
+       tous, et c'est ce que les textes du site annoncent. */
     id: 'fiqh-n1',
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 1',
@@ -458,6 +463,10 @@ export const CRENEAUX = [
     intitule: 'Sîra',
     detail: 'Biographie du Prophète',
     salutation: 'ﷺ',
+    /* Précisé le 02/09 : « toutes les horaires où c'est pas femme il faut
+       mettre homme, sauf le Fiqh ». C'était la dernière séance dont le
+       groupe restait indéterminé. */
+    groupe: 'Hommes',
     public: 'Adultes',
     debut: '19:00',
     fin: '21:00',
@@ -1009,10 +1018,13 @@ export const COURS_INTRO = {
   titre: 'Ce que l’on apprend ici',
   chapeau:
     "Trois enseignements, du tout premier alphabet jusqu’aux longues sourates.",
-  // Information pratique attendue, énoncée une seule fois. Formulée pour rester
-  // exacte : un créneau de sciences musulmanes est noté « Mixte » au planning.
+  /* RETOURNÉE le 02/09. Elle disait « sauf mention contraire, les groupes
+     sont séparés » — ce qui supposait qu'une séance mixte porte une étiquette.
+     La mosquée demande l'inverse : le Fiqh accueille tout le monde et ne
+     porte AUCUNE étiquette. C'est donc l'absence de mention qui signifie
+     « ouvert à tous », et la phrase doit le dire dans ce sens-là. */
   mentionMixite:
-    'Sauf mention contraire au planning, les groupes sont séparés hommes et femmes.',
+    'Les séances marquées « Hommes » ou « Femmes » sont réservées à ce groupe ; les autres sont ouvertes à tous.',
   groupe: 'groupe ouvert',
   groupes: 'groupes ouverts',
   groupesAConfirmer: 'Groupes à confirmer',
@@ -1109,10 +1121,11 @@ export const HERO = {
     titre: 'Inscriptions ouvertes',
     detail: 'Cours adultes 2026 – 2027',
   },
-  /* La séparation des groupes vient de la note manuscrite de l'équipe.
-     L'affiche n'attribue aucune séance à un groupe : la phrase reste donc
-     générale, sans jamais promettre un horaire précis. */
-  chapo: 'Les groupes sont séparés hommes et femmes.',
+  /* RÉÉCRIT le 02/09 : « les groupes sont séparés hommes et femmes » est
+     devenu faux pour le Fiqh, qui accueille tout le monde. Le premier écran
+     renvoie donc au planning plutôt que d'énoncer une règle générale que
+     l'une des matières dément. */
+  chapo: 'Le planning indique, séance par séance, le groupe concerné.',
   /* Pointe hors du site depuis le 24/08 — voir INSCRIPTION_EN_LIGNE. */
   ctaPrimaire: { libelle: 'S’inscrire', href: null, externe: true },
   ctaSecondaire: { libelle: 'Voir le planning', href: '#planning' },
