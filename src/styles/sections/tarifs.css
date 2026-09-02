@@ -534,44 +534,9 @@
    vente, et rien ne les met en avant.
    ------------------------------------------------------------ */
 
-.lp-tarifs__coupure-basse {
-  margin-block: var(--sp-7) var(--sp-5);
-}
-
-.lp-tarifs__arguments {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 760px) {
-  .lp-tarifs__arguments {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-5);
-  }
-}
-
-.lp-tarifs__argument {
-  position: relative;
-  padding-left: var(--sp-5);
-  font-family: var(--ff-body);
-  font-size: var(--fs-14);
-  line-height: var(--lh-body);
-  color: var(--fg-muted);
-}
-
-.lp-tarifs__argument::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: calc(var(--lh-body) * 0.5em);
-  width: 10px;
-  height: 1px;
-  background: var(--accent);
-}
+/* Le filet de coupure basse et les trois arguments qu'il séparait ont été
+   retirés le 02/09 avec eux : un filet qui ne sépare plus rien n'est qu'un
+   trait. */
 
 /* ============================================================
    LE DÉGRESSIF

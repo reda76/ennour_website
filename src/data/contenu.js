@@ -202,12 +202,14 @@ export const POLES = [
        Les deux couvertures sont posées sur leurs créneaux au planning, là
        où l'on choisit entre le niveau 1 et le niveau 2. */
     photo: PHOTOS_COURS.sira,
-    /* « Le week-end, au choix » était FAUX : il n'y a aucun choix de jour.
-       Le Fiqh a deux niveaux à deux jours fixes, la Sîra est le samedi. */
+    /* La mention du JOUR a été retirée le 02/09, avec l'arrivée de la Sîra
+       femmes le jeudi : « Le week-end » n'était plus vrai, et énumérer
+       quatre jours dans une puce de carte revient à recopier le planning,
+       qui les donne séance par séance. Une carte de pôle dit ce qu'on y
+       apprend ; le quand a sa section. */
     points: [
       'Fiqh — niveaux 1 et 2',
       'Cours de Sîra',
-      'Le week-end',
     ],
   },
 ]
@@ -392,10 +394,11 @@ export const CRENEAUX = [
        n'affichait plus que vendredi, samedi et dimanche depuis le 21/08 :
        les colonnes suivent les jours réellement tenus, elles se rouvrent
        d'elles-mêmes.
-       La salle n'est pas précisée — elle s'annonce « à l'inscription ». */
+       Salle précisée le 02/09. */
     debut: '14:00',
     fin: '15:30',
     jours: ['Mardi', 'Jeudi'],
+    salle: 'Salle 5',
     formules: ['coran'],
   },
   {
@@ -459,6 +462,25 @@ export const CRENEAUX = [
     debut: '19:00',
     fin: '21:00',
     jours: ['Samedi'],
+    salle: 'Salle 5',
+    formules: ['sciences'],
+  },
+  {
+    /* AJOUTÉE le 02/09 : « le jeudi à 17h30 à 19h30, Sîra femmes ».
+       La séance du samedi ne porte AUCUN groupe et n'en reçoit pas ici :
+       la mosquée n'a pas dit qu'elle devenait réservée aux hommes, et le
+       déduire de l'existence d'une séance femmes serait une invention.
+       À lui faire préciser. La salle, elle, l'a été le 02/09. */
+    id: 'sira-f',
+    poles: ['sciences'],
+    intitule: 'Sîra',
+    detail: 'Biographie du Prophète',
+    salutation: 'ﷺ',
+    groupe: 'Femmes',
+    public: 'Adultes',
+    debut: '17:30',
+    fin: '19:30',
+    jours: ['Jeudi'],
     salle: 'Salle 5',
     formules: ['sciences'],
   },
@@ -551,10 +573,12 @@ export const FORMULES = [
     numero: 3,
     nom: 'Sciences musulmanes',
     sousTitre: 'Sîra & Fiqh',
-    rythme: 'Le week-end',
+    /* Quatre jours depuis le 02/09 : la Sîra femmes du jeudi s'ajoute au
+       samedi et au dimanche. « Le week-end » ne décrivait plus la formule. */
+    rythme: 'En semaine et le week-end',
     prix: 80,
     prixNote: null,
-    resume: 'La jurisprudence et la vie du Prophète, le samedi et le dimanche soir.',
+    resume: 'La jurisprudence et la vie du Prophète, du jeudi au dimanche soir.',
     inclus: ['Cours de Sîra', 'Cours de Fiqh'],
     /* LES DEUX OUVRAGES, demandés le 25/08 : « il faut mettre les livres
        dans la card correspondante ». La photo de la Sîra les avait
@@ -648,16 +672,18 @@ export const FORMULES_CUMULABLES = {
   texte: 'Vous pouvez choisir une seule formule ou en combiner plusieurs selon vos objectifs.',
 }
 
-/* Les trois arguments du bas de l'affiche.
-   NOTE POUR LA MOSQUÉE : « Enseignement de qualité » est repris tel quel de
-   votre affiche. C'est proche de la mention « professeurs qualifiés » que
-   vous m'aviez demandé de retirer — dites-moi si vous préférez l'ôter ici
-   aussi, elle part en une ligne. */
-export const ARGUMENTS = [
-  { key: 'paiement', libelle: 'Paiement en une fois ou échelonné' },
-  { key: 'qualite', libelle: 'Enseignement de qualité' },
-  { key: 'ambiance', libelle: 'Ambiance fraternelle et bienveillante' },
-]
+/* SUPPRIMÉS le 02/09 à la demande de la mosquée. C'étaient les trois
+   arguments du bas de l'affiche : « Paiement en une fois ou échelonné »,
+   « Enseignement de qualité », « Ambiance fraternelle et bienveillante ».
+
+   Les deux derniers étaient des promesses invérifiables, de la même famille
+   que les « professeurs qualifiés » retirés le 08/08 — la note laissée ici
+   le signalait déjà. Le premier était un doublon : le règlement échelonné
+   est annoncé dans l'introduction de la section ET dans les moyens de
+   paiement de l'inscription, avec son détail.
+
+   Le tableau `ARGUMENTS` est retiré plutôt que vidé : un tableau vide se
+   remplit un jour sans qu'on se souvienne de pourquoi il l'était. */
 
 /* Mention de rareté portée par l'affiche. Factuelle, donc conservée —
    mais à retirer le jour où les groupes ne sont plus contraints. */

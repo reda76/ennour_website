@@ -1,5 +1,4 @@
 import {
-  ARGUMENTS,
   DEVISE,
   FORMULES,
   FORMULES_CUMULABLES,
@@ -376,7 +375,6 @@ function CarteFormule({ formule, delai }) {
 export default function Tarifs() {
   const formules = FORMULES ?? []
   const moyens = MOYENS_REGLEMENT ?? []
-  const mentions = ARGUMENTS ?? []
 
   return (
     <section id="tarifs" className="lp-section lp-tarifs" aria-labelledby="tarifs-titre">
@@ -461,18 +459,6 @@ export default function Tarifs() {
           </div>
         </ScrollReveal>
 
-        {mentions.length ? (
-          <>
-            <hr className="lp-rule lp-tarifs__coupure-basse" />
-            <ScrollReveal as="ul" className="lp-tarifs__arguments">
-              {mentions.map((mention) => (
-                <li key={mention.key} className="lp-tarifs__argument">
-                  {mention.libelle}
-                </li>
-              ))}
-            </ScrollReveal>
-          </>
-        ) : null}
       </div>
     </section>
   )
