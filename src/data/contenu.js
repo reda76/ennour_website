@@ -374,22 +374,19 @@ export const CRENEAUX = [
     formules: ['coran'],
   },
   {
-    /* RÉOUVERT le 26/08. Le Coran femmes avait été annulé le 21/08 avec les
-       séances de semaine ; la mosquée le remet, mais « pour l'instant pas le
-       jour et l'horaire ».
-       `jours: []` et `debut/fin: null` ne sont donc PAS des oublis : ils
-       disent qu'aucun des deux n'est arrêté, et le planning sait déjà les
-       traiter — la séance forme un bloc à part, rangé en fin de semaine,
-       plutôt que d'occuper une colonne au hasard.
-       Ne pas y mettre d'horaire « provisoire » : quelqu'un viendrait. */
+    /* Annulé le 21/08 avec les séances de semaine, RÉOUVERT le 26/08 sans
+       jour ni horaire, programmé depuis. Le mécanisme du bloc « En attente
+       de programmation » qui l'a porté entre-temps reste en place dans le
+       planning : il resservira à la prochaine séance annoncée avant d'être
+       calée. */
     id: 'coran-f',
     poles: ['coran'],
     intitule: 'Coran',
     groupe: 'Femmes',
     public: 'Adultes',
-    /* PROGRAMMÉ le 01/09 : « mardi et jeudi de 14h à 15h30 ». Le créneau
-       était en attente depuis le 26/08, sans jour ni horaire ; il quitte
-       donc le bloc « En attente de programmation » et rejoint la semaine.
+    /* PROGRAMMÉ le 01/09, puis RECTIFIÉ le 03/09 : « de 14h à 15h30 le lundi
+       et jeudi ». Le mardi annoncé d'abord devient LUNDI — ne pas le
+       rétablir depuis les échanges antérieurs.
        C'est aussi le retour de deux jours de SEMAINE au planning, qui
        n'affichait plus que vendredi, samedi et dimanche depuis le 21/08 :
        les colonnes suivent les jours réellement tenus, elles se rouvrent
@@ -397,7 +394,7 @@ export const CRENEAUX = [
        Salle précisée le 02/09. */
     debut: '14:00',
     fin: '15:30',
-    jours: ['Mardi', 'Jeudi'],
+    jours: ['Lundi', 'Jeudi'],
     salle: 'Salle 5',
     formules: ['coran'],
   },
@@ -407,8 +404,11 @@ export const CRENEAUX = [
     intitule: 'Alphabétisation',
     groupe: 'Hommes',
     public: 'Adultes',
-    debut: '16:00',
-    fin: '17:00',
+    /* DÉCALÉ le 03/09 : « hommes de 14h à 15h le dimanche salle 3 ». Les deux
+       groupes se tenaient jusque-là à la même heure dans deux salles ; ils
+       se suivent désormais. La séance femmes, elle, ne bouge pas. */
+    debut: '14:00',
+    fin: '15:00',
     jours: ['Dimanche'],
     salle: 'Salle 3',
     formules: ['alphabetisation'],
@@ -476,10 +476,10 @@ export const CRENEAUX = [
   },
   {
     /* AJOUTÉE le 02/09 : « le jeudi à 17h30 à 19h30, Sîra femmes ».
-       La séance du samedi ne porte AUCUN groupe et n'en reçoit pas ici :
-       la mosquée n'a pas dit qu'elle devenait réservée aux hommes, et le
-       déduire de l'existence d'une séance femmes serait une invention.
-       À lui faire préciser. La salle, elle, l'a été le 02/09. */
+       La séance du samedi n'a longtemps porté aucun groupe — le déduire de
+       l'existence d'une séance femmes aurait été une invention. La mosquée
+       l'a confirmée « hommes » le 03/09, au planning comme sur la formule ;
+       la question est close. */
     id: 'sira-f',
     poles: ['sciences'],
     intitule: 'Sîra',
@@ -553,7 +553,7 @@ export const FORMULES = [
     rythme: 'En semaine et le week-end',
     prix: 80,
     prixNote: null,
-    resume: 'Lecture, tajwîd et mémorisation — le mardi et le jeudi en après-midi, le vendredi en soirée, tôt le dimanche matin.',
+    resume: 'Lecture, tajwîd et mémorisation — le lundi et le jeudi en après-midi, le vendredi en soirée, tôt le dimanche matin.',
     inclus: ['Lecture du Coran', 'Tajwîd', 'Mémorisation', 'Révision'],
     /* Les supports montrés dans la carte, à la demande de la mosquée le
        24/08 : « dans la formule, là où il y a le prix, que le livre il
@@ -795,7 +795,7 @@ export const ETAPES_INSCRIPTION = [
        existe, l'étape ne peut plus annoncer le seul règlement sur place.
        L'ordre n'est pas neutre — en ligne d'abord, parce que c'est le seul
        des deux qui se fait depuis cette page. */
-    texte: "Le règlement se fait en ligne ou sur place, en une fois ou échelonné.",
+    texte: "Le règlement se fait en ligne ou sur place, en une fois ou en trois fois.",
   },
 ]
 
@@ -832,7 +832,16 @@ export const MOYENS_REGLEMENT = [
     url: 'https://www.helloasso.com/associations/association-le-phare-76/adhesions/cours',
   },
   { key: 'especes', libelle: 'Sur place', detail: 'Au secrétariat de la mosquée.' },
-  { key: 'echelonnement', libelle: 'En une fois ou échelonné', detail: 'Par prélèvements automatiques ou par chèques remis à l’inscription.' },
+  /* PRÉCISÉ le 03/09 : « mise en place prélèvement automatique pour ceux qui
+     souhaitent payer en 3 fois ». « Échelonné » devient « en trois fois » —
+     un nombre vaut mieux qu'un adjectif quand on décide de s'inscrire.
+     Les chèques restent : la mosquée a ajouté un moyen, elle n'en a retiré
+     aucun. */
+  {
+    key: 'echelonnement',
+    libelle: 'En une fois ou en trois fois',
+    detail: 'Le paiement en trois fois se fait par prélèvement automatique ; les chèques restent acceptés à l’inscription.',
+  },
 ]
 
 /* ---------- Navigation ---------- */
@@ -1147,7 +1156,7 @@ export const TARIFS_MENTION = {
   titre: 'Ce que couvre chaque formule',
   // Les tarifs sont désormais publics : plus aucune formule n'est en attente.
   montants:
-    "Trois formules pour l’année 2026-2027, à 80 € chacune et cumulables entre elles. Le règlement peut être fait en une fois ou échelonné.",
+    "Trois formules pour l’année 2026-2027, à 80 € chacune et cumulables entre elles. Le règlement peut être fait en une fois ou en trois fois.",
   reglementTitre: 'Moyens de règlement',
   /* Le bloc « tarif famille » a été RETIRÉ : il annonçait une réduction
      « à l'étude » que personne n'avait confirmée. Une offre hypothétique

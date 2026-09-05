@@ -45,3 +45,7 @@ pnpm-debug.log*
 # et déjà retaillés dans public/photos/cours/. On les garde sous la main pour
 # pouvoir refaire les découpes, on ne les publie pas.
 sources-images/
+
+# Outils de contrôle (pilotage du navigateur, sondes de mesure). Ils vivent
+# ici plutôt que dans /tmp, qui est balayé en cours de session.
+.outils/
