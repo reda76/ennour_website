@@ -276,9 +276,13 @@ function Creneau({ creneau }) {
           par le panneau « Au choix », dont la carte héritait ici du padding
           et du fond. Un nom de classe repris, c'est un style hérité par
           accident. */}
-      {creneau.groupe && (
-        <p className="lp-planning__groupe-nom">{creneau.groupe}</p>
-      )}
+      {/* Toujours rendu : une séance sans groupe affiche « Hommes et femmes »
+          plutôt qu'un blanc, qui se lisait comme un oubli. Les données, elles,
+          gardent un `groupe` vide — c'est lui qui fait apparaître la séance
+          dans les deux filtres. */}
+      <p className="lp-planning__groupe-nom">
+        {creneau.groupe || PLANNING_UI.groupeOuvert}
+      </p>
 
       {/* Les SUPPORTS ont été retirés des cases le 26/08 : « ça fait trop ».
           Sept images dans une grille horaire tiraient l'œil vers elles alors

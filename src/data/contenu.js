@@ -426,11 +426,17 @@ export const CRENEAUX = [
     formules: ['alphabetisation'],
   },
   {
-    /* PAS de `groupe`, et c'est VOULU : « sauf le Fiqh où là ne pas préciser
-       car c'est homme et femme » (02/09). Les deux niveaux accueillent tout
-       le monde. Ne pas « compléter » ce champ en croyant réparer un oubli :
-       depuis cette date, une séance sans groupe est une séance ouverte à
-       tous, et c'est ce que les textes du site annoncent. */
+    /* PAS de `groupe`, et c'est toujours VOULU — mais la raison a changé.
+       Le 02/09 : « sauf le Fiqh où là ne pas préciser car c'est homme et
+       femme ». Le 03/09, revirement : « ajoute aussi que les cours de fiqh
+       c'est homme et femme, car là rien n'est stipulé ».
+       Le champ reste vide quand même, et ce n'est pas un demi-respect de la
+       consigne : c'est le VIDE qui fait apparaître la séance dans les DEUX
+       filtres du planning. Y écrire « Hommes et femmes » créerait un
+       troisième groupe, une troisième pastille de filtre, et sortirait le
+       Fiqh des deux autres — l'inverse de ce qu'on veut dire.
+       La mention est donc AFFICHÉE et non stockée : voir PLANNING_UI.groupeOuvert.
+       Ne pas remplir ce champ. */
     id: 'fiqh-n1',
     poles: ['sciences'],
     intitule: 'Fiqh — niveau 1',
@@ -1045,7 +1051,11 @@ export const COURS_INTRO = {
      porte AUCUNE étiquette. C'est donc l'absence de mention qui signifie
      « ouvert à tous », et la phrase doit le dire dans ce sens-là. */
   mentionMixite:
-    'Les séances marquées « Hommes » ou « Femmes » sont réservées à ce groupe ; les autres sont ouvertes à tous.',
+    /* RÉÉCRIT le 03/09. La phrase expliquait ce que signifiait une séance
+       SANS mention — il n'y en a plus : le Fiqh, seul cas, affiche désormais
+       « Hommes et femmes ». Une règle sans instance embrouille au lieu
+       d'éclairer. */
+    'Chaque séance indique le groupe qu’elle accueille.',
   groupe: 'groupe ouvert',
   groupes: 'groupes ouverts',
   groupesAConfirmer: 'Groupes à confirmer',
@@ -1296,6 +1306,12 @@ export const ETATS_SEANCE = {
 }
 
 export const PLANNING_UI = {
+  /* Ce qu'on écrit sur une séance qui n'a pas de groupe. Demandé le 03/09 :
+     « rien n'est stipulé » pour le Fiqh, et un blanc se lit comme un oubli
+     plutôt que comme une ouverture.
+     Le libellé remplace donc l'absence à l'écran, sans rien changer aux
+     données : le filtrage continue de reposer sur un `groupe` vide. */
+  groupeOuvert: 'Hommes et femmes',
   annee: 'Année scolaire',
   toutAfficher: 'Tout afficher',
   aucunResultat: 'Aucun créneau ne correspond à cette sélection.',

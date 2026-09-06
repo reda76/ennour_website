@@ -10,6 +10,7 @@ import {
   MOYENS_REGLEMENT,
   ORG,
   PLANNING_INTRO,
+  PLANNING_UI,
   PLACES_LIMITEES,
   SECTIONS,
   TARIFS_AFFICHE,
@@ -198,7 +199,9 @@ function Seance({ seance }) {
      `intitule`, et le groupe le complète — « Coran » seul ne distinguerait
      pas les trois créneaux de la formule 1. */
   const { intitule, groupe, detail, salutation, jours, debut, fin, auChoix } = seance
-  const libelle = groupe ? `${intitule} — ${groupe.toLocaleLowerCase('fr')}` : intitule
+  /* Le groupe complète toujours l'intitulé, y compris quand il n'est pas
+     stocké : « Fiqh — niveau 1 » seul ne disait pas qui il accueille. */
+  const libelle = `${intitule} — ${(groupe || PLANNING_UI.groupeOuvert).toLocaleLowerCase('fr')}`
 
   return (
     <li className="lp-tarifs__seance">
