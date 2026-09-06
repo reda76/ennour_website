@@ -505,29 +505,40 @@
    on affiche une attente assumée, en ocre, jamais en rouge.
    ============================================================ */
 
+/* REFONDU le 03/09. C'était une pastille : fond orange, contour tireté,
+   coin arrondi, point coloré en tête. Une « puce d'état » — le motif qu'on
+   trouve sur mille interfaces engendrées, et que la mosquée a demandé de
+   quitter.
+
+   Ce qui la remplace tient de l'imprimé plutôt que du tableau de bord :
+   un court filet, puis la note en italique. Le filet donne l'accroche que
+   le fond donnait, sans le crier ; l'italique dit « incise » à toute
+   personne qui lit des livres — et le site est composé en Alegreya, une
+   police de labeur.
+
+   Le rôle ne change pas : vingt-trois emplacements portent cette classe,
+   ils basculent tous ensemble. */
 .lp-attente {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--sp-2);
-  padding: var(--sp-1) var(--sp-3);
-  border: 1px dashed var(--border-accent);
-  border-radius: var(--r-1);
-  background: var(--orange-5);
   font-family: var(--ff-body);
   font-size: var(--fs-13);
-  font-weight: var(--fw-medium);
-  line-height: 1.4;
-  color: var(--accent-bright);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--fg-muted);
 }
 
-/* La pastille : un point en attente, pas une alerte. */
+/* Le filet, pas un point : couché, il accompagne la ligne de texte au lieu
+   de la ponctuer. `align-self: center` le cale sur l'œil des minuscules
+   plutôt que sur la ligne de base, où il pendrait. */
 .lp-attente::before {
   content: '';
-  width: 6px;
-  height: 6px;
+  align-self: center;
+  width: 16px;
+  height: 1px;
   flex: none;
-  border-radius: var(--r-full);
-  background: var(--signal-attente);
+  background: var(--accent-bright);
 }
 
 /* ============================================================

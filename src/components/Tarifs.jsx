@@ -444,12 +444,33 @@ export default function Tarifs() {
                 <span className="lp-attente">{TARIFS_TEXTES.reglementAConfirmer}</span>
               </p>
             )}
+
           </div>
 
           {/* La colonne d'action : l'unique bouton primaire de la section,
               et la seule mention de places — posée là parce que c'est au
               moment d'agir qu'elle informe, pas quand elle alarme. */}
           <div className="lp-card lp-tarifs__action">
+            {/* L'avis est DANS la carte du bouton et AVANT lui : ces deux
+                faits doivent être lus au moment où l'on décide, pas à
+                l'autre bout de la section. Avant et non après — placé sous
+                le bouton, il serait lu par ceux qui ont déjà cliqué. */}
+            {TARIFS_MENTION.avis?.length ? (
+              <aside className="lp-tarifs__avis" aria-labelledby="tarifs-avis">
+                <p className="lp-eyebrow lp-tarifs__avis-titre" id="tarifs-avis">
+                  {TARIFS_MENTION.avisTitre}
+                </p>
+                <ul className="lp-tarifs__avis-liste">
+                  {TARIFS_MENTION.avis.map((a) => (
+                    <li key={a.cle}>
+                      <strong>{a.fort}</strong>
+                      {a.suite}
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+            ) : null}
+
             <LienInscription className="lp-btn lp-btn--primaire lp-tarifs__cta">
               {TARIFS_TEXTES.ctaInscription}
             </LienInscription>

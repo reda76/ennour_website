@@ -672,3 +672,51 @@
      confond sinon avec la carte. Voir --border-image dans tokens.css. */
   border: 1px solid var(--border-image);
 }
+
+/* ============================================================
+   L'AVIS
+   Deux faits qui doivent être lus AVANT de payer. Ils l'étaient mal en
+   ligne discrète sous la liste.
+
+   La forme est celle d'un encadré d'imprimé, et non d'une bannière
+   d'alerte : un filet orange COUCHÉ en tête — jamais dressé sur le flanc,
+   le motif qu'on vient de retirer partout — un fond de plâtre, et le fait
+   en gras suivi de sa précision. Ce qui doit sauter aux yeux est le mot,
+   pas le cadre.
+   ============================================================ */
+/* DÉPLACÉ le 03/09 dans la carte du bouton, au plus près de la décision.
+   Il y devient une BANDE : les marges négatives annulent le rembourrage de
+   la carte et le bloc touche ses deux arêtes — le même geste que la bande
+   de prix des cartes de formule, qui se lit comme une ligne et non comme
+   un encadré de plus. */
+.lp-tarifs__avis {
+  margin-inline: calc(var(--sp-6) * -1);
+  margin-bottom: var(--sp-2);
+  padding: var(--sp-4) var(--sp-6);
+  background: var(--surface-2);
+  /* Le filet en tête est le seul geste coloré, et il est COUCHÉ : les
+     arêtes dressées ont toutes été retirées du site le 03/09. */
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--border-hair);
+}
+
+.lp-tarifs__avis-titre {
+  margin: 0 0 var(--sp-3);
+  color: var(--accent-bright);
+}
+
+.lp-tarifs__avis-liste {
+  display: grid;
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-14);
+  line-height: 1.6;
+  color: var(--fg);
+  max-width: var(--measure);
+}
+
+/* Le gras porte le fait, le reste le précise. Pas de puce : deux items ne
+   font pas une liste à parcourir, ils font deux phrases à lire. */
+.lp-tarifs__avis-liste strong { font-weight: var(--fw-semibold); }

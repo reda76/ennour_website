@@ -136,9 +136,10 @@
   width: max-content;
   margin: 0;
   padding: var(--sp-3) var(--sp-5);
-  /* Le montant orange à gauche : le même geste que .lp-filet, dressé. */
-  border-left: 3px solid var(--accent);
-  border-radius: var(--r-0) var(--r-1) var(--r-1) var(--r-0);
+  /* L'arête orange à gauche est partie le 03/09, avec toutes les autres.
+     Le bloc se tient par son fond clair et son ombre portée ; il n'avait
+     pas besoin d'être souligné en plus. */
+  border-radius: var(--r-1);
   background: var(--surface);
   box-shadow: var(--edge-light);
 }

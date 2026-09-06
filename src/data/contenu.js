@@ -831,7 +831,19 @@ export const MOYENS_REGLEMENT = [
        découlent. Ne pas la recopier ailleurs. */
     url: 'https://www.helloasso.com/associations/association-le-phare-76/adhesions/cours',
   },
-  { key: 'especes', libelle: 'Sur place', detail: 'Au secrétariat de la mosquée.' },
+  /* PRÉCISÉ le 03/09 : « l'inscription en liquide, il faut que les gens
+     viennent sur place pour les permanences, le samedi de 14h à 15h jusqu'à
+     nouvel ordre ». « Au secrétariat » ne suffisait pas — sans créneau, on
+     vient au hasard et on trouve porte close.
+     « Jusqu'à nouvel ordre » est de la mosquée et reste affiché : c'est ce
+     qui distingue un horaire tenu d'un horaire qui peut changer. */
+  {
+    key: 'especes',
+    libelle: 'Sur place, en espèces',
+    /* L'horaire des permanences a MONTÉ dans TARIFS_MENTION.avis le 03/09 :
+       il y est mis en évidence, et le répéter ici en ferait un doublon. */
+    detail: 'Aux permanences de la mosquée.',
+  },
   /* PRÉCISÉ le 03/09 : « mise en place prélèvement automatique pour ceux qui
      souhaitent payer en 3 fois ». « Échelonné » devient « en trois fois » —
      un nombre vaut mieux qu'un adjectif quand on décide de s'inscrire.
@@ -1158,6 +1170,27 @@ export const TARIFS_MENTION = {
   montants:
     "Trois formules pour l’année 2026-2027, à 80 € chacune et cumulables entre elles. Le règlement peut être fait en une fois ou en trois fois.",
   reglementTitre: 'Moyens de règlement',
+  /* L'AVIS. Deux faits que la mosquée veut voir, et qu'une ligne discrète
+     sous une liste ne portait pas assez : l'horaire des permanences — sans
+     lui, on vient au hasard et on trouve porte close — et l'engagement sur
+     l'année.
+     Ils sont réunis dans un encadré plutôt que dispersés : ce sont les deux
+     seules choses de cette section qui puissent surprendre quelqu'un APRÈS
+     coup, et c'est ce qui définit un avis.
+     La FAQ développe le second (réponse 15 de la mosquée) ; ici on avertit. */
+  avisTitre: 'À savoir avant de vous inscrire',
+  avis: [
+    {
+      cle: 'permanences',
+      fort: 'Le paiement en espèces se fait uniquement aux permanences',
+      suite: ', le samedi de 14 h à 15 h et jusqu’à nouvel ordre.',
+    },
+    {
+      cle: 'engagement',
+      fort: 'L’inscription engage pour l’année entière',
+      suite: ' : en cas d’arrêt en cours d’année, aucun remboursement n’est possible.',
+    },
+  ],
   /* Le bloc « tarif famille » a été RETIRÉ : il annonçait une réduction
      « à l'étude » que personne n'avait confirmée. Une offre hypothétique
      n'a pas sa place sur une page de tarifs. */

@@ -227,7 +227,6 @@
   margin: 0;
   padding: var(--sp-3) var(--sp-4);
   border: 1px solid var(--border-accent);
-  border-left-width: 3px;
   border-radius: var(--r-1);
   background: var(--orange-5);
   font-size: var(--fs-14);

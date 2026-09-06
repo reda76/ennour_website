@@ -405,29 +405,21 @@
 .lp-planning__creneau {
   gap: var(--sp-2);
   padding: var(--sp-4);
-  /* Place de l'arête de pôle, qui est une couche et non une bordure :
-     elle doit pouvoir porter DEUX teintes. */
-  padding-left: calc(var(--sp-4) + 3px);
   height: 100%;
   overflow: hidden;
 }
 
-/* L'arête gauche porte le ou les pôles. Un seul pôle : --lp-t2 retombe
-   sur --lp-t1 et l'arête est unie. Deux pôles : elle est partagée en
-   deux, franchement, sans dégradé — un fondu laisserait croire à une
-   troisième teinte. */
-.lp-planning__creneau::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  width: 3px;
-  background: linear-gradient(
-    180deg,
-    var(--lp-t1, var(--border-strong)) 0 50%,
-    var(--lp-t2, var(--lp-t1, var(--border-strong))) 50% 100%
-  );
-}
+/* L'ARÊTE DE PÔLE A ÉTÉ RETIRÉE le 03/09. C'était un liseré vertical de
+   3px, orange, sur le bord gauche de chaque carte — le motif qui signait
+   l'interface, et que la mosquée a demandé de quitter.
+
+   Rien ne s'y perd : la règle du site veut que la couleur ne porte jamais
+   l'information seule, et le pôle est toujours écrit — soit dans le
+   surtitre de la carte, soit dans l'intitulé lui-même. Le liseré était le
+   doublon décoratif de cette mention.
+
+   Les variables --lp-t1 et --lp-t2 restent : elles servent encore aux
+   carrés des filtres, où la couleur accompagne un nom. */
 
 /* Pas d'état de survol sur ces cartes : elles ne sont pas cliquables,
    et un fond qui réagit promettrait une action qui n'existe pas. */
@@ -517,20 +509,22 @@
    salle qui la suit. L'encre pleine plutôt que l'orange — le orange est
    réservé aux pôles, et deux codes couleur dans la même carte se
    neutraliseraient. */
+/* REFONDU le 03/09, avec les pastilles d'état. C'était une étiquette grise
+   à fond, contour et coin arrondi — la troisième forme de « puce » de la
+   carte, après celles d'attente et d'ouverture.
+   Elle devient ce qu'elle est : un mot. En capitales espacées, du même ton
+   que le surtitre de pôle au-dessus — l'œil le range parmi les libellés,
+   pas parmi les boutons. Rien à cliquer, donc rien qui ressemble à un
+   bouton. */
 .lp-planning__groupe-nom {
-  display: inline-flex;
-  align-self: flex-start;
   margin: 0;
-  padding: 2px var(--sp-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-1);
-  background: var(--surface-2);
   font-family: var(--ff-body);
   font-size: var(--fs-12);
   font-weight: var(--fw-semibold);
   letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
   line-height: 1.5;
-  color: var(--fg-muted);
+  color: var(--fg-dim);
 }
 
 /* L'état de la séance : classe fermée, classe ouverte, ou séance hors
@@ -542,27 +536,27 @@
 /* Une classe ouverte n'est pas une attente : elle emprunte la forme de
    .lp-attente mais en vert de signal, jamais en ocre — l'ocre du site veut
    dire « donnée manquante », et l'employer ici en inverserait le sens. */
+/* Même refonte que .lp-attente le 03/09, et pour la même raison : c'était
+   une pastille verte à fond, contour et point. Elle garde le vert — il
+   distingue une bonne nouvelle d'une réserve — mais sous la forme d'un
+   filet et d'une note, comme sa jumelle orange. */
 .lp-planning__ouvert {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--sp-2);
-  padding: var(--sp-1) var(--sp-3);
-  border: 1px solid rgba(47, 107, 82, 0.42);   /* --signal-ok à 42 % */
-  border-radius: var(--r-1);
-  background: rgba(47, 107, 82, 0.07);
   font-family: var(--ff-body);
-  font-size: var(--fs-12);
-  font-weight: var(--fw-medium);
-  line-height: 1.4;
+  font-size: var(--fs-13);
+  font-style: italic;
+  line-height: 1.5;
   color: var(--signal-ok);
 }
 
 .lp-planning__ouvert::before {
   content: '';
-  width: 6px;
-  height: 6px;
+  align-self: center;
+  width: 16px;
+  height: 1px;
   flex: none;
-  border-radius: var(--r-full);
   background: var(--signal-ok);
 }
 
@@ -615,13 +609,13 @@
    orange — pas noyé en bas de page.
    ============================================================ */
 
-/* Compose .lp-card ; dérogent la bordure (filet d'encre pâle, arête gauche
-   orange) et la largeur de lecture. */
+/* Compose .lp-card ; dérogent la bordure et la largeur de lecture.
+   L'arête gauche orange est partie le 03/09 avec celle des cartes de
+   séance : même motif, même raison. */
 .lp-planning__mention {
   display: grid;
   gap: var(--sp-2);
   border-color: var(--border-hair);
-  border-left: 2px solid var(--border-accent);
   max-width: var(--measure);
 }
 
