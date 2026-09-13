@@ -309,19 +309,26 @@ export default function Calendrier() {
                     </div>
                   ))}
 
-                  {m.segments.filter((s) => s.type === 'jalon').map((s, i) => (
+                  {m.segments.filter((s) => s.type === 'jalon').map((s, i, jalons) => (
                     <div
                       key={s.key}
                       /* Passé la moitié de l'axe, l'étiquette se range à
                          gauche de son mât pour ne pas sortir de la frise.
-                         Un jalon sur deux monte au-dessus du mât : les deux
-                         rentrées sont à dix-neuf jours l'une de l'autre,
-                         soit six pour cent de l'axe, et leurs étiquettes se
-                         chevauchaient franchement. */
+
+                         Elle ne monte au-dessus du mât que si le jalon
+                         PRÉCÉDENT est trop proche pour que les deux
+                         étiquettes tiennent côte à côte. C'était auparavant
+                         « un jalon sur deux » — une règle calquée sur le cas
+                         d'alors, deux rentrées à dix-neuf jours d'écart.
+                         Depuis qu'il n'y a plus qu'une rentrée, cette parité
+                         envoyait « Fin des cours » dans la bande haute, où
+                         il chevauchait l'étiquette des examens de juin, qui
+                         s'achèvent le même jour. La proximité se mesure,
+                         elle ne se devine pas au rang. */
                       className={
                         'lp-calendrier__amer' +
                         (s.x > 50 ? ' lp-calendrier__amer--fin' : '') +
-                        (i % 2 === 1 ? ' lp-calendrier__amer--decale' : '') +
+                        (i > 0 && s.x - jalons[i - 1].x < 12 ? ' lp-calendrier__amer--decale' : '') +
                         (actif === s.key ? ' is-actif' : '')
                       }
                       style={{ left: `${s.x}%` }}

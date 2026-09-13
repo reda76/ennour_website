@@ -749,12 +749,21 @@ export const CALENDRIER = [
   { key: 'hiver', libelle: 'Vacances d’hiver', debut: '2027-02-20', fin: '2027-03-08', type: 'vacances', provisoire: false },
   { key: 'examen-t2', libelle: 'Examens du 2e trimestre', debut: '2027-04-12', fin: '2027-04-16', type: 'examen', provisoire: true },
   { key: 'printemps', libelle: 'Vacances de printemps', debut: '2027-04-17', fin: '2027-05-03', type: 'vacances', provisoire: false },
-  { key: 'examen-t3', libelle: 'Examens du 3e trimestre', debut: '2027-06-28', fin: '2027-07-02', type: 'examen', provisoire: true },
-  /* Les vacances d'été de la zone B s'ouvrent le 3 juillet 2027. Se caler
-     sur elles place la fin des cours la veille. Reste provisoire : la règle
-     porte sur les VACANCES, et rien ne dit que la mosquée enseigne jusqu'au
-     dernier jour scolaire. L'ancienne date, le 26 juin, était inventée. */
-  { key: 'fin', libelle: 'Fin des cours', court: 'Fin des cours', debut: '2027-07-02', fin: null, type: 'jalon', provisoire: true },
+  /* RECALÉS le 13/09. Ils tombaient du 28 juin au 2 juillet — c'est-à-dire
+     APRÈS la fin des cours, que la mosquée vient de fixer au 20 juin. Une
+     session d'examens postérieure à la dernière séance n'a pas de sens.
+     Ils reprennent donc la règle d'origine — « dernière semaine à chaque
+     trimestre » — appliquée à la vraie fin d'année : la semaine qui s'achève
+     le 20 juin. Ils restent PROVISOIRES : la mosquée a donné une règle et
+     une date de fin, jamais les dates d'examens elles-mêmes. */
+  { key: 'examen-t3', libelle: 'Examens du 3e trimestre', debut: '2027-06-14', fin: '2027-06-20', type: 'examen', provisoire: true },
+  /* DONNÉE PAR LA MOSQUÉE le 13/09 : « fin des cours le 20 juin 2027 ».
+     Elle cesse donc d'être provisoire. La date déduite jusque-là — le
+     2 juillet, veille des vacances d'été de la zone B — supposait que la
+     mosquée enseigne jusqu'au dernier jour scolaire. Elle s'arrête douze
+     jours plus tôt : c'est exactement le genre d'écart qu'une déduction ne
+     pouvait pas deviner. */
+  { key: 'fin', libelle: 'Fin des cours', court: 'Fin des cours', debut: '2027-06-20', fin: null, type: 'jalon', provisoire: false },
 ]
 
 /* La réserve ne porte plus que sur ce qui reste incertain. Depuis le 21/08,
@@ -765,7 +774,7 @@ export const CALENDRIER = [
    Distinguer importe : douter de tout ferait douter de la date de rentrée,
    qui est précisément celle sur laquelle on s'inscrit. */
 export const MENTION_CALENDRIER =
-  'La rentrée est confirmée et les vacances suivent le calendrier scolaire de la zone B. Les sessions d’examens restent à confirmer.'
+  'La rentrée et la fin des cours sont confirmées, et les vacances suivent le calendrier scolaire de la zone B. Les sessions d’examens restent à confirmer.'
 
 /* ---------- Inscription ----------
    Les quatre étapes décrivent ce que le site FAIT, pas une procédure
