@@ -505,6 +505,35 @@
    on affiche une attente assumée, en ocre, jamais en rouge.
    ============================================================ */
 
+/* ============================================================
+   COMPLET
+   Le seul état du site qui ARRÊTE quelqu'un. Il ne peut donc pas se
+   contenter de l'incise en italique qui porte les autres mentions : elle
+   convient à « anciens élèves uniquement », que l'on lit en parcourant,
+   pas à « plus de place », que l'on doit voir sans lire.
+
+   D'où un bandeau plein, en capitales espacées. Le fond est l'orange le
+   plus PROFOND de la palette — celui de l'état pressé d'un bouton, jamais
+   employé comme aplat jusqu'ici. Il se lit comme un arrêt sans introduire
+   de rouge, que la charte du site n'a pas : un seul accent chaud, et les
+   pôles se distinguent par son NIVEAU.
+   Contraste mesuré : 7,00:1 du plâtre sur ce fond, largement au-dessus du
+   seuil AA — et le bandeau n'est pas qu'une couleur, il porte le mot.
+   ============================================================ */
+.lp-complet {
+  display: block;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--orange-4);
+  color: var(--platre-1);
+  font-family: var(--ff-body);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.4;
+}
+
 /* REFONDU le 03/09. C'était une pastille : fond orange, contour tireté,
    coin arrondi, point coloré en tête. Une « puce d'état » — le motif qu'on
    trouve sur mille interfaces engendrées, et que la mosquée a demandé de

@@ -8,7 +8,7 @@ import {
   PLANNING_INTRO,
   PLANNING_TEXTES,
   PLANNING_UI,
-  ETATS_SEANCE,
+  etatDeSeance,
   POLES,
 } from '../data/contenu.js'
 
@@ -236,6 +236,7 @@ function Creneau({ creneau }) {
      porte donc jamais l'information seule : elle est toujours doublée d'un
      nom, ici ou dans l'intitulé. */
   const aNommer = noms.filter((nom) => !intitule.includes(nom.toLocaleLowerCase('fr')))
+  const etat = etatDeSeance(creneau)
 
   return (
     <article
@@ -243,6 +244,15 @@ function Creneau({ creneau }) {
       data-pole={creneau.poles[0]}
       data-pole-2={creneau.poles[1]}
     >
+      {/* Le bandeau « complet » ouvre la case, à fond perdu, avant même
+          l'horaire : c'est le seul état qui empêche de s'inscrire, il doit
+          se voir avant qu'on ne lise quoi que ce soit. Les autres états
+          restent en incise au bas de la case — on les lit en parcourant,
+          ils n'arrêtent personne. */}
+      {etat?.cle === 'complet' && (
+        <p className="lp-complet lp-planning__bandeau">{etat.libelle}</p>
+      )}
+
       {aNommer.length > 0 && (
         <p className="lp-planning__pole">{aNommer.join(' · ')}</p>
       )}
@@ -313,23 +323,16 @@ function Creneau({ creneau }) {
         </p>
       )}
 
-      {/* Deux états que le classeur a rendus nécessaires. Ils ne se cumulent
-          pas : une classe fermée n'a pas à discuter de sa formule. */}
-      {creneau.inscriptionsOuvertes === false ? (
+      {/* L'état de la séance, s'il y en a un. La règle vit dans contenu.js
+          (`etatDeSeance`) parce que les cartes de formule posent la même
+          question : une seule décision, deux endroits qui l'affichent.
+          Le vert est réservé à ce qui OUVRE ; une réserve — complet, anciens
+          élèves, hors formule — se lit en incise neutre. */}
+      {etat && etat.cle !== 'complet' ? (
         <p className="lp-planning__etat-seance">
-          <span className="lp-attente">{ETATS_SEANCE.anciensEleves}</span>
-        </p>
-      ) : creneau.inscriptionsOuvertes === true ? (
-        /* Le pendant POSITIF, et il n'est pas décoratif : le Fiqh a deux
-           niveaux au même horaire, dont un fermé. Sans cette mention, le
-           lecteur devrait déduire de l'absence d'étiquette sur l'autre
-           carte qu'il s'agit de celle qui l'accueille. */
-        <p className="lp-planning__etat-seance">
-          <span className="lp-planning__ouvert">{ETATS_SEANCE.nouvelleClasse}</span>
-        </p>
-      ) : creneau.formules?.length === 0 ? (
-        <p className="lp-planning__etat-seance">
-          <span className="lp-attente">{ETATS_SEANCE.horsFormule}</span>
+          <span className={etat.ton === 'ouvert' ? 'lp-planning__ouvert' : 'lp-attente'}>
+            {etat.libelle}
+          </span>
         </p>
       ) : null}
     </article>

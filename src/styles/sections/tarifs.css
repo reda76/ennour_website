@@ -720,3 +720,18 @@
 /* Le gras porte le fait, le reste le précise. Pas de puce : deux items ne
    font pas une liste à parcourir, ils font deux phrases à lire. */
 .lp-tarifs__avis-liste strong { font-weight: var(--fw-semibold); }
+
+/* L'état d'une séance dans la liste d'une formule — complet, réservé aux
+   anciens élèves, hors formule. Posé entre l'intitulé et l'horaire : on
+   apprend que la séance est fermée AVANT de lire quand elle a lieu. */
+.lp-tarifs__seance-etat {
+  margin: var(--sp-1) 0 0;
+}
+
+/* Le bandeau « complet » dans la liste des séances d'une formule. Il ne va
+   pas à fond perdu — l'entrée de liste porte un filet à gauche qui la
+   rattache à sa séance, et le recouvrir détacherait le bandeau de ce qu'il
+   qualifie. */
+.lp-tarifs__seance-bandeau {
+  margin: var(--sp-2) 0;
+}

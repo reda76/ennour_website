@@ -681,3 +681,10 @@
     padding: var(--sp-4);
   }
 }
+
+/* Le bandeau « complet » à fond perdu : les marges négatives annulent le
+   rembourrage de la case, il touche ses trois arêtes du haut. `overflow:
+   hidden` sur la case arrondit ses angles supérieurs pour lui. */
+.lp-planning__bandeau {
+  margin: calc(var(--sp-4) * -1) calc(var(--sp-4) * -1) var(--sp-1);
+}

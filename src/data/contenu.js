@@ -395,6 +395,8 @@ export const CRENEAUX = [
     debut: '14:00',
     fin: '15:30',
     jours: ['Lundi', 'Jeudi'],
+    /* COMPLET depuis le 18/09. */
+    etat: 'complet',
     salle: 'Salle 5',
     formules: ['coran'],
   },
@@ -419,6 +421,8 @@ export const CRENEAUX = [
     intitule: 'Alphabétisation',
     groupe: 'Femmes',
     public: 'Adultes',
+    /* COMPLET depuis le 18/09. */
+    etat: 'complet',
     debut: '16:00',
     fin: '17:00',
     jours: ['Dimanche'],
@@ -446,8 +450,10 @@ export const CRENEAUX = [
     jours: ['Dimanche'],
     salle: 'Salle 5',
     formules: ['sciences'],
-    /* La classe est nouvelle : c'est celle qui reçoit les inscriptions. */
-    inscriptionsOuvertes: true,
+    /* COMPLET depuis le 18/09. Portait jusque-là « nouvelle classe —
+       inscriptions ouvertes » : c'était elle qui les recevait, et elle les a
+       toutes reçues. */
+    etat: 'complet',
   },
   {
     id: 'fiqh-n2',
@@ -461,7 +467,7 @@ export const CRENEAUX = [
     formules: ['sciences'],
     /* Réservé aux anciens élèves : l'afficher sans le dire enverrait des
        débutants s'inscrire à un cours qui ne les accueillera pas. */
-    inscriptionsOuvertes: false,
+    etat: 'anciensEleves',
   },
   {
     id: 'sira',
@@ -1304,7 +1310,20 @@ export const TARIFS_AFFICHE = {
 /* ---------- Section « Planning » — libellés d'interface ---------- */
 /* Libellés des deux états introduits par le classeur : une classe fermée aux
    nouvelles inscriptions, et une séance rattachée à aucune formule. */
+/* L'état d'une séance. REMODELÉ le 18/09 : c'était un booléen à trois
+   valeurs, `inscriptionsOuvertes` — true, false, ou absent. Ce modèle a
+   montré sa limite le jour où le Fiqh niveau 1 est devenu complet : il
+   portait `true`, et il aurait fallu qu'il soit à la fois « ouvert » et
+   « plus de place ». Deux champs qui se contredisent, ou un booléen qui
+   doit dire trois choses, finissent toujours par mentir.
+
+   Un seul champ `etat`, une seule valeur à la fois, et les combinaisons
+   impossibles cessent d'être représentables. L'absence d'`etat` signifie
+   qu'il n'y a rien de particulier à signaler. */
 export const ETATS_SEANCE = {
+  complet: 'Complet — plus de place',
+  completDetail:
+    'Cette séance a atteint son effectif : elle ne reçoit plus d’inscription.',
   anciensEleves: 'Anciens élèves uniquement',
   anciensElevesDetail:
     'Cette classe poursuit le programme de l’an dernier : elle ne reçoit pas de nouvelle inscription cette année.',
@@ -1312,6 +1331,34 @@ export const ETATS_SEANCE = {
   horsFormule: 'Nous consulter',
   horsFormuleDetail:
     'Cette séance ne figure sur aucune des trois formules de l’affiche. Contactez le secrétariat pour connaître les conditions.',
+}
+
+/** Ce qu'une séance annonce, et sur quel ton.
+ *
+ *  UNE seule fonction décide, parce que deux endroits posent la question —
+ *  le planning et les cartes de formule. Dupliquer la règle, c'est accepter
+ *  qu'un jour l'un dise « complet » et l'autre rien.
+ *
+ *  `ton` distingue une réserve d'une bonne nouvelle : le vert est réservé à
+ *  ce qui ouvre, tout le reste se lit en incise neutre.
+ *  Renvoie `null` quand il n'y a rien à signaler — le cas le plus fréquent.
+ */
+export function etatDeSeance(creneau) {
+  if (creneau.etat === 'complet') {
+    return { cle: 'complet', libelle: ETATS_SEANCE.complet, ton: 'reserve' }
+  }
+  if (creneau.etat === 'anciensEleves') {
+    return { cle: 'anciensEleves', libelle: ETATS_SEANCE.anciensEleves, ton: 'reserve' }
+  }
+  if (creneau.etat === 'nouvelleClasse') {
+    return { cle: 'nouvelleClasse', libelle: ETATS_SEANCE.nouvelleClasse, ton: 'ouvert' }
+  }
+  /* Une séance qui ne relève d'aucune formule ne se vend pas : elle se
+     discute avec le secrétariat. Déduit de `formules`, pas déclaré. */
+  if (!creneau.formules?.length) {
+    return { cle: 'horsFormule', libelle: ETATS_SEANCE.horsFormule, ton: 'reserve' }
+  }
+  return null
 }
 
 export const PLANNING_UI = {

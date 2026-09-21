@@ -7,6 +7,7 @@ import {
   totalFiable,
   totalPlein,
   seancesDeFormule,
+  etatDeSeance,
   MOYENS_REGLEMENT,
   ORG,
   PLANNING_INTRO,
@@ -199,6 +200,11 @@ function Seance({ seance }) {
      `intitule`, et le groupe le complète — « Coran » seul ne distinguerait
      pas les trois créneaux de la formule 1. */
   const { intitule, groupe, detail, salutation, jours, debut, fin, auChoix } = seance
+  /* AJOUTÉ le 18/09 : l'état ne s'affichait qu'au planning. Or c'est ICI
+     qu'on choisit sa formule et qu'on clique pour payer — laisser une
+     séance complète muette dans cette liste, c'est encaisser 80 € pour un
+     créneau qui n'accueille personne. */
+  const etat = etatDeSeance(seance)
   /* Le groupe complète toujours l'intitulé, y compris quand il n'est pas
      stocké : « Fiqh — niveau 1 » seul ne disait pas qui il accueille. */
   const libelle = `${intitule} — ${(groupe || PLANNING_UI.groupeOuvert).toLocaleLowerCase('fr')}`
@@ -226,6 +232,16 @@ function Seance({ seance }) {
       {/* Jour et horaire, ou l'attente des deux. Le Coran femmes n'a ni
           l'un ni l'autre depuis sa réouverture : `Jours` ne rend rien sur
           une liste vide, et la pastille prend la place de l'heure. */}
+      {etat?.cle === 'complet' ? (
+        <p className="lp-complet lp-tarifs__seance-bandeau">{etat.libelle}</p>
+      ) : etat ? (
+        <p className="lp-tarifs__seance-etat">
+          <span className={etat.ton === 'ouvert' ? 'lp-planning__ouvert' : 'lp-attente'}>
+            {etat.libelle}
+          </span>
+        </p>
+      ) : null}
+
       <p className="lp-tarifs__quand">
         {debut && fin ? (
           <>
