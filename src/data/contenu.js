@@ -357,6 +357,8 @@ export const CRENEAUX = [
     jours: ['Vendredi'],
     salle: 'Salle 5',
     formules: ['coran'],
+    /* COMPLET depuis le 28/09. */
+    etat: 'complet',
   },
   {
     id: 'coran-h-weekend',
@@ -372,6 +374,8 @@ export const CRENEAUX = [
     jours: ['Dimanche'],
     salle: 'Salle 5',
     formules: ['coran'],
+    /* COMPLET depuis le 28/09. */
+    etat: 'complet',
   },
   {
     /* Annulé le 21/08 avec les séances de semaine, RÉOUVERT le 26/08 sans
