@@ -735,3 +735,29 @@
 .lp-tarifs__seance-bandeau {
   margin: var(--sp-2) 0;
 }
+
+/* ============================================================
+   INSCRIPTIONS CLOSES (01/10)
+   ============================================================ */
+
+/* Dans la bande de prix : le bandeau « complet » se pose au-dessus du
+   montant, sur toute la largeur de la bande. */
+.lp-tarifs__prix-complet {
+  align-self: stretch;
+}
+
+/* En tête de la carte d'action, à fond perdu comme l'encadré qu'il
+   remplace — même geste, même place, nouvelle nouvelle. */
+.lp-tarifs__ferme {
+  display: grid;
+  gap: var(--sp-3);
+  margin-inline: calc(var(--sp-6) * -1);
+  margin-bottom: var(--sp-2);
+}
+.lp-tarifs__ferme-motif {
+  margin: 0;
+  padding-inline: var(--sp-6);
+  font-size: var(--fs-14);
+  line-height: 1.6;
+  color: var(--fg);
+}

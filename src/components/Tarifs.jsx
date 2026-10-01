@@ -8,6 +8,8 @@ import {
   totalPlein,
   seancesDeFormule,
   etatDeSeance,
+  ETATS_SEANCE,
+  INSCRIPTION_EN_LIGNE,
   MOYENS_REGLEMENT,
   ORG,
   PLANNING_INTRO,
@@ -281,6 +283,7 @@ function CarteFormule({ formule, delai }) {
   /* Lues dans le planning : une formule et son planning ne peuvent plus
      annoncer deux horaires différents. */
   const seances = seancesDeFormule(formule.key)
+  const formuleComplete = seances.length > 0 && seances.every((c) => etatDeSeance(c)?.cle === 'complet')
   const titreId = `tarifs-${formule.key}`
   const auChoix = seances?.some((s) => s.auChoix)
 
@@ -379,6 +382,12 @@ function CarteFormule({ formule, delai }) {
 
       {/* Le prix ferme la carte, juste avant l'appel à l'action. */}
       <div className="lp-tarifs__prix">
+        {/* Déduit, pas déclaré : la formule est complète quand TOUTES ses
+            séances le sont. Posé dans la bande de prix, contre le montant —
+            c'est là qu'on regarde avant de décider. La bande reste une
+            seule ligne de la grille partagée : les prix des trois cartes
+            restent alignés. */}
+        {formuleComplete ? <p className="lp-complet lp-tarifs__prix-complet">{ETATS_SEANCE.complet}</p> : null}
         <Prix prix={prix} prixNote={prixNote} />
       </div>
 
@@ -392,6 +401,7 @@ function CarteFormule({ formule, delai }) {
 }
 
 export default function Tarifs() {
+  const fermees = INSCRIPTION_EN_LIGNE.fermees
   const formules = FORMULES ?? []
   const moyens = MOYENS_REGLEMENT ?? []
 
@@ -474,7 +484,18 @@ export default function Tarifs() {
                 faits doivent être lus au moment où l'on décide, pas à
                 l'autre bout de la section. Avant et non après — placé sous
                 le bouton, il serait lu par ceux qui ont déjà cliqué. */}
-            {TARIFS_MENTION.avis?.length ? (
+            {/* Inscriptions closes : la carte annonce la fermeture en tête,
+                avec sa raison. L'encadré des conditions de paiement et la
+                mention « places limitées » disparaissent — ils parlent d'une
+                inscription qu'on ne peut plus faire. */}
+            {fermees ? (
+              <div className="lp-tarifs__ferme">
+                <p className="lp-complet">{INSCRIPTION_EN_LIGNE.libelleFerme}</p>
+                <p className="lp-tarifs__ferme-motif">{INSCRIPTION_EN_LIGNE.motifFerme}</p>
+              </div>
+            ) : null}
+
+            {!fermees && TARIFS_MENTION.avis?.length ? (
               <aside className="lp-tarifs__avis" aria-labelledby="tarifs-avis">
                 <p className="lp-eyebrow lp-tarifs__avis-titre" id="tarifs-avis">
                   {TARIFS_MENTION.avisTitre}
@@ -493,7 +514,7 @@ export default function Tarifs() {
             <LienInscription className="lp-btn lp-btn--primaire lp-tarifs__cta">
               {TARIFS_TEXTES.ctaInscription}
             </LienInscription>
-            {PLACES_LIMITEES ? (
+            {!fermees && PLACES_LIMITEES ? (
               <p className="lp-small lp-tarifs__places">{PLACES_LIMITEES}</p>
             ) : null}
           </div>

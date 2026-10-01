@@ -1,4 +1,4 @@
-import { POLES, CRENEAUX, COURS_INTRO, COURS_TEXTES, DEVISE } from '../data/contenu.js'
+import { POLES, CRENEAUX, COURS_INTRO, COURS_TEXTES, DEVISE, ETATS_SEANCE, etatDeSeance } from '../data/contenu.js'
 import ScrollReveal from './ScrollReveal.jsx'
 import Coran from './illustrations/Coran.jsx'
 import Alphabetisation from './illustrations/Alphabetisation.jsx'
@@ -38,6 +38,12 @@ const LISTE_OU = new Intl.ListFormat(DEVISE.locale, { style: 'long', type: 'disj
  * — `auChoix` vaut « Samedi OU Dimanche » : l'élève ne retient qu'un jour,
  *   compter les deux doublerait l'offre annoncée par l'affiche.
  */
+/* Un pôle est complet quand toutes ses séances le sont. */
+function poleComplet(cle) {
+  const seances = CRENEAUX.filter((c) => c.poles?.includes(cle))
+  return seances.length > 0 && seances.every((c) => etatDeSeance(c)?.cle === 'complet')
+}
+
 function lireSeances(cle) {
   const creneaux = CRENEAUX.filter((c) => c.poles?.includes(cle))
 
@@ -148,6 +154,12 @@ export default function Cours() {
                       <div className="lp-cours__plaque">
                         <Illustration className="lp-cours__illu" />
                       </div>
+                    ) : null}
+
+                    {/* Complet quand TOUTES les séances du pôle le sont —
+                        déduit du planning, jamais déclaré à la main. */}
+                    {poleComplet(pole.key) ? (
+                      <p className="lp-complet lp-cours__complet">{ETATS_SEANCE.complet}</p>
                     ) : null}
 
                     <h3 id={`cours-pole-${pole.key}`} className="lp-h3">

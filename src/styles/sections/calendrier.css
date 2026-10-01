@@ -624,3 +624,8 @@
 .lp-calendrier__amer--decale .lp-calendrier__amer-lib {
   bottom: 54px;
 }
+
+/* L'étiquette « Aujourd'hui » près des bords : alignée sur le repère au lieu
+   d'être centrée dessus, pour rester entière dans la frise. */
+.lp-calendrier__jour--debut .lp-calendrier__jour-lib { translate: 0 calc(var(--sp-2) * -1); }
+.lp-calendrier__jour--fin .lp-calendrier__jour-lib { translate: -100% calc(var(--sp-2) * -1); }

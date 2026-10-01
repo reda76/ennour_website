@@ -588,3 +588,35 @@
   margin: 0;
   background: var(--border-hair);
 }
+
+/* ============================================================
+   INSCRIPTIONS CLOSES (01/10)
+   Ce que deviennent les commandes d'inscription quand
+   INSCRIPTION_EN_LIGNE.fermees est vrai. Ce ne sont plus des liens mais des
+   <span aria-disabled> : rien à cliquer, rien à focaliser.
+
+   Le bouton garde sa forme — sa place dans la barre et dans les cartes ne
+   bouge pas, la mise en page reste stable — mais perd son aplat orange,
+   sa réaction au survol et son curseur de main. Un fond de plâtre, un
+   contour d'encre pâle, un texte resté LISIBLE : on doit pouvoir lire
+   « Inscriptions closes », c'est l'information.
+   ============================================================ */
+.lp-btn.is-ferme,
+.lp-btn.is-ferme:hover,
+.lp-btn.is-ferme:active {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--fg-muted);
+  box-shadow: none;
+  filter: none;
+  cursor: not-allowed;
+}
+
+/* Les liens texte (cartes de formule, FAQ) perdent leur couleur de lien
+   et leur soulignement : un texte souligné et orange se lit comme un lien,
+   même quand il n'en est plus un. */
+.lp-lien.is-ferme {
+  color: var(--fg-muted);
+  text-decoration: none;
+  cursor: not-allowed;
+}

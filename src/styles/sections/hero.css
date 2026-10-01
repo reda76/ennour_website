@@ -313,3 +313,10 @@
   .lp-hero__repere-valeur--long { font-size: var(--fs-20); }
   .lp-hero__reperes { gap: var(--sp-5); }
 }
+
+/* Inscriptions closes : l'annonce prend le titre en orange profond, le ton
+   du bandeau « complet » des séances — c'est la même nouvelle, dite au
+   premier écran. */
+.lp-hero__annonce.is-ferme .lp-hero__annonce-titre {
+  color: var(--orange-4);
+}

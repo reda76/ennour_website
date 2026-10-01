@@ -418,6 +418,8 @@ export const CRENEAUX = [
     jours: ['Dimanche'],
     salle: 'Salle 3',
     formules: ['alphabetisation'],
+    /* COMPLET depuis le 01/10 : toutes les séances le sont. */
+    etat: 'complet',
   },
   {
     id: 'alpha-f',
@@ -471,7 +473,9 @@ export const CRENEAUX = [
     formules: ['sciences'],
     /* Réservé aux anciens élèves : l'afficher sans le dire enverrait des
        débutants s'inscrire à un cours qui ne les accueillera pas. */
-    etat: 'anciensEleves',
+    /* Réservé aux anciens élèves jusqu'au 01/10, COMPLET depuis : les
+       inscriptions sont closes sur toutes les séances. */
+    etat: 'complet',
   },
   {
     id: 'sira',
@@ -489,6 +493,8 @@ export const CRENEAUX = [
     jours: ['Samedi'],
     salle: 'Salle 5',
     formules: ['sciences'],
+    /* COMPLET depuis le 01/10 : toutes les séances le sont. */
+    etat: 'complet',
   },
   {
     /* AJOUTÉE le 02/09 : « le jeudi à 17h30 à 19h30, Sîra femmes ».
@@ -508,6 +514,8 @@ export const CRENEAUX = [
     jours: ['Jeudi'],
     salle: 'Salle 5',
     formules: ['sciences'],
+    /* COMPLET depuis le 01/10 : toutes les séances le sont. */
+    etat: 'complet',
   },
   /* RETIRÉES le 07/08 sur instruction de la mosquée : « il y a un créneau
      Coran pour femme, faut le retirer, c'est à part et non officiel ».
@@ -1101,6 +1109,15 @@ export const COURS_INTRO = {
    `externe: true` n'est pas décoratif — il commande l'ouverture dans un
    nouvel onglet, le `rel` et la mention lue par les lecteurs d'écran. */
 export const INSCRIPTION_EN_LIGNE = {
+  /* FERMÉES le 01/10 : « tous les cours sont complets, on arrête les
+     inscriptions ». UN interrupteur, et tout le site suit : les six boutons
+     « S'inscrire » deviennent inactifs, l'annonce du premier écran change,
+     l'encadré des conditions de paiement disparaît.
+     Pour ROUVRIR : repasser à `false` — et retirer `etat: 'complet'` des
+     séances qui ont de nouveau de la place. */
+  fermees: true,
+  libelleFerme: 'Inscriptions closes',
+  motifFerme: 'Toutes les séances sont complètes pour l’année 2026 – 2027.',
   href: MOYENS_REGLEMENT.find((m) => m.key === 'helloasso')?.url ?? null,
   libelle: 'S’inscrire',
   /* Annoncé aux lecteurs d'écran, jamais affiché : un lien qui change de
@@ -1167,9 +1184,16 @@ export const HERO = {
   },
   /* L'affiche ouvre les inscriptions : c'est l'information la plus actionnable
      de la page, elle monte donc dans le premier écran. */
+  /* Deux versions, choisies par INSCRIPTION_EN_LIGNE.fermees : le premier
+     écran ne peut pas annoncer « inscriptions ouvertes » pendant que tous
+     les boutons de la page sont désactivés. */
   annonce: {
     titre: 'Inscriptions ouvertes',
     detail: 'Cours adultes 2026 – 2027',
+  },
+  annonceFermee: {
+    titre: 'Inscriptions closes',
+    detail: 'Toutes les séances sont complètes — cours adultes 2026 – 2027',
   },
   /* RÉÉCRIT le 02/09 : « les groupes sont séparés hommes et femmes » est
      devenu faux pour le Fiqh, qui accueille tout le monde. Le premier écran

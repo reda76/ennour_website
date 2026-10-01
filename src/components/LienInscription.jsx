@@ -21,7 +21,24 @@ import { INSCRIPTION_EN_LIGNE } from '../data/contenu.js'
  * bouton du tout.
  */
 export default function LienInscription({ className, children, suffixeCache }) {
-  const { href, libelle, mentionNouvelOnglet } = INSCRIPTION_EN_LIGNE
+  const { href, libelle, mentionNouvelOnglet, fermees, libelleFerme } = INSCRIPTION_EN_LIGNE
+
+  /* Inscriptions CLOSES (01/10) : plus de lien du tout. Un <a> vers la
+     campagne, même grisé, se cliquerait encore — et mènerait à un paiement
+     pour des séances pleines. On rend un simple <span>, qui n'est ni
+     focalisable ni activable, et `aria-disabled` dit aux lecteurs d'écran
+     que la commande existe mais ne répond plus.
+     Le libellé change aussi : « S'inscrire — Coran » devient « Inscriptions
+     closes ». Un bouton grisé qui garderait son verbe d'action se lirait
+     comme une panne, pas comme une décision. */
+  if (fermees) {
+    return (
+      <span className={`${className ?? ''} is-ferme`} aria-disabled="true">
+        {libelleFerme}
+      </span>
+    )
+  }
+
   if (!href) return null
 
   return (

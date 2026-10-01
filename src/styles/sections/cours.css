@@ -336,3 +336,8 @@
   object-fit: cover;
   object-position: center;
 }
+
+/* Le bandeau « complet » d'un pôle, entre sa photo et son titre. */
+.lp-cours__complet {
+  margin: var(--sp-3) 0 0;
+}

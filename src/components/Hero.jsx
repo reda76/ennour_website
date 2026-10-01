@@ -1,4 +1,4 @@
-import { ORG, POLES, CRENEAUX, HERO, estAConfirmer } from '../data/contenu.js'
+import { ORG, POLES, CRENEAUX, HERO, INSCRIPTION_EN_LIGNE, estAConfirmer } from '../data/contenu.js'
 import LienInscription from './LienInscription.jsx'
 
 /* ============================================================
@@ -94,6 +94,7 @@ function FlecheBas() {
 }
 
 export default function Hero() {
+  const annonce = INSCRIPTION_EN_LIGNE.fermees ? HERO.annonceFermee : HERO.annonce
   /* Les repères sont rendus à leur valeur dès le premier passage : aucun
      compte à rebours animé, qui les afficherait à « 0 » pour un robot
      d'indexation ou un onglet en arrière-plan.
@@ -161,9 +162,15 @@ export default function Hero() {
               le <h1> pour deux lignes désorganiserait le plan de la page.
               Volontairement pas la pastille .lp-attente non plus — celle-ci
               signale ce qui n'est pas arrêté ; ici tout l'est. */}
-          <p className="lp-hero__annonce lp-hero__entree" style={{ '--entree-retard': '240ms' }}>
-            <span className="lp-hero__annonce-titre">{HERO.annonce.titre}</span>
-            <span className="lp-hero__annonce-detail">{HERO.annonce.detail}</span>
+          {/* Quand les inscriptions sont closes, l'annonce le dit — elle ne
+              peut pas promettre une ouverture pendant que les boutons juste
+              en dessous sont désactivés. */}
+          <p
+            className={'lp-hero__annonce lp-hero__entree' + (INSCRIPTION_EN_LIGNE.fermees ? ' is-ferme' : '')}
+            style={{ '--entree-retard': '240ms' }}
+          >
+            <span className="lp-hero__annonce-titre">{annonce.titre}</span>
+            <span className="lp-hero__annonce-detail">{annonce.detail}</span>
           </p>
 
           <div className="lp-hero__actions lp-hero__entree" style={{ '--entree-retard': '320ms' }}>

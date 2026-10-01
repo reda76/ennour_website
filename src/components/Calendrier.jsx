@@ -343,7 +343,19 @@ export default function Calendrier() {
                   ))}
 
                   {m.aujourdHuiX !== null && (
-                    <div className="lp-calendrier__jour" style={{ left: `${m.aujourdHuiX}%` }}>
+                    /* Près d'un bord, l'étiquette — centrée sur son repère par
+                       défaut — déborderait à moitié hors de la frise et serait
+                       coupée : au début de l'année scolaire on ne lisait que
+                       « rd'hui ». Elle s'aligne donc sur le bord qu'elle
+                       approche. */
+                    <div
+                      className={
+                        'lp-calendrier__jour' +
+                        (m.aujourdHuiX < 8 ? ' lp-calendrier__jour--debut' : '') +
+                        (m.aujourdHuiX > 92 ? ' lp-calendrier__jour--fin' : '')
+                      }
+                      style={{ left: `${m.aujourdHuiX}%` }}
+                    >
                       <span className="lp-calendrier__jour-lib">{T.statutPendant}</span>
                     </div>
                   )}
